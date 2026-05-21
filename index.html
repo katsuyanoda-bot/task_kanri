@@ -142,7 +142,7 @@
     const IconSettings = ({ className = "h-4 w-4" }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
       </svg>
     );
     const IconDragHandle = () => (
@@ -312,7 +312,7 @@
           {
             id: 't2',
             stepId: 2,
-            title: '経理上の問題・収益認識の確認',
+            title: '経理上の問題・収益認識 of 確認',
             description: '無料枠超過分の請求タイミングと、既存有料プランからの切り替え時の売上計上基準（収益認識基準）の策定。',
             assignee: '経理 (田中)',
             department: 'finance',
@@ -335,7 +335,7 @@
           {
             id: 't3',
             stepId: 2,
-            title: '法務上の問題・利用規約改定の確認',
+            title: '法務上の問題・利用規約改定 of 確認',
             description: '既存顧客への不利益変更にあたらないかの確認。同意取得が必要な場合のフロー確認。',
             assignee: '法務 (鈴木)',
             department: 'legal',
@@ -359,7 +359,7 @@
           {
             id: 't4',
             stepId: 2,
-            title: 'システム上の問題・API連携の確認',
+            title: 'システム上の問題・API連携 of 確認',
             description: 'プロダクト側での無料スカウト通数のカウントおよび、超過時の従量課金システム連携ロジックの実装検証。',
             assignee: 'システム (伊藤)',
             department: 'system',
@@ -374,7 +374,7 @@
             id: 't5',
             stepId: 3,
             title: '申込書・見積フォーマットの整備',
-            description: '無料枠記載を含めた新しい申込書テンプレートの作成、および法務特約事項の作成。',
+            description: '無料枠記載を含めた新しい申込書テンプレート of 作成、および法務特約事項の作成。',
             assignee: '自分 (事務)',
             department: 'backoffice',
             dueDate: '2026-06-05',
@@ -463,7 +463,24 @@
       const [newProjEnd, setNewProjEnd] = useState('2026-06-25');
       const [newProjFolderId, setNewProjFolderId] = useState('f1'); 
 
-      // 選択中フォルダ（親）の案件だけを絞り込む
+      // DBビューのフィルタ用State
+      const [dbFilterFolderId, setDbFilterFolderId] = useState('all');
+      const [dbFilterText, setDbFilterText] = useState('');
+
+      const filteredDbProjects = useMemo(() => {
+        return projects.filter(proj => {
+          if (dbFilterFolderId !== 'all' && proj.folderId !== dbFilterFolderId) return false;
+          if (dbFilterText.trim() !== '') {
+            const lowerText = dbFilterText.toLowerCase();
+            if (!proj.name.toLowerCase().includes(lowerText) && !proj.code.toLowerCase().includes(lowerText)) {
+              return false;
+            }
+          }
+          return true;
+        });
+      }, [projects, dbFilterFolderId, dbFilterText]);
+
+      // 選択中フォルダ（親）の案件だけを絞り込む (ダッシュボード用)
       const filteredProjects = useMemo(() => {
         return projects.filter(p => p.folderId === selectedFolderId);
       }, [projects, selectedFolderId]);
@@ -594,6 +611,15 @@
       const countLateTasksByProject = (proj) => {
         const pTasks = proj.tasks || [];
         return pTasks.filter(t => isOverdue(t.dueDate, t.status)).length;
+      };
+
+      // DBビュー用：ステータスごとのタスク数を計算する
+      const countTaskStatus = (proj) => {
+        const pTasks = proj.tasks || [];
+        const completed = pTasks.filter(t => t.status === 'completed').length;
+        const inProgress = pTasks.filter(t => t.status === 'in_progress').length;
+        const notStarted = pTasks.filter(t => t.status === 'pending' || t.status === 'blocked').length;
+        return { completed, inProgress, notStarted, total: pTasks.length };
       };
 
       // --- STEPの残り期限日数計算とバッジ生成 ---
@@ -1436,7 +1462,7 @@
             )}
 
             {/* 📋 進行ダッシュボード */}
-            {viewMode === 'board' ? (
+            {viewMode === 'board' && (
               <React.Fragment>
                 {/* プロジェクトの基本情報 ＆ 各STEP集計ボード */}
                 <div className="flex flex-col gap-4">
@@ -1449,7 +1475,7 @@
                         <div className="space-y-1.5">
                           <div className="flex justify-between items-center">
                             <span className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
-                              <IconFolder /> 大分類フォルダ
+                              <IconFolder className="h-3.5 w-3.5" /> 大分類フォルダ
                             </span>
                             <div className="flex items-center gap-1">
                               <button 
@@ -1966,6 +1992,7 @@
                                   const isInProgress = task.status === 'in_progress';
                                   const isLate = isOverdue(task.dueDate, task.status);
                                   
+                                  // 動的な部署カラーの特定
                                   const assignedDeptColorKey = deptList.find(d => d.key === task.department)?.color || 'slate';
                                   const dClass = colorClassesMap[assignedDeptColorKey] || colorClassesMap.slate;
                                   const sortedLogs = task.contextLogs ? [...task.contextLogs].sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
@@ -2078,9 +2105,11 @@
                                           </div>
                                         </div>
                                       ) : (
+                                        // 2. タスク通常表示
                                         <div className="space-y-3 flex-1 flex flex-col justify-between pl-1">
                                           <div className="space-y-2 pr-6">
                                             <div className="flex items-center gap-1.5 flex-wrap">
+                                              {/* 動的なバッジカラー */}
                                               <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${dClass.badge}`}>
                                                 {task.assignee}
                                               </span>
@@ -2105,8 +2134,10 @@
                                             )}
                                           </div>
 
+                                          {/* アコーディオン展開時に表示 */}
                                           {!isTaskCollapsed && (
                                             <div className="space-y-3 animate-in fade-in slide-in-from-top-1">
+                                              {/* 時系列進捗メモセクション */}
                                               <div className="bg-slate-50/50 border border-slate-200 rounded-xl p-3 space-y-2">
                                                 <div className="flex justify-between items-center pb-1.5 border-b border-slate-200">
                                                   <span className="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
@@ -2130,6 +2161,7 @@
                                                   )}
                                                 </div>
 
+                                                {/* インライン時系列メモ追加フォーム */}
                                                 {addingLogTaskId === task.id && (
                                                   <div className="bg-white border border-indigo-100 rounded-lg p-2.5 space-y-2.5 text-xs shadow-sm">
                                                     <textarea 
@@ -2157,6 +2189,7 @@
                                                       </div>
                                                     </div>
 
+                                                    {/* 複数リンク追加 */}
                                                     <div className="border-t border-slate-100 pt-2 space-y-2">
                                                       <span className="text-[9px] font-bold text-slate-400 block uppercase">関連リンク追加</span>
                                                       <div className="flex items-center gap-1">
@@ -2166,6 +2199,7 @@
                                                         <button onClick={handleAddLinkToNewLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-bold">追加</button>
                                                       </div>
 
+                                                      {/* ストック中の一時リンク一覧表示 */}
                                                       {newLogLinks.length > 0 && (
                                                         <div className="flex flex-wrap gap-1.5 pt-1">
                                                           {newLogLinks.map(lnk => (
@@ -2185,6 +2219,7 @@
                                                   </div>
                                                 )}
 
+                                                {/* メモ履歴の一覧 */}
                                                 <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1 scrollbar-thin">
                                                   {sortedLogs.length > 0 ? (
                                                     sortedLogs.map(log => {
@@ -2199,6 +2234,7 @@
                                                           }`}
                                                         >
                                                           {isEditingThisLog ? (
+                                                            /* --- メモのインライン編集モード --- */
                                                             <div className="space-y-2 text-xs w-full bg-slate-50/50 p-2 rounded-lg border border-slate-200">
                                                               <span className="font-bold text-[10px] text-indigo-600 block">✏️ メモを編集</span>
                                                               <textarea 
@@ -2225,6 +2261,7 @@
                                                                 </div>
                                                               </div>
 
+                                                              {/* 関連リンク編集 */}
                                                               <div className="border-t border-slate-200 pt-2 space-y-1.5">
                                                                 <span className="text-[9px] font-bold text-slate-400 block uppercase">関連リンク編集</span>
                                                                 <div className="flex items-center gap-1">
@@ -2234,6 +2271,7 @@
                                                                   <button onClick={handleAddLinkToEditLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-bold">追加</button>
                                                                 </div>
 
+                                                                {/* リンク一覧 */}
                                                                 {editLogLinks.length > 0 && (
                                                                   <div className="flex flex-wrap gap-1.5 pt-1">
                                                                     {editLogLinks.map(lnk => (
@@ -2252,6 +2290,7 @@
                                                               </div>
                                                             </div>
                                                           ) : (
+                                                            /* --- メモの通常表示モード --- */
                                                             <React.Fragment>
                                                               <div className="flex justify-between items-center border-b border-slate-100 pb-1">
                                                                 <span className="text-[8px] font-mono text-slate-400 flex items-center gap-0.5">
@@ -2304,6 +2343,7 @@
                                                                   </span>
                                                                 )}
 
+                                                                {/* 複数登録リンク */}
                                                                 {log.links && log.links.map(lnk => (
                                                                   <span key={lnk.id} className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-100 transition">
                                                                     <a href={lnk.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-0.5">
@@ -2326,6 +2366,7 @@
                                                 </div>
                                               </div>
 
+                                              {/* 操作フッター */}
                                               <div className="mt-3 pt-3 border-t border-slate-100 flex justify-between items-center">
                                                 <button 
                                                   onClick={() => toggleTaskPriority(task.id)}
@@ -2384,8 +2425,10 @@
                   })}
                 </div>
               </React.Fragment>
-            ) : (
-              /* --- VIEW：🗃️ 案件一覧データベース (DBビュー / 新設) --- */
+            )}
+
+            {/* --- VIEW：🗃️ 案件一覧データベース (DBビュー) --- */}
+            {viewMode === 'database' && (
               <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden p-6 space-y-4 animate-in fade-in duration-150">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
                   <div className="space-y-1">
@@ -2400,109 +2443,15 @@
                       setNewProjFolderId(selectedFolderId);
                       setShowAddProjectModal(true);
                     }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-xs"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-xs shrink-0"
                   >
                     <IconPlus /> 案件を新規起票
                   </button>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold text-[11px] uppercase tracking-wider">
-                        <th className="py-3 px-4 border border-slate-200">大分類フォルダ</th>
-                        <th className="py-3 px-4 border border-slate-200">案件プロジェクト名称</th>
-                        <th className="py-3 px-4 border border-slate-200">コード</th>
-                        <th className="py-3 px-4 border border-slate-200">開始日 〜 目標完了日</th>
-                        <th className="py-3 px-4 border border-slate-200 text-center">タスク完了数</th>
-                        <th className="py-3 px-4 border border-slate-200">プロジェクト進捗率</th>
-                        <th className="py-3 px-4 border border-slate-200">アラート・ヘルス</th>
-                        <th className="py-3 px-4 border border-slate-200 text-center">アクション</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {projects.map(proj => {
-                        const prog = calculateProjectProgressById(proj);
-                        const lates = countLateTasksByProject(proj);
-                        const folderName = folders.find(f => f.id === proj.folderId)?.name || '未分類';
-                        const totalT = (proj.tasks || []).length;
-                        const compT = (proj.tasks || []).filter(t => t.status === 'completed').length;
-
-                        return (
-                          <tr key={proj.id} className="hover:bg-slate-50/50 transition-colors">
-                            <td className="py-3 px-4 border border-slate-200 font-bold text-slate-500">
-                              <span className="inline-flex items-center gap-1">
-                                <IconFolder className="h-3.5 w-3.5" />
-                                {folderName}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 border border-slate-200 font-extrabold text-slate-800 text-sm max-w-xs truncate">
-                              {proj.name}
-                            </td>
-                            <td className="py-3 px-4 border border-slate-200 font-mono text-slate-500 font-semibold">
-                              {proj.code}
-                            </td>
-                            <td className="py-3 px-4 border border-slate-200 font-mono text-slate-500">
-                              {proj.startDate} 〜 {proj.endDate}
-                            </td>
-                            <td className="py-3 px-4 border border-slate-200 text-center font-mono font-bold text-slate-600">
-                              {compT} / {totalT}
-                            </td>
-                            <td className="py-3 px-4 border border-slate-200">
-                              <div className="flex items-center gap-2 min-w-[120px]">
-                                <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
-                                  <div className="h-full bg-indigo-500" style={{ width: `${prog}%` }} />
-                                </div>
-                                <span className="font-extrabold font-mono text-indigo-600 w-8 text-right">{prog}%</span>
-                              </div>
-                            </td>
-                            <td className="py-3 px-4 border border-slate-200">
-                              {lates > 0 ? (
-                                <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 font-extrabold text-[10px] px-2 py-0.5 rounded-full animate-pulse">
-                                  ⚠️ 遅延タスク {lates} 件あり
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold text-[10px] px-2 py-0.5 rounded-full">
-                                  ✅ 順調
-                                </span>
-                              )}
-                            </td>
-                            <td className="py-3 px-4 border border-slate-200 text-center">
-                              <div className="flex items-center justify-center gap-1.5">
-                                <button 
-                                  onClick={() => handleOpenProjectFromDb(proj)}
-                                  className="flex items-center gap-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold px-2.5 py-1 rounded-lg transition-all"
-                                  title="この案件ダッシュボードを開く"
-                                >
-                                  <IconEye className="h-3.5 w-3.5" />
-                                  <span>開く</span>
-                                </button>
-                                <button 
-                                  onClick={(e) => handleDeleteProjectByList(proj.id, e)}
-                                  className="text-slate-400 hover:text-rose-600 p-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-100 rounded-lg transition-all"
-                                  title="この案件を削除"
-                                >
-                                  <IconTrash2 className="h-3.5 w-3.5" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-          </main>
-        </div>
-      );
-    }
-
-    // ReactをDOMにレンダリングする処理 (CDN環境用)
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
-</body>
-</html>
+                {/* フィルタコントロール */}
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <select
+                    value={dbFilterFolderId}
+                    onChange={(e) => setDbFilterFolderId(e.target.value)}
+                    className="border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-6
