@@ -438,6 +438,14 @@
     ];
 
     function App() {
+      // 簡易的なアラートメッセージ用ステート (window.alert の代わり)
+      const [alertMessage, setAlertMessage] = useState(null);
+
+      const showAlert = (msg) => {
+        setAlertMessage(msg);
+        setTimeout(() => setAlertMessage(null), 3000); // 3秒後に消す
+      };
+
       // 現在表示中の画面ビュー（"board" = 進行ダッシュボード, "database" = 案件一覧DBビュー）
       const [viewMode, setViewMode] = useState('board');
 
@@ -539,6 +547,7 @@
 
       // ドラッグ中の一時保存インデックス
       const [draggedStepIndex, setDraggedStepIndex] = useState(null);
+      const [draggedTaskInfo, setDraggedTaskInfo] = useState(null);
 
       // タスクリストState
       const tasks = activeProject ? (activeProject.tasks || []) : [];
@@ -718,6 +727,50 @@
         setStepList(updatedSteps);
       };
 
+      // --- ドラッグ＆ドロップ並び替えロジック (タスク用) ---
+      const handleTaskDragStart = (stepId, index, e) => {
+        e.stopPropagation();
+        setDraggedTaskInfo({ stepId, index });
+        e.dataTransfer.effectAllowed = 'move';
+      };
+
+      const handleTaskDragOver = (stepId, index, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!draggedTaskInfo || draggedTaskInfo.stepId !== stepId || draggedTaskInfo.index === index) return;
+
+        const currentStepTasks = tasks.filter(t => t.stepId === stepId);
+        const draggedTask = currentStepTasks[draggedTaskInfo.index];
+        
+        const newStepTasks = [...currentStepTasks];
+        newStepTasks.splice(draggedTaskInfo.index, 1);
+        newStepTasks.splice(index, 0, draggedTask);
+
+        const otherTasks = tasks.filter(t => t.stepId !== stepId);
+        setTasks([...otherTasks, ...newStepTasks]);
+        setDraggedTaskInfo({ stepId, index });
+      };
+
+      const handleTaskDragEnd = (e) => {
+        e.stopPropagation();
+        setDraggedTaskInfo(null);
+      };
+
+      const moveTaskOrder = (stepId, index, direction, e) => {
+        e.stopPropagation();
+        const currentStepTasks = tasks.filter(t => t.stepId === stepId);
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= currentStepTasks.length) return;
+
+        const newStepTasks = [...currentStepTasks];
+        const temp = newStepTasks[index];
+        newStepTasks[index] = newStepTasks[targetIndex];
+        newStepTasks[targetIndex] = temp;
+
+        const otherTasks = tasks.filter(t => t.stepId !== stepId);
+        setTasks([...otherTasks, ...newStepTasks]);
+      };
+
       const handleScrollToStep = (stepId) => {
         if (collapsedSteps[stepId]) {
           setCollapsedSteps(prev => ({ ...prev, [stepId]: false }));
@@ -764,7 +817,7 @@
       const handleDeleteFolder = (folderId, e) => {
         e.stopPropagation();
         if (folders.length <= 1) {
-          alert('少なくとも1つの大分類フォルダを残す必要があります。');
+          showAlert('少なくとも1つの大分類フォルダを残す必要があります。');
           return;
         }
         if (window.confirm(`この大分類フォルダを完全に削除しますか？\n（フォルダ内のすべての案件も同時に削除されます）`)) {
@@ -808,7 +861,7 @@
       const handleDeleteProjectByList = (projId, e) => {
         e.stopPropagation();
         if (projects.length <= 1) {
-          alert('少なくとも1つの案件フォルダを残す必要があります。');
+          showAlert('少なくとも1つの案件フォルダを残す必要があります。');
           return;
         }
         const projName = projects.find(p => p.id === projId)?.name || 'この案件';
@@ -876,9 +929,9 @@
         setShowAddStepForm(false);
       };
 
-      const handleDeleteStep = (stepId, e) => {
+      const handleDeleteStep = (stepId, stepName, e) => {
         e.stopPropagation(); 
-        if (window.confirm(`STEP ${stepId} を削除しますか？\n（このステップに紐づくタスクも同時に削除されます）`)) {
+        if (window.confirm(`ステップ「${stepName}」を削除しますか？\n（このステップに紐づくタスクも同時に削除されます）`)) {
           setStepList(prev => prev.filter(s => s.id !== stepId));
           setTasks(prev => prev.filter(t => t.stepId !== stepId));
         }
@@ -1151,7 +1204,7 @@
 
       const handleDeleteDept = (deptKey) => {
         if (deptList.length <= 1) {
-          alert('少なくとも1つの部署を残す必要があります。');
+          showAlert('少なくとも1つの部署を残す必要があります。');
           return;
         }
         if (window.confirm(`「${deptList.find(d => d.key === deptKey)?.label}」部署を削除しますか？\n（この部署に紐づくタスクは自動的に最初の部署に変更されます）`)) {
@@ -1176,29 +1229,44 @@
         setDeptList(prev => prev.map(d => d.key === deptKey ? { ...d, label: newName.trim() } : d));
       };
 
-      // 案件固有のURLをクリップボードにコピーする処理
       const handleCopyProjectUrl = (projId, e) => {
-        if(e) e.stopPropagation();
-        // 現在のURLベースにプロジェクトIDのクエリを付与
+        if (e) e.stopPropagation();
         const baseUrl = window.location.origin + window.location.pathname;
         const projectUrl = `${baseUrl}?pid=${projId}`;
-        
-        // iFrame環境（Canvas等）でも安全にコピーできるようフォールバックを使用
-        const textArea = document.createElement("textarea");
-        textArea.value = projectUrl;
-        textArea.style.top = "0";
-        textArea.style.left = "0";
-        textArea.style.position = "fixed";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        try {
-          document.execCommand('copy');
-          showAlert(`案件の共有URLをコピーしました！\nNotion等に貼り付けてご活用ください。\n\n${projectUrl}`);
-        } catch (err) {
-          showAlert('URLのコピーに失敗しました。お手数ですが手動でコピーしてください。');
+
+        const copyWithExecCommand = () => {
+          const textArea = document.createElement("textarea");
+          textArea.value = projectUrl;
+          textArea.style.top = "0";
+          textArea.style.left = "0";
+          textArea.style.position = "fixed";
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+              showAlert(`案件の共有URLをコピーしました！\nNotion等に貼り付けてご活用ください。\n\n${projectUrl}`);
+            } else {
+              showAlert(`URLのコピーに失敗しました。以下のURLを手動でコピーしてください。\n\n${projectUrl}`);
+            }
+          } catch (err) {
+            showAlert(`URLのコピーに失敗しました。以下のURLを手動でコピーしてください。\n\n${projectUrl}`);
+          }
+          document.body.removeChild(textArea);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(projectUrl)
+            .then(() => {
+              showAlert(`案件の共有URLをコピーしました！\nNotion等に貼り付けてご活用ください。\n\n${projectUrl}`);
+            })
+            .catch(() => {
+              copyWithExecCommand();
+            });
+        } else {
+          copyWithExecCommand();
         }
-        document.body.removeChild(textArea);
       };
 
       const handleOpenProjectFromDb = (proj) => {
@@ -1210,6 +1278,13 @@
       return (
         <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12">
           
+          {/* 追加：メッセージトースト */}
+          {alertMessage && (
+            <div className="fixed bottom-4 right-4 bg-slate-800 text-white px-4 py-3 rounded-lg shadow-lg z-[100] whitespace-pre-wrap text-sm animate-in fade-in slide-in-from-bottom-2">
+              {alertMessage}
+            </div>
+          )}
+
           {/* 1. ナビゲーションヘッダー */}
           <header className="bg-white border-b border-slate-200 sticky top-0 z-50 px-6 py-3 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
@@ -1855,7 +1930,7 @@
                             className="p-4 bg-purple-50/40 border-b border-purple-100 flex flex-col gap-3"
                           >
                             <div className="flex items-center gap-2">
-                              <span className="bg-purple-600 text-white font-extrabold text-[10px] px-2 py-0.5 rounded">STEP {step.id} 編集</span>
+                              <span className="bg-purple-600 text-white font-extrabold text-[10px] px-2 py-0.5 rounded">STEP {index + 1} 編集</span>
                               <input 
                                 required
                                 type="text" 
@@ -1918,7 +1993,7 @@
                                   <IconDragHandle />
                                 </div>
 
-                                <span className={`${stepClasses.bar} text-white font-extrabold text-[10px] px-2 py-0.5 rounded shadow-xs`}>STEP {step.id}</span>
+                                <span className={`${stepClasses.bar} text-white font-extrabold text-[10px] px-2 py-0.5 rounded shadow-xs`}>STEP {index + 1}</span>
                                 
                                 <h3 className="font-extrabold text-sm text-slate-800 flex items-center gap-1.5">
                                   {step.name}
@@ -1957,7 +2032,7 @@
                                     <IconEdit2 className="h-3 w-3" />
                                   </button>
                                   <button 
-                                    onClick={(e) => handleDeleteStep(step.id, e)}
+                                    onClick={(e) => handleDeleteStep(step.id, step.name, e)}
                                     className="p-1 text-slate-400 hover:text-rose-600 hover:bg-white rounded transition shadow-xs border border-transparent hover:border-slate-100"
                                     title="このステップをまるごと削除する"
                                   >
@@ -2013,7 +2088,7 @@
                             {addingTaskStepId === step.id && (
                               <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-4 bg-purple-50/10 border-b border-slate-200 space-y-3 text-xs animate-in fade-in">
                                 <div className="flex justify-between items-center pb-1.5 border-b border-slate-150">
-                                  <span className="font-extrabold text-purple-800">➕ STEP {step.id} に新規タスクを追加</span>
+                                  <span className="font-extrabold text-purple-800">➕ STEP {index + 1} に新規タスクを追加</span>
                                   <button type="button" onClick={() => setAddingTaskStepId(null)} className="text-slate-400 hover:text-slate-600"><IconX /></button>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -2058,7 +2133,7 @@
                             {/* タスクカード一覧 */}
                             <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                               {stepTasks.length > 0 ? (
-                                stepTasks.map(task => {
+                                stepTasks.map((task, taskIndex) => {
                                   const isBlocked = task.status === 'blocked';
                                   const isCompleted = task.status === 'completed';
                                   const isInProgress = task.status === 'in_progress';
@@ -2072,20 +2147,40 @@
                                   return (
                                     <div 
                                       key={task.id}
+                                      draggable={editingTaskId !== task.id}
+                                      onDragStart={(e) => handleTaskDragStart(step.id, taskIndex, e)}
+                                      onDragOver={(e) => handleTaskDragOver(step.id, taskIndex, e)}
+                                      onDragEnd={handleTaskDragEnd}
                                       className={`group relative border-4 rounded-2xl p-4 transition-all flex flex-col justify-between overflow-hidden shadow-xs ${
                                         isCompleted 
                                           ? 'border-slate-200 opacity-60 bg-slate-50/40' 
                                           : task.isHighPriority 
                                             ? 'border-rose-400 bg-gradient-to-br from-rose-50/15 via-white to-white ring-1 ring-rose-450/10 shadow-md'
                                             : `${dClass.borderStrong} bg-white` 
-                                      }`}
+                                      } ${draggedTaskInfo?.stepId === step.id && draggedTaskInfo?.index === taskIndex ? 'drag-ghost' : ''}`}
                                     >
                                       {/* タスク右上の常時表示＆ホバーアクションエリア */}
                                       <div className="absolute top-2 right-2 flex items-center gap-1.5 z-10">
                                         
-                                        {/* ホバー時に表示される 編集・削除 ボタン */}
+                                        {/* ホバー時に表示される 移動・編集・削除 ボタン */}
                                         {!isCompleted && (
                                           <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 mr-1">
+                                            <button 
+                                              onClick={(e) => moveTaskOrder(step.id, taskIndex, -1, e)}
+                                              disabled={taskIndex === 0}
+                                              className={`p-1 bg-white border border-slate-200 rounded transition shadow-xs ${taskIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'text-slate-400 hover:text-indigo-600'}`}
+                                              title="上に移動"
+                                            >
+                                              <IconArrowUp />
+                                            </button>
+                                            <button 
+                                              onClick={(e) => moveTaskOrder(step.id, taskIndex, 1, e)}
+                                              disabled={taskIndex === stepTasks.length - 1}
+                                              className={`p-1 bg-white border border-slate-200 rounded transition shadow-xs ${taskIndex === stepTasks.length - 1 ? 'opacity-30 cursor-not-allowed' : 'text-slate-400 hover:text-indigo-600'}`}
+                                              title="下に移動"
+                                            >
+                                              <IconArrowDown />
+                                            </button>
                                             <button onClick={() => startEditing(task)} className="p-1 text-slate-400 hover:text-indigo-600 bg-white border border-slate-200 rounded transition shadow-xs" title="編集">
                                               <IconEdit2 className="h-3.5 w-3.5" />
                                             </button>
@@ -2148,7 +2243,7 @@
                                       {/* 1. タスクインライン編集モード */}
                                       {editingTaskId === task.id ? (
                                         <div className="space-y-3 text-xs w-full pl-1 pr-4 mt-6">
-                                          <span className="font-extrabold text-indigo-600 block mb-1">✏️ タスクの編集</span>
+                                          <span className="font-extrabold text-indigo-600 block mb-1">✏️ タスクの編集 (#{index + 1}-{taskIndex + 1})</span>
                                           <input 
                                             type="text" 
                                             value={editFormData.title} 
@@ -2210,7 +2305,13 @@
                                         // 2. タスク通常表示
                                         <div className="space-y-3 flex-1 flex flex-col justify-between pl-1 pr-4 mt-6">
                                           <div className="space-y-2">
-                                            <h4 className="font-extrabold text-sm text-slate-800 leading-snug">{task.title}</h4>
+                                            <h4 className="font-extrabold text-sm text-slate-800 leading-snug flex items-start gap-1.5 pr-28">
+                                              <div className="p-0.5 hover:bg-slate-100 rounded transition cursor-grab active:cursor-grabbing text-slate-400 shrink-0 mt-0.5" title="ドラッグして並び替え">
+                                                <IconDragHandle />
+                                              </div>
+                                              <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold ${dClass.bg} ${dClass.text} shrink-0 mt-0.5`}>#{index + 1}-{taskIndex + 1}</span>
+                                              <span>{task.title}</span>
+                                            </h4>
                                             
                                             <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
                                               <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${dClass.badge}`}>
