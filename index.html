@@ -582,6 +582,20 @@
       const [editingTaskId, setEditingTaskId] = useState(null);
       const [editFormData, setEditFormData] = useState({});
 
+      // URLパラメーター（?pid=xxx）から直接特定の案件プロジェクトを開く処理
+      React.useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pid = urlParams.get('pid');
+        if (pid) {
+          const targetProj = initialProjects.find(p => p.id === pid);
+          if (targetProj) {
+            setCurrentProjectId(targetProj.id);
+            setSelectedFolderId(targetProj.folderId);
+            setViewMode('board');
+          }
+        }
+      }, []);
+
       const isOverdue = (dueDate, status) => {
         if (status === 'completed') return false;
         return new Date(dueDate) < new Date(TODAY_STR); 
@@ -1162,7 +1176,31 @@
         setDeptList(prev => prev.map(d => d.key === deptKey ? { ...d, label: newName.trim() } : d));
       };
 
-      // DBビューから対象案件を直接ダッシュボードで読み込む処理
+      // 案件固有のURLをクリップボードにコピーする処理
+      const handleCopyProjectUrl = (projId, e) => {
+        if(e) e.stopPropagation();
+        // 現在のURLベースにプロジェクトIDのクエリを付与
+        const baseUrl = window.location.origin + window.location.pathname;
+        const projectUrl = `${baseUrl}?pid=${projId}`;
+        
+        // iFrame環境（Canvas等）でも安全にコピーできるようフォールバックを使用
+        const textArea = document.createElement("textarea");
+        textArea.value = projectUrl;
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showAlert(`案件の共有URLをコピーしました！\nNotion等に貼り付けてご活用ください。\n\n${projectUrl}`);
+        } catch (err) {
+          showAlert('URLのコピーに失敗しました。お手数ですが手動でコピーしてください。');
+        }
+        document.body.removeChild(textArea);
+      };
+
       const handleOpenProjectFromDb = (proj) => {
         setSelectedFolderId(proj.folderId);
         setCurrentProjectId(proj.id);
@@ -1644,6 +1682,13 @@
                                 className="text-[10px] text-indigo-600 hover:text-indigo-850 font-extrabold flex items-center gap-0.5 bg-indigo-50 border border-indigo-200 px-2.5 py-1.5 rounded-md transition shrink-0 ml-2 shadow-xs"
                               >
                                 <IconEdit2 className="h-2.5 w-2.5" /> 案件を編集・移動
+                              </button>
+                              <button 
+                                onClick={(e) => handleCopyProjectUrl(activeProject.id, e)}
+                                className="text-[10px] text-slate-600 hover:text-slate-800 font-extrabold flex items-center gap-0.5 bg-white border border-slate-300 px-2.5 py-1.5 rounded-md transition shrink-0 ml-1.5 shadow-xs"
+                                title="この案件の直リンクURLをコピーする"
+                              >
+                                <IconLink className="h-2.5 w-2.5" /> URLコピー
                               </button>
                             </div>
                           )}
@@ -2595,6 +2640,13 @@
                                 >
                                   <IconEye className="h-3.5 w-3.5" />
                                   <span>開く</span>
+                                </button>
+                                <button 
+                                  onClick={(e) => handleCopyProjectUrl(proj.id, e)}
+                                  className="flex items-center gap-1 bg-white hover:bg-slate-50 text-slate-600 border border-slate-300 font-bold px-2 py-1 rounded-lg transition-all"
+                                  title="Notion共有用のURLをコピー"
+                                >
+                                  <IconLink className="h-3 w-3" />
                                 </button>
                                 <button 
                                   onClick={(e) => handleDeleteProjectByList(proj.id, e)}
