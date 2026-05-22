@@ -15,7 +15,7 @@
       theme: {
         extend: {
           colors: {
-            slate: { 55: '#f8fafc', 150: '#e2e8f0', 202: '#e2e8f0', 205: '#e2e8f0', 250: '#e2e8f0', 350: '#cbd5e1', 404: '#94a3b8', 405: '#94a3b8', 450: '#94a3b8', 455: '#94a3b8', 505: '#64748b', 550: '#64748b', 555: '#64748b', 605: '#475569', 606: '#475569', 650: '#475569', 655: '#475569', 705: '#334155', 750: '#334155', 755: '#334155', 805: '#1e293b', 850: '#1e293b', 855: '#1e293b', 955: '#0f172a' },
+            slate: { 55: '#f8fafc', 150: '#e2e8f0', 202: '#e2e8f0', 205: '#e2e8f0', 250: '#e2e8f0', 350: '#cbd5e1', 404: '#94a3b8', 405: '#94a3b8', 450: '#94a3b8', 455: '#94a3b8', 505: '#64748b', 550: '#64748b', 555: '#64748b', 605: '#475569', 606: '#475569', 650: '#475569', 655: '#475569', 705: '#334155', 750: '#334155', 755: '#334155', 805: '#1e293b', 850: '#1e293b', 855: '#1e293b', 955: '#0f172a', 850: '#1e293b', 855: '#1e293b', 900: '#0f172a', 850: '#1e293b', 855: '#1e293b', 850: '#1e293b', 855: '#1e293b', 850: '#1e293b', 855: '#1e293b' },
             purple: { 55: '#faf5ff' },
             indigo: { 150: '#e0e7ff', 450: '#818cf8', 455: '#818cf8', 505: '#6366f1', 550: '#6366f1', 605: '#4f46e5', 606: '#4f46e5', 650: '#4f46e5', 655: '#4f46e5', 750: '#3730a3', 755: '#3730a3' },
             emerald: { 55: '#ecfdf5', 555: '#10b981' },
@@ -87,16 +87,16 @@
     const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
     const IconMoon = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>;
 
-    // --- カラー定義マップ (ダークモード対応) ---
+    // --- カラー定義マップ (ダークモード対応 - 透過を一切なくし不透明なソリッドカラーに変更) ---
     const colorClassesMap = {
-      purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-purple-50/30 dark:bg-purple-900/20', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-400' },
-      indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-indigo-50/30 dark:bg-indigo-900/20', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-400' },
-      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-50/30 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-blue-400' },
-      emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-50/30 dark:bg-emerald-900/20', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-400' },
-      green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-green-50/30 dark:bg-green-900/20', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
-      amber: { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-amber-50/30 dark:bg-amber-900/20', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-400', accentBar: 'bg-amber-500 dark:bg-amber-400' },
-      rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-rose-50/30 dark:bg-rose-900/20', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-100 dark:bg-rose-900/40 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-rose-400' },
-      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-slate-50/30 dark:bg-slate-800/30', border: 'border-slate-200 dark:border-slate-700', borderStrong: 'border-slate-300 dark:border-slate-600', badge: 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700', bar: 'bg-slate-500 dark:bg-slate-400', accentBar: 'bg-slate-400 dark:bg-slate-500' }
+      purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-purple-100 dark:bg-[#25183a]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-200 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-400' },
+      indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-indigo-100 dark:bg-[#1e223b]', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-200 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-400' },
+      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-100 dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-200 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-blue-400' },
+      emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-200 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-400' },
+      green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-green-100 dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-200 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
+      amber: { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-200 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-400', accentBar: 'bg-amber-500 dark:bg-amber-400' },
+      rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-rose-100 dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-200 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-rose-400' },
+      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-slate-100 dark:bg-[#1e293b]', border: 'border-slate-200 dark:border-slate-700', borderStrong: 'border-slate-300 dark:border-slate-600', badge: 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700', bar: 'bg-slate-500 dark:bg-slate-400', accentBar: 'bg-slate-400 dark:bg-slate-500' }
     };
 
     // 初期マスタデータ
@@ -128,7 +128,7 @@
         taskSequence: 2,
         links: [{ id: 'plnk_1', label: '要件定義書 (Notion)', url: 'https://example.com' }],
         stepList: [
-          { id: 1, name: '企画合意', desc: '方針策定', deptKey: 'sales', startDate: '2026-05-15', dueDate: '2026-05-20', links: [{ id: 'slnk_1', label: '企画MTG議事録', url: 'https://example.com' }] },
+          { id: 1, name: '企画合意', desc: '方針策定', deptKey: 'sales', startDate: '2026-05-15', dueDate: '2026-05-20', links: [{ id: 'slnk_1', label: 'MTG議事録', url: 'https://example.com' }] },
           { id: 2, name: '部門検証', desc: '並行調整', deptKey: 'legal', startDate: '2026-05-19', dueDate: '2026-06-05', links: [] }
         ],
         tasks: [
@@ -739,7 +739,7 @@
             </div>
           )}
 
-          {/* 新規プロジェクト起票モーダル */}
+          {/* 新規プロジェクト起票モーダル (復元) */}
           {showAddProjectModal && (
             <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in p-4">
               <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
@@ -776,7 +776,7 @@
                     <div className="border-t border-slate-200 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
                       <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1"><IconLink className="h-3 w-3"/> プロジェクト関連リンク</span>
                       <div className="flex items-center gap-2">
-                        <input type="text" placeholder="リンク名 (例: 要件定義書)" value={tmpProjLinkLabel} onChange={e => setTmpProjLinkLabel(e.target.value)} className="w-32 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
+                        <input type="text" placeholder="リンク名 (例: 要件定義書)" value={tmpProjLinkLabel} onChange={e => setTmpProjLinkLabel(e.target.value)} className="w-32 border border-slate-300 dark:border-slate-600 rounded-xl p-2.5 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
                         <input type="text" placeholder="URL (https://...)" value={tmpProjLinkUrl} onChange={e => setTmpProjLinkUrl(e.target.value)} className="flex-1 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
                         <button type="button" onClick={handleAddLinkToNewProj} className="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors">追加</button>
                       </div>
@@ -890,7 +890,7 @@
             {viewMode === 'board' && (
               <React.Fragment>
                 {activeProject ? (
-                  <div className="sticky top-[116px] z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-3xl p-4 flex flex-col md:flex-row justify-between gap-4 shadow-sm animate-in fade-in transition-colors">
+                  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-4 flex flex-col md:flex-row justify-between gap-4 shadow-sm animate-in fade-in transition-colors">
                     <div className="space-y-2 flex-1">
                       {editingProject ? (
                         <div className="space-y-3.5 bg-slate-50/60 dark:bg-slate-900/60 p-4 rounded-3xl border border-slate-200 dark:border-slate-700 text-xs shadow-inner animate-in fade-in">
@@ -1056,7 +1056,7 @@
                       </div>
                       <div className="border-t border-purple-100 dark:border-purple-800/50 pt-3 space-y-2">
                         <span className="block text-purple-900 dark:text-purple-400 font-extrabold text-xs">🔗 関連リンク</span>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           <input type="text" placeholder="リンク名" value={tmpStepLinkLabel} onChange={e => setTmpStepLinkLabel(e.target.value)} className="w-40 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-purple-400 text-slate-700 dark:text-slate-200" />
                           <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpStepLinkUrl(e.target.value)} className="flex-1 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-purple-400 text-slate-700 dark:text-slate-200" />
                           <button type="button" onClick={handleAddLinkToNewStep} className="bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-800 text-purple-700 dark:text-purple-300 font-black px-4 py-2 rounded-xl shadow-xs transition-colors">追加</button>
@@ -1115,7 +1115,7 @@
                               {editStepLinks.length > 0 && (
                                 <div className="flex flex-wrap gap-2 pt-1">
                                   {editStepLinks.map(lnk => (
-                                    <span key={lnk.id} className="inline-flex items-center gap-1.5 text-xs bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-3 py-1 rounded-full font-bold shadow-xs"><IconLink className="h-3 w-3" /><span>{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-purple-400 hover:text-rose-600 dark:hover:text-rose-400 font-extrabold text-xs ml-1">×</button></span>
+                                    <span key={lnk.id} className="inline-flex items-center gap-1.5 text-[11px] bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-2.5 py-1 rounded-full font-bold shadow-xs"><IconLink className="h-3 w-3" /><span className="truncate max-w-[120px]">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-purple-400 hover:text-rose-600 dark:hover:text-rose-400 font-extrabold text-xs ml-1">×</button></span>
                                   ))}
                                 </div>
                               )}
@@ -1126,7 +1126,10 @@
                             </div>
                           </div>
                         ) : (
-                          <div onClick={() => toggleStepCollapse(step.id)} className={`sticky top-[178px] z-20 p-4 border-b flex flex-col lg:flex-row justify-between gap-4 cursor-pointer border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-t-[20px] transition-all bg-opacity-95 dark:bg-opacity-95 backdrop-blur-sm ${isCol ? 'bg-slate-50 dark:bg-slate-800' : cClass.bg}`}>
+                          /* 各STEPのコンテナ用ヘッダー。
+                             sticky位置を top-[114px] に設定。
+                             bg-opacityやbackdrop-blurを完全に削除し、不透明な bg-white またはダークモード時は cClass.bg(不透明版)をしっかりと適用 */
+                          <div onClick={() => toggleStepCollapse(step.id)} className={`sticky top-[114px] z-20 p-4 border-b flex flex-col lg:flex-row justify-between gap-4 cursor-pointer border-slate-200 dark:border-slate-700 rounded-t-[20px] transition-all ${isCol ? 'bg-white dark:bg-slate-800' : cClass.bg}`}>
                             <div className="space-y-2 flex-1 min-w-0">
                               <div className="flex items-center gap-3 flex-wrap">
                                 <div className="p-1 hover:bg-white/80 dark:hover:bg-slate-700/80 rounded-lg cursor-grab active:cursor-grabbing"><IconDragHandle /></div>
@@ -1278,8 +1281,8 @@
                                           <button onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }} className="p-1 text-slate-400 hover:text-rose-600 rounded-md"><IconTrash2 className="h-3.5 w-3.5" /></button>
                                         </div>
                                       )}
-                                      <button onClick={(e) => { e.stopPropagation(); toggleTaskPriority(task.id); }} className={`flex items-center gap-0.5 text-[9px] font-black px-2.5 py-1.5 rounded-xl border ${task.isHighPriority ? 'bg-rose-500 text-white border-rose-600' : 'bg-rose-50/70 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 border-rose-200'}`}><IconFlag className="h-2.5 w-2.5" />{task.isHighPriority ? '最優先' : '優先度'}</button>
-                                      <select value={task.status} onClick={(e) => e.stopPropagation()} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className={`text-[9px] font-black px-2.5 py-1.5 rounded-xl border cursor-pointer focus:outline-none ${d ? 'bg-emerald-500 text-white border-emerald-600' : w ? 'bg-blue-500 text-white border-blue-600' : na ? 'bg-slate-400 text-white border-slate-500' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}>
+                                      <button onClick={(e) => { e.stopPropagation(); toggleTaskPriority(task.id); }} className={`flex items-center gap-0.5 text-[9px] font-black px-2.5 py-1.5 rounded-xl border ${task.isHighPriority ? 'bg-rose-500 text-white border-rose-600 shadow-md shadow-rose-100 dark:shadow-none' : 'bg-rose-50/70 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 border-rose-200'}`}><IconFlag className="h-2.5 w-2.5" />{task.isHighPriority ? '最優先' : '優先度'}</button>
+                                      <select value={task.status} onClick={(e) => e.stopPropagation()} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className={`text-[9px] font-black px-2.5 py-1.5 rounded-xl border cursor-pointer focus:outline-none ${d ? 'bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-100' : w ? 'bg-blue-500 text-white border-blue-600 shadow-md shadow-blue-100' : na ? 'bg-slate-400 text-white border-slate-500 shadow-md shadow-slate-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200'}`}>
                                         <option value="pending" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">🔘 未対応</option><option value="in_progress" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">⚡ 進行中</option><option value="completed" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">✅ 完了マーク</option><option value="not_applicable" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">🚫 対応なし</option>
                                       </select>
                                       {editingTaskId !== task.id && <button onClick={(e) => { e.stopPropagation(); toggleTaskCollapse(task.id); }} className="p-1 text-slate-400 ml-0.5">{tCol ? <IconChevronRight className="h-4 w-4" /> : <IconChevronDown className="h-4 w-4" />}</button>}
@@ -1495,6 +1498,7 @@
                                                                 ))}
                                                               </div>
                                                             )}
+                                                            <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(log.text, 'コピー完了！'); }} className="absolute right-0 top-0 opacity-100 p-1 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 rounded text-[9px] font-bold shadow-xs select-none transition-colors" title="コピーする">📋</button>
                                                           </div>
                                                           <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                                                             {log.to && (<span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-lg font-black">TO: {log.to}</span>)}
