@@ -100,7 +100,7 @@
     const IconX = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
     const IconFlag = ({ className = "h-3 w-3" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>;
     const IconPin = ({ className = "h-2.5 w-2.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><line x1="12" y1="17" x2="12" y2="22"></line><path d="M5 17h14v-1.76a2 2 0 0 0-.44-1.24l-2.32-2.9A2 2 0 0 1 15.8 9.86V5a1 1 0 0 0-1-1h-5.6a1 1 0 0 0-1 1v4.86a2 2 0 0 1-.44 1.24l-2.32-2.9a2 2 0 0 0-.44 1.24Z"></path></svg>;
-    const IconSettings = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1 2.83 2.83l.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>;
+    const IconSettings = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1 2.83 2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>;
     const IconDragHandle = () => <svg className="h-4 w-4 text-slate-400 dark:text-slate-500 cursor-grab active:cursor-grabbing" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line></svg>;
     const IconArrowUp = () => <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>;
     const IconArrowDown = () => <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>;
@@ -1019,13 +1019,20 @@
                             )}
                             
                             <div className="flex items-center gap-4 pl-8 lg:pl-0 shrink-0" onClick={(e) => e.stopPropagation()}>
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] text-slate-400 font-extrabold uppercase">進捗</span>
-                                <div className="h-2 w-20 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner"><div className={`h-full ${cClass.bar}`} style={{ width: `${stpProg}%` }}></div></div>
-                                <span className={`text-xs font-black ${cClass.text}`}>{stpProg}%</span>
+                              <div className="flex flex-col gap-1.5 items-end">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] text-slate-400 font-extrabold uppercase">進捗</span>
+                                  <div className="h-2 w-20 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner"><div className={`h-full ${cClass.bar} transition-all duration-300`} style={{ width: `${stpProg}%` }}></div></div>
+                                  <span className={`text-xs font-black ${cClass.text}`}>{stpProg}%</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-[9px] font-black bg-white/50 dark:bg-slate-900/50 px-2 py-0.5 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-xs">
+                                  <span className="text-slate-500 dark:text-slate-400">未対応 {stepTks.filter(t => t.status === 'pending').length}個</span>
+                                  <span className="text-blue-600 dark:text-blue-400">進行中 {stepTks.filter(t => t.status === 'in_progress').length}個</span>
+                                  <span className="text-emerald-600 dark:text-emerald-400">完了 {stepTks.filter(t => t.status === 'completed').length}個</span>
+                                </div>
                               </div>
                               {addingTaskStepId !== step.id && (
-                                <button onClick={(e) => { e.stopPropagation(); setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); setNewTaskImages([]); const fb = deptList[0]?.key || 'backoffice'; setNewTaskDept(fb); setNewTaskAssignee(fb === 'backoffice' ? '自分 (事務)' : '担当者'); }} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-black text-xs px-3 py-2 rounded-xl flex items-center gap-1"><IconPlus /> タスク追加</button>
+                                <button onClick={(e) => { e.stopPropagation(); setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); setNewTaskImages([]); const fb = deptList[0]?.key || 'backoffice'; setNewTaskDept(fb); setNewTaskAssignee(fb === 'backoffice' ? '自分 (事務)' : '担当者'); }} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-black text-xs px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs"><IconPlus /> タスク追加</button>
                               )}
                             </div>
                           </div>
