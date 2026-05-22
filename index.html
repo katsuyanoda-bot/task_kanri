@@ -1114,10 +1114,14 @@
                               <div className="flex items-center gap-3 flex-wrap">
                                 <div className="p-1 hover:bg-white/80 dark:hover:bg-slate-700/80 rounded-lg cursor-grab active:cursor-grabbing"><IconDragHandle /></div>
                                 <span className={`${cClass.bar} text-white font-black text-[10px] px-2.5 py-0.5 rounded shadow-xs`}>STEP {index + 1}</span>
-                                <h3 className="font-black text-sm text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                                <h3 
+                                  className="font-black text-sm text-slate-800 dark:text-slate-100 flex items-center gap-1.5 cursor-text select-text"
+                                  onPointerDown={(e) => e.stopPropagation()} 
+                                  onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                >
                                   {step.name}
-                                  <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(step.name, 'コピー済！'); }} className="p-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-500 rounded-lg text-[9px] font-bold shrink-0">📋 コピー</button>
-                                  <span className="text-slate-400 dark:text-slate-500 ml-1">{isCol ? <IconChevronRight className="h-4 w-4" /> : <IconChevronDown className="h-4 w-4" />}</span>
+                                  <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(step.name, 'コピー済！'); }} className="p-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 select-none">📋 コピー</button>
+                                  <span className="text-slate-400 dark:text-slate-500 ml-1 select-none">{isCol ? <IconChevronRight className="h-4 w-4" /> : <IconChevronDown className="h-4 w-4" />}</span>
                                 </h3>
                                 {renderStepDeadlineBadge(step, stpProg)}
                                 <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
@@ -1128,7 +1132,13 @@
                                 </div>
                               </div>
                               <div className="flex flex-col gap-2 pl-8">
-                                <p className={`font-bold text-xs ${step.desc ? 'text-slate-600 dark:text-slate-400' : 'text-slate-400 dark:text-slate-500 italic'}`}>{step.desc || '詳細説明なし'}</p>
+                                <p 
+                                  className={`font-bold text-xs cursor-text select-text ${step.desc ? 'text-slate-600 dark:text-slate-400' : 'text-slate-400 dark:text-slate-500 italic'}`}
+                                  onPointerDown={(e) => e.stopPropagation()} 
+                                  onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                >
+                                  {step.desc || '詳細説明なし'}
+                                </p>
                                 <div className="flex items-center gap-3 flex-wrap">
                                   {step.startDate && step.dueDate && <div className="flex items-center gap-1.5 text-[10.5px] text-slate-600 dark:text-slate-300 font-mono font-bold bg-white/80 dark:bg-slate-800/80 px-2.5 py-0.5 rounded-lg border dark:border-slate-700"><IconCalendar className="h-3 w-3" /><span>{step.startDate} 〜 {step.dueDate}</span></div>}
                                   {step.links && step.links.length > 0 && (
@@ -1302,8 +1312,12 @@
                                     ) : (
                                       <div className="space-y-3.5 flex-1 flex flex-col justify-between pl-1 pr-4 mt-6">
                                         <div className="space-y-2.5">
-                                          <h4 className="font-extrabold text-sm text-slate-800 dark:text-slate-100 flex items-start gap-1.5 pr-24">
-                                            <span className={`text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold ${tkCls.bg} ${tkCls.text} shrink-0 mt-0.5`}>#{index + 1}-{taskIndex + 1}-<span className="font-black text-xs">{task.sequenceId || '?'}</span></span>
+                                          <h4 
+                                            className="font-extrabold text-sm text-slate-800 dark:text-slate-100 flex items-start gap-1.5 pr-24 cursor-text select-text"
+                                            onPointerDown={(e) => e.stopPropagation()} 
+                                            onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                          >
+                                            <span className={`text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold ${tkCls.bg} ${tkCls.text} shrink-0 mt-0.5 select-none`}>#{index + 1}-{taskIndex + 1}-<span className="font-black text-xs">{task.sequenceId || '?'}</span></span>
                                             <span>{task.title}</span>
                                           </h4>
                                           <div className="flex flex-wrap items-center gap-2 pt-0.5">
@@ -1313,9 +1327,15 @@
                                           </div>
                                           
                                           <div className="relative group/desc space-y-1.5 mt-3" onClick={(e) => e.stopPropagation()}>
-                                            <div className="text-[9.5px] font-bold text-slate-450 dark:text-slate-500 ml-1 flex items-center gap-1"><IconInfo className="h-3 w-3" /> 論点・備考</div>
+                                            <div className="text-[9.5px] font-bold text-slate-450 dark:text-slate-500 ml-1 flex items-center gap-1 select-none"><IconInfo className="h-3 w-3" /> 論点・備考</div>
                                             <div className="relative">
-                                              <p className={`text-[11px] whitespace-pre-wrap bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 ${task.description ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500 italic'}`}>{task.description || '入力なし'}</p>
+                                              <p 
+                                                className={`text-[11px] whitespace-pre-wrap bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 cursor-text select-text ${task.description ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500 italic'}`}
+                                                onPointerDown={(e) => e.stopPropagation()} 
+                                                onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                              >
+                                                {task.description || '入力なし'}
+                                              </p>
                                               {task.attachedImages && task.attachedImages.length > 0 && (
                                                 <div className="flex flex-wrap gap-2 pt-2 px-1">
                                                   {task.attachedImages.map((src, imgIdx) => (
@@ -1345,9 +1365,13 @@
                                         {!tCol && (
                                           <div className="space-y-3 pt-2" onClick={(e) => e.stopPropagation()}>
                                             <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 space-y-2.5 shadow-inner">
-                                              <div className="flex justify-between items-center pb-1.5 border-b border-slate-200 dark:border-slate-700/50">
-                                                <span className="text-[9.5px] font-black text-slate-400 dark:text-slate-500 flex items-center gap-1"><IconClock /> 時系列メモ</span>
-                                                {addingLogTaskId !== task.id && !d && !na && <button onClick={() => { setAddingLogTaskId(task.id); setNewLogText(''); setNewLogTo(''); setNewLogDueDate(''); setNewLogLinks([]); setNewLogImages([]); setTmpLinkLabel(''); setTmpLinkUrl(''); }} className="text-[9.5px] font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-0.5"><IconPlus /> 追記</button>}
+                                              <div className="pb-1.5 border-b border-slate-200 dark:border-slate-700/50 space-y-2">
+                                                <span className="text-[9.5px] font-black text-slate-400 dark:text-slate-500 flex items-center gap-1 select-none"><IconClock /> 時系列メモ</span>
+                                                {addingLogTaskId !== task.id && !d && !na && (
+                                                  <div className="flex justify-center w-full pb-1">
+                                                    <button onClick={(e) => { e.stopPropagation(); setAddingLogTaskId(task.id); setNewLogText(''); setNewLogTo(''); setNewLogDueDate(''); setNewLogLinks([]); setNewLogImages([]); setTmpLinkLabel(''); setTmpLinkUrl(''); }} className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-800/50 px-4 py-1.5 rounded-full transition-colors shadow-xs"><IconPlus className="h-3 w-3"/> メモを追記する</button>
+                                                  </div>
+                                                )}
                                               </div>
                                               {addingLogTaskId === task.id && (
                                                 <div className="bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-800/50 rounded-2xl p-3 space-y-3 text-xs shadow-md animate-in zoom-in-95">
@@ -1434,7 +1458,13 @@
                                                             </div>
                                                           </div>
                                                           <div className="w-full pr-14 space-y-2">
-                                                            <p className={`text-[11px] text-slate-600 dark:text-slate-300 font-bold whitespace-pre-wrap ${log.completed ? 'line-through text-slate-400' : ''}`}>{log.text}</p>
+                                                            <p 
+                                                              className={`text-[11px] font-bold whitespace-pre-wrap cursor-text select-text ${log.completed ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-600 dark:text-slate-300'}`}
+                                                              onPointerDown={(e) => e.stopPropagation()} 
+                                                              onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                                            >
+                                                              {log.text}
+                                                            </p>
                                                             {log.attachedImages && log.attachedImages.length > 0 && (
                                                               <div className="flex flex-wrap gap-1.5 pt-1.5">
                                                                 {log.attachedImages.map((src, imgIdx) => (
