@@ -470,12 +470,22 @@
       }
     ];
 
-    // --- Firebase環境設定と初期化 (RULE 1-3を厳格に適用) ---
-    const firebaseConfig = JSON.parse(__firebase_config);
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    // --- Firebase環境設定と初期化 (RULE 1-3を厳格に適用 ＆ 安全なフォールバックを内包) ---
+    let app, auth, db;
+    let useFirebase = false;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+    try {
+      if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+        const firebaseConfig = JSON.parse(__firebase_config);
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        useFirebase = true;
+      }
+    } catch (e) {
+      console.warn("Firebase config could not be initialized. Switched to LocalStorage-only mode.", e);
+    }
 
     function App() {
       // 簡易的なアラートメッセージ用ステート (トースト)
@@ -502,6 +512,12 @@
 
       // (1) 初期認証リスナー & 匿名ログイン処理 (RULE 3)
       useEffect(() => {
+        if (!useFirebase) {
+          // Firebase非活性時は認証プロセスをスキップし、即ローカル用ダミーユーザーを設定
+          setUser({ uid: "local-user" });
+          return;
+        }
+
         const initAuth = async () => {
           try {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -510,7 +526,8 @@
               await signInAnonymously(auth);
             }
           } catch (e) {
-            console.error("Firebase Authentication Error: ", e);
+            console.error("Firebase Authentication Error, switching to local mode: ", e);
+            setUser({ uid: "local-fallback" });
           }
         };
         initAuth();
@@ -518,11 +535,39 @@
         return () => unsubscribe();
       }, []);
 
-      // (2) リアルタイム・クラウドデータベース同期 (RULE 1 & RULE 2 に準拠)
+      // (2) リアルタイム・クラウドデータベース or ローカルストレージ同期
       useEffect(() => {
         if (!user) return;
 
-        // フォルダデータの常時監視 (空なら自動初期化シード)
+        if (!useFirebase) {
+          // --- ローカルストレージ自動同期モード（GitHub Pages用） ---
+          const localFolders = localStorage.getItem('pl_folders');
+          if (localFolders) {
+            setFolders(JSON.parse(localFolders));
+          } else {
+            setFolders(initialFolders);
+            localStorage.setItem('pl_folders', JSON.stringify(initialFolders));
+          }
+
+          const localDepts = localStorage.getItem('pl_depts');
+          if (localDepts) {
+            setDeptList(JSON.parse(localDepts));
+          } else {
+            setDeptList(initialDepts);
+            localStorage.setItem('pl_depts', JSON.stringify(initialDepts));
+          }
+
+          const localProjects = localStorage.getItem('pl_projects');
+          if (localProjects) {
+            setProjects(JSON.parse(localProjects));
+          } else {
+            setProjects(initialProjects);
+            localStorage.setItem('pl_projects', JSON.stringify(initialProjects));
+          }
+          return;
+        }
+
+        // --- Firestore常時接続同期モード (RULE 1 & RULE 2 に準拠) ---
         const foldersRef = collection(db, 'artifacts', appId, 'public', 'data', 'folders');
         const unsubscribeFolders = onSnapshot(foldersRef, (snapshot) => {
           const list = snapshot.docs.map(doc => doc.data());
@@ -535,7 +580,6 @@
           }
         }, (err) => console.error("Firestore folders error: ", err));
 
-        // 部署データの常時監視 (空なら自動初期化シード)
         const deptsRef = collection(db, 'artifacts', appId, 'public', 'data', 'departments');
         const unsubscribeDepts = onSnapshot(deptsRef, (snapshot) => {
           const list = snapshot.docs.map(doc => doc.data());
@@ -548,7 +592,6 @@
           }
         }, (err) => console.error("Firestore departments error: ", err));
 
-        // プロジェクトデータの常時監視 (空なら自動初期化シード)
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
         const unsubscribeProjects = onSnapshot(projectsRef, (snapshot) => {
           const list = snapshot.docs.map(doc => doc.data());
@@ -568,9 +611,22 @@
         };
       }, [user]);
 
-      // クラウド保存用共通ハンドラー (特定プロジェクトのみをFirestoreで更新)
+      // クラウド保存 or ローカル保存の抽象化ハンドラー
       const saveProjectToFirestore = async (updatedProj) => {
-        if (!user || !updatedProj) return;
+        if (!updatedProj) return;
+
+        if (!useFirebase) {
+          // ローカルモード
+          setProjects(prev => {
+            const next = prev.map(p => p.id === updatedProj.id ? updatedProj : p);
+            localStorage.setItem('pl_projects', JSON.stringify(next));
+            return next;
+          });
+          return;
+        }
+
+        // Firebaseモード
+        if (!user) return;
         try {
           await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', updatedProj.id), updatedProj);
         } catch (err) {
@@ -909,26 +965,10 @@
         }, 150);
       };
 
-      // --- プロジェクト情報の保存 ---
-      const saveProjectEdit = () => {
-        const updated = { 
-          ...activeProject, 
-          name: projectForm.name, 
-          code: projectForm.code,
-          status: projectForm.status,
-          startDate: projectForm.startDate, 
-          endDate: projectForm.endDate,
-          folderId: projectForm.folderId 
-        };
-        saveProjectToFirestore(updated);
-        setEditingProject(false);
-        showAlert('案件プロジェクトの情報を更新しました。');
-      };
-
       // --- 新規大分類フォルダの追加 ＆ 削除 ---
       const handleCreateFolder = async (e) => {
         e.preventDefault();
-        if (!newFolderName.trim() || !user) return;
+        if (!newFolderName.trim()) return;
 
         const newId = `f_${Date.now()}`;
         const newFolder = {
@@ -936,6 +976,20 @@
           name: newFolderName.trim()
         };
 
+        if (!useFirebase) {
+          setFolders(prev => {
+            const next = [...prev, newFolder];
+            localStorage.setItem('pl_folders', JSON.stringify(next));
+            return next;
+          });
+          setSelectedFolderId(newId);
+          setNewFolderName('');
+          setShowAddFolderModal(false);
+          showAlert(`大分類フォルダ「${newFolder.name}」を作成しました。`);
+          return;
+        }
+
+        if (!user) return;
         try {
           await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'folders', newId), newFolder);
           setSelectedFolderId(newId);
@@ -961,6 +1015,23 @@
           '大分類フォルダの削除',
           `「${folderName}」を完全に削除しますか？\n（このフォルダに所属するすべての案件・タスクデータが同時に削除されます。この操作は取り消せません）`,
           async () => {
+            if (!useFirebase) {
+              setFolders(prev => {
+                const next = prev.filter(f => f.id !== folderId);
+                localStorage.setItem('pl_folders', JSON.stringify(next));
+                return next;
+              });
+              setProjects(prev => {
+                const next = prev.filter(p => p.folderId !== folderId);
+                localStorage.setItem('pl_projects', JSON.stringify(next));
+                return next;
+              });
+              const remainingFolders = folders.filter(f => f.id !== folderId);
+              setSelectedFolderId(remainingFolders[0].id);
+              showAlert('大分類フォルダを削除しました。');
+              return;
+            }
+
             try {
               await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'folders', folderId));
               // 配下のプロジェクトも一括削除
@@ -982,7 +1053,7 @@
       // --- 新規プロジェクトの起票 ＆ 削除 ---
       const handleCreateProject = async (e) => {
         e.preventDefault();
-        if (!newProjName.trim() || !user) return;
+        if (!newProjName.trim()) return;
 
         const newId = `p_${Date.now()}`;
         const newProject = {
@@ -999,11 +1070,26 @@
           tasks: []
         };
 
+        if (!useFirebase) {
+          setProjects(prev => {
+            const next = [...prev, newProject];
+            localStorage.setItem('pl_projects', JSON.stringify(next));
+            return next;
+          });
+          setSelectedFolderId(newProjFolderId); 
+          setCurrentProjectId(newId);
+          setNewProjName('');
+          setNewProjCode('');
+          setNewProjStatus('pending');
+          setShowAddProjectModal(false);
+          showAlert(`案件「${newProject.name}」を新規に起票しました。`);
+          return;
+        }
+
         try {
           await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', newId), newProject);
           setSelectedFolderId(newProjFolderId); 
           setCurrentProjectId(newId);
-          
           setNewProjName('');
           setNewProjCode('');
           setNewProjStatus('pending');
@@ -1027,6 +1113,20 @@
           '案件プロジェクトの削除',
           `案件「${projName}」を完全に削除しますか？\n（大ステップ、タスク、時系列メモ等のデータもすべて削除されます。この操作は取り消せません）`,
           async () => {
+            if (!useFirebase) {
+              setProjects(prev => {
+                const next = prev.filter(p => p.id !== projId);
+                localStorage.setItem('pl_projects', JSON.stringify(next));
+                return next;
+              });
+              if (currentProjectId === projId) {
+                const remainingProjects = projects.filter(p => p.id !== projId);
+                setCurrentProjectId(remainingProjects[0].id);
+              }
+              showAlert('案件プロジェクトを削除しました。');
+              return;
+            }
+
             try {
               await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projId));
               if (currentProjectId === projId) {
@@ -1435,13 +1535,26 @@
       // 部署マスタの更新
       const handleCreateDept = async (e) => {
         e.preventDefault();
-        if (!newDeptLabel.trim() || !user) return;
+        if (!newDeptLabel.trim()) return;
         const newKey = `dept_${Date.now()}`;
         const newDept = {
           key: newKey,
           label: newDeptLabel.trim(),
           color: newDeptColor
         };
+
+        if (!useFirebase) {
+          setDeptList(prev => {
+            const next = [...prev, newDept];
+            localStorage.setItem('pl_depts', JSON.stringify(next));
+            return next;
+          });
+          setNewDeptLabel('');
+          setSelectedSettingsDeptKey(newKey);
+          showAlert(`部署「${newDept.label}」を登録マスタに追加しました。`);
+          return;
+        }
+
         try {
           await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'departments', newKey), newDept);
           setNewDeptLabel('');
@@ -1465,12 +1578,44 @@
           '部署・カラーマスタの削除',
           `部署「${deptName}」を削除しますか？\n（この部署に紐づいている既存タスクやステップは、自動的に最初の部署「${deptList[0].label}」にリセットされます）`,
           async () => {
+            const remainingDepts = deptList.filter(d => d.key !== deptKey);
+            const fallbackDeptKey = remainingDepts[0].key;
+
+            if (!useFirebase) {
+              setDeptList(remainingDepts);
+              localStorage.setItem('pl_depts', JSON.stringify(remainingDepts));
+
+              const nextProjects = projects.map(proj => {
+                let modified = false;
+                const updatedTasks = (proj.tasks || []).map(t => {
+                  if (t.department === deptKey) {
+                    modified = true;
+                    return { ...t, department: fallbackDeptKey };
+                  }
+                  return t;
+                });
+                const updatedSteps = (proj.stepList || []).map(s => {
+                  if (s.deptKey === deptKey) {
+                    modified = true;
+                    return { ...s, deptKey: fallbackDeptKey };
+                  }
+                  return s;
+                });
+                return modified ? { ...proj, tasks: updatedTasks, stepList: updatedSteps } : proj;
+              });
+
+              setProjects(nextProjects);
+              localStorage.setItem('pl_projects', JSON.stringify(nextProjects));
+
+              if (selectedSettingsDeptKey === deptKey) {
+                setSelectedSettingsDeptKey(fallbackDeptKey);
+              }
+              showAlert('部署マスタを削除し、関連データを更新しました。');
+              return;
+            }
+
             try {
               await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'departments', deptKey));
-              
-              // 関連する全てのプロジェクトデータの部署も上書き
-              const remainingDepts = deptList.filter(d => d.key !== deptKey);
-              const fallbackDeptKey = remainingDepts[0].key;
               
               for (const proj of projects) {
                 let modified = false;
@@ -1512,6 +1657,14 @@
       const updateDeptColorSetting = async (deptKey, newColorKey) => {
         const found = deptList.find(d => d.key === deptKey);
         if (!found) return;
+
+        if (!useFirebase) {
+          const next = deptList.map(d => d.key === deptKey ? { ...d, color: newColorKey } : d);
+          setDeptList(next);
+          localStorage.setItem('pl_depts', JSON.stringify(next));
+          return;
+        }
+
         try {
           await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'departments', deptKey), {
             ...found,
@@ -1526,6 +1679,14 @@
         if (!newName.trim()) return;
         const found = deptList.find(d => d.key === deptKey);
         if (!found) return;
+
+        if (!useFirebase) {
+          const next = deptList.map(d => d.key === deptKey ? { ...d, label: newName.trim() } : d);
+          setDeptList(next);
+          localStorage.setItem('pl_depts', JSON.stringify(next));
+          return;
+        }
+
         try {
           await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'departments', deptKey), {
             ...found,
@@ -1636,7 +1797,10 @@
               </div>
               <div>
                 <h1 className="text-sm font-extrabold text-slate-900 leading-tight">Project Loom</h1>
-                <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">マイ・プロジェクト ECDダッシュボード</p>
+                <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">
+                  マイ・プロジェクト ECDダッシュボード 
+                  {!useFirebase && <span className="ml-1.5 text-emerald-600 bg-emerald-50 px-1 py-0.5 rounded font-black text-[8px] tracking-normal">ローカル保存モード</span>}
+                </p>
               </div>
             </div>
 
@@ -1817,7 +1981,7 @@
                               onClick={() => setSelectedSettingsDeptKey(dept.key)}
                               className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-between cursor-pointer transition-all ${
                                 isSelected 
-                                  ? 'border-indigo-450 bg-indigo-50/30 shadow-xs' 
+                                  ? 'border-indigo-455 bg-indigo-50/30 shadow-xs' 
                                   : 'border-slate-100 bg-slate-55 hover:bg-slate-100/55'
                               }`}
                             >
@@ -2342,18 +2506,18 @@
                             {/* 開始日・期限の編集 */}
                             <div className="grid grid-cols-2 gap-3 text-xs">
                               <div>
-                                <label className="block text-slate-550 font-bold mb-0.5">開始予定日</label>
+                                <label className="block text-slate-555 font-bold mb-0.5">開始予定日</label>
                                 <input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border border-purple-200 rounded-xl p-2 font-mono text-xs focus:outline-none bg-white font-bold" />
                               </div>
                               <div>
-                                <label className="block text-slate-550 font-bold mb-0.5">完了予定日(期日)</label>
+                                <label className="block text-slate-555 font-bold mb-0.5">完了予定日(期日)</label>
                                 <input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border border-purple-200 rounded-xl p-2 font-mono text-xs focus:outline-none bg-white font-bold" />
                               </div>
                             </div>
 
                             {/* 部署カラーの変更紐づき */}
                             <div className="space-y-1 text-xs">
-                              <span className="block text-slate-550 font-bold">関連付ける主担当部署</span>
+                              <span className="block text-slate-555 font-bold">関連付ける主担当部署</span>
                               <select 
                                 value={editStepDeptKey} 
                                 onChange={e => setEditStepDeptKey(e.target.value)} 
@@ -2629,7 +2793,7 @@
                                             </button>
                                             <button 
                                               onClick={() => startEditing(task)} 
-                                              className="p-1 text-slate-450 hover:text-indigo-600 hover:bg-slate-55 rounded-md transition" 
+                                              className="p-1 text-slate-450 hover:text-indigo-650 hover:bg-slate-55 rounded-md transition" 
                                               title="詳細・期日などをインライン編集"
                                             >
                                               <IconEdit2 className="h-3.5 w-3.5" />
@@ -2751,7 +2915,7 @@
                                             </div>
                                           </div>
                                           <div className="flex justify-end gap-1.5 pt-2 border-t border-slate-100">
-                                            <button onClick={() => setEditingTaskId(null)} className="bg-slate-100 hover:bg-slate-200 text-slate-650 px-3 py-1.5 rounded-xl font-bold">戻る</button>
+                                            <button onClick={() => setEditingTaskId(null)} className="bg-slate-100 hover:bg-slate-200 text-slate-655 px-3 py-1.5 rounded-xl font-bold">戻る</button>
                                             <button onClick={() => saveEdit(task.id)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold shadow-md shadow-indigo-100">保存</button>
                                           </div>
                                         </div>
@@ -2859,7 +3023,7 @@
                                                     </div>
 
                                                     <div className="flex justify-end gap-1.5 mt-1 pt-2 border-t border-slate-100">
-                                                      <button onClick={() => setAddingLogTaskId(null)} className="text-[9px] text-slate-400 hover:bg-slate-50 px-2.5 py-1.5 rounded-lg font-bold">キャンセル</button>
+                                                      <button onClick={() => setAddingLogTaskId(null)} className="text-[9px] text-slate-400 hover:bg-slate-55 px-2.5 py-1.5 rounded-lg font-bold">キャンセル</button>
                                                       <button onClick={() => addLog(task.id)} className="text-[9px] bg-indigo-650 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-lg font-black">メモを追加</button>
                                                     </div>
                                                   </div>
@@ -2914,7 +3078,7 @@
                                                                   <IconLink />
                                                                   <input type="text" placeholder="名前" value={tmpEditLinkLabel} onChange={e=>setTmpEditLinkLabel(e.target.value)} className="w-16 border border-slate-250 rounded px-1.5 py-0.5 text-[9px] font-bold" />
                                                                   <input type="text" placeholder="URL" value={tmpEditLinkUrl} onChange={e=>setTmpEditLinkUrl(e.target.value)} className="flex-1 border border-slate-250 rounded px-1.5 py-0.5 text-[9px]" />
-                                                                  <button onClick={handleAddLinkToEditLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-650 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-black">追加</button>
+                                                                  <button onClick={handleAddLinkToEditLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-655 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-black">追加</button>
                                                                 </div>
 
                                                                 {/* リンク一覧 */}
@@ -2972,7 +3136,7 @@
                                                               
                                                               <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                                                                 {log.to && (
-                                                                  <span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 hover:bg-indigo-100/60 border border-indigo-200 text-indigo-750 px-2 py-0.5 rounded-lg transition font-black">
+                                                                  <span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 hover:bg-indigo-100/60 border border-indigo-200 text-indigo-755 px-2 py-0.5 rounded-lg transition font-black">
                                                                     <span>TO: {log.to}</span>
                                                                     {!isCompleted && (
                                                                       <button onClick={() => clearLogField(task.id, log.id, 'to')} className="text-indigo-400 hover:text-rose-600 font-bold text-[10px] ml-1">×</button>
@@ -3075,7 +3239,7 @@
                   <select
                     value={dbFilterStatus}
                     onChange={(e) => setDbFilterStatus(e.target.value)}
-                    className="border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-600 bg-slate-50 focus:outline-none focus:border-indigo-450 cursor-pointer shadow-xs"
+                    className="border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-600 bg-slate-50 focus:outline-none focus:border-indigo-455 cursor-pointer shadow-xs"
                   >
                     <option value="all">🚥 すべての進捗状況</option>
                     <option value="pending">未着手</option>
@@ -3089,7 +3253,7 @@
                       placeholder="案件名やECD管理コードでリアルタイム検索..."
                       value={dbFilterText}
                       onChange={(e) => setDbFilterText(e.target.value)}
-                      className="w-full border border-slate-200 rounded-xl p-2.5 pl-3.5 text-xs text-slate-700 font-bold bg-white focus:outline-none focus:border-indigo-450 shadow-xs"
+                      className="w-full border border-slate-200 rounded-xl p-2.5 pl-3.5 text-xs text-slate-700 font-bold bg-white focus:outline-none focus:border-indigo-455 shadow-xs"
                     />
                   </div>
                 </div>
