@@ -83,7 +83,7 @@
     const colorClassesMap = {
       purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-purple-50/30 dark:bg-purple-900/20', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-700', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-400' },
       indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-indigo-50/30 dark:bg-indigo-900/20', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-700', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-400' },
-      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-50/30 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-indigo-400' },
+      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-50/30 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-indigo-500 dark:bg-blue-400' },
       emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-50/30 dark:bg-emerald-900/20', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-700', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-amber-400' },
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-green-50/30 dark:bg-green-900/20', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700', bar: 'bg-green-700 dark:bg-green-500', accentBar: 'bg-green-600 dark:bg-green-400' },
       amber: { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-amber-50/30 dark:bg-amber-900/20', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-700', bar: 'bg-amber-500 dark:bg-amber-500', accentBar: 'bg-amber-500 dark:bg-amber-400' },
@@ -950,7 +950,11 @@
                                   <input type="text" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-white dark:bg-slate-800 font-bold" />
                                   <input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-white dark:bg-slate-800 font-mono font-bold" />
                                 </div>
-                                <div className="flex justify-end gap-2"><button type="submit" className="bg-purple-600 text-white px-4 py-2 rounded-xl font-bold">作成する</button></div>
+                                {/* 🚨 タスク追加フォーム内の「作成する」ボタンの左隣に「キャンセル」ボタンを追加 */}
+                                <div className="flex justify-end gap-2">
+                                  <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-xl font-bold">キャンセル</button>
+                                  <button type="submit" className="bg-purple-600 text-white px-4 py-2 rounded-xl font-bold">作成する</button>
+                                </div>
                               </form>
                             )}
 
@@ -1052,7 +1056,7 @@
                   <button onClick={() => setShowAddProjectModal(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs px-4 py-2.5 rounded-2xl shadow-md">➕ 新規案件を起票する</button>
                 </div>
                 <div className="flex gap-3">
-                  <select value={dbFilterFolderId} onChange={(e) => setDbFilterFolderId(e.target.value)} className="border dark:border-slate-700 rounded-xl p-2 bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-600 dark:text-slate-300 focus:outline-none">{folders.map(f => (<option key={f.id} value={f.id}>📁 {f.name}</option>))}</select>
+                  <select value={dbFilterFolderId} onChange={(e) => setDbFilterFolderId(e.target.value)} className="border dark:border-slate-700 rounded-xl p-2 bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-600 dark:text-slate-300 focus:outline-none">{folders.map(f => (<option key={f.id} value={f.id} className="dark:bg-slate-800">📁 {f.name}</option>))}</select>
                   <input type="text" placeholder="リアルタイム検索..." value={dbFilterText} onChange={(e) => setDbFilterText(e.target.value)} className="flex-1 border dark:border-slate-700 rounded-xl p-2 text-xs bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:outline-none" />
                 </div>
                 <div className="overflow-x-auto rounded-2xl border dark:border-slate-700">
@@ -1082,6 +1086,111 @@
               </div>
             )}
           </main>
+
+          {/* 📁 フォルダ追加モーダル (復活) */}
+          {showAddFolderModal && (
+            <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-700">
+                  <h3 className="font-extrabold text-sm text-slate-900 dark:text-slate-100">📁 新規フォルダの作成</h3>
+                  <button onClick={() => setShowAddFolderModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1"><IconX /></button>
+                </div>
+                <form onSubmit={handleCreateFolder} className="space-y-4 text-xs">
+                  <div>
+                    <label className="block text-slate-400 font-bold mb-1">フォルダ名</label>
+                    <input 
+                      required 
+                      type="text" 
+                      placeholder="例: 新規事業開発" 
+                      value={newFolderName} 
+                      onChange={e => setNewFolderName(e.target.value)} 
+                      className="w-full border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold focus:outline-none focus:border-indigo-500" 
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button type="button" onClick={() => setShowAddFolderModal(false)} className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
+                    <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-2xl font-bold shadow-md shadow-indigo-100 dark:shadow-none">作成</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* 📄 案件(プロジェクト)起票モーダル (復活) */}
+          {showAddProjectModal && (
+            <div className="fixed inset-0 bg-slate-900/40 dark:bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-700">
+                  <h3 className="font-extrabold text-sm text-slate-900 dark:text-slate-100">📄 新規案件の起票</h3>
+                  <button onClick={() => setShowAddProjectModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1"><IconX /></button>
+                </div>
+                <form onSubmit={handleCreateProject} className="space-y-4 text-xs">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-400 font-bold mb-1">所属フォルダ</label>
+                      <select value={newProjFolderId} onChange={e => setNewProjFolderId(e.target.value)} className="w-full border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold focus:outline-none">
+                        {folders.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-400 font-bold mb-1">ステータス</label>
+                      <select value={newProjStatus} onChange={e => setNewProjStatus(e.target.value)} className="w-full border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold focus:outline-none">
+                        <option value="pending">未着手</option>
+                        <option value="in_progress">進行中</option>
+                        <option value="completed">完了</option>
+                        <option value="not_applicable">対応なし</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 font-bold mb-1">案件プロジェクト名 *</label>
+                    <input 
+                      required 
+                      type="text" 
+                      placeholder="案件名を入力してください" 
+                      value={newProjName} 
+                      onChange={e => setNewProjName(e.target.value)} 
+                      className="w-full border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold focus:outline-none focus:border-indigo-500" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 font-bold mb-1">管理コード</label>
+                    <input 
+                      type="text" 
+                      placeholder="例: ECD-2026-Q2" 
+                      value={newProjCode} 
+                      onChange={e => setNewProjCode(e.target.value)} 
+                      className="w-full border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold font-mono focus:outline-none focus:border-indigo-500" 
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-400 font-bold mb-1">開始予定日</label>
+                      <input 
+                        type="date" 
+                        value={newProjStart} 
+                        onChange={e => setNewProjStart(e.target.value)} 
+                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold font-mono focus:outline-none" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-400 font-bold mb-1">目標完了日</label>
+                      <input 
+                        type="date" 
+                        value={newProjEnd} 
+                        onChange={e => setNewProjEnd(e.target.value)} 
+                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold font-mono focus:outline-none" 
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button type="button" onClick={() => setShowAddProjectModal(false)} className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
+                    <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-2xl font-bold shadow-md shadow-indigo-100 dark:shadow-none">起票する</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
 
           {/* 設定モーダル */}
           {showSettingsModal && (
