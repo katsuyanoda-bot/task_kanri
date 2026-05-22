@@ -2498,6 +2498,30 @@
                         >
                           <IconLink className="h-3 w-3 text-slate-400" /> コピー共有
                         </button>
+                        <button 
+                          onClick={() => {
+                            setShowAddStepForm(true);
+                            setNewStepName('');
+                            setNewStepDesc('');
+                            setNewStepStartDate(activeProject.startDate);
+                            setNewStepDueDate(activeProject.endDate);
+                            setNewStepLinks([]);
+                            setTmpStepLinkLabel('');
+                            setTmpStepLinkUrl('');
+                            setTimeout(() => {
+                              const el = document.getElementById('add-step-form');
+                              if(el) {
+                                const headerOffset = 180; 
+                                const elementPosition = el.getBoundingClientRect().top;
+                                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                              }
+                            }, 150);
+                          }}
+                          className="text-[10px] bg-purple-600 hover:bg-purple-700 text-white font-black flex items-center gap-1 px-3 py-2 rounded-xl transition shadow-md shadow-purple-200"
+                        >
+                          <IconPlus className="h-3 w-3" /> STEPを追加
+                        </button>
                       </div>
                     )}
 
@@ -2506,25 +2530,9 @@
                   <p className="text-slate-400 text-xs italic bg-white p-6 border rounded-3xl text-center shadow-xs">案件プロジェクトが未作成、または選択されていません。上部ヘッダーの「＋」ボタンから追加してください。</p>
                 )}
 
-                {/* 大ステップ（STEP）の動的追加ボタン */}
-                <div className="flex justify-end">
-                  {activeProject && !showAddStepForm ? (
-                    <button 
-                      onClick={() => {
-                        setShowAddStepForm(true);
-                        setNewStepName('');
-                        setNewStepDesc('');
-                        setNewStepStartDate(activeProject.startDate);
-                        setNewStepDueDate(activeProject.endDate);
-                        setNewStepLinks([]);
-                        setTmpStepLinkLabel('');
-                        setTmpStepLinkUrl('');
-                      }}
-                      className="bg-purple-50 hover:bg-purple-100 text-purple-700 font-black border border-purple-200 text-xs px-4 py-3 rounded-2xl flex items-center gap-1.5 transition-all shadow-xs"
-                    >
-                      <IconPlus /> 新しい大ステップ（大工程）を追加
-                    </button>
-                  ) : activeProject ? (
+                {/* 大ステップ（STEP）の動的追加フォーム */}
+                {activeProject && showAddStepForm && (
+                  <div id="add-step-form" className="flex justify-end">
                     <form onSubmit={handleAddStep} className="w-full bg-purple-50 border border-purple-300 rounded-3xl p-5 space-y-4 text-xs animate-in fade-in duration-200">
                       <div className="flex justify-between items-center pb-1.5 border-b border-purple-100">
                         <span className="font-extrabold text-purple-800">➕ 新規大ステップ（STEP）の作成</span>
@@ -2613,8 +2621,8 @@
                         <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-2xl font-bold shadow-md shadow-purple-100">ステップを作成</button>
                       </div>
                     </form>
-                  ) : null}
-                </div>
+                  </div>
+                )}
 
                 {/* STEPコンテナ */}
                 <div className="space-y-8">
