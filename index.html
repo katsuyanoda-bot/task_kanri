@@ -2142,7 +2142,7 @@
               </div>
             )}
 
-            {/* 新規案件フォルダの起票モーダル */}
+            {/* 新規案件フォルダの追加モーダル */}
             {showAddProjectModal && (
               <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-xs flex items-center justify-center z-50 animate-in fade-in duration-200">
                 <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto scrollbar-thin">
@@ -2175,7 +2175,7 @@
                       </div>
                       <div>
                         <label className="block text-slate-500 font-bold mb-1">ECDコード</label>
-                        <input type="text" placeholder="例: ECD-2026-Q3" value={newProjCode} onChange={e=>setNewProjCode(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 focus:border-indigo-500 focus:outline-none" />
+                        <input type="text" placeholder="例: ECD-2026-Q3" value={newProjCode} onChange={e=>setNewProjCode(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 focus:border-indigo-550" />
                       </div>
                     </div>
 
@@ -2288,7 +2288,7 @@
                           const currentSelectedColor = activeDept.color;
                           return (
                             <div className="space-y-4 text-xs">
-                              <span className="block font-black text-slate-800 border-b border-slate-200 pb-1.5">
+                              <span className="block font-black text-slate-805 border-b border-slate-200 pb-1.5">
                                 📝 「{activeDept.label}」の詳細設定
                               </span>
 
@@ -2493,7 +2493,7 @@
                     <form onSubmit={handleAddStep} className="w-full bg-purple-50/20 border border-purple-300 rounded-3xl p-5 space-y-4 text-xs animate-in fade-in duration-200">
                       <div className="flex justify-between items-center pb-1.5 border-b border-purple-100">
                         <span className="font-extrabold text-purple-800">➕ 新規大ステップ（STEP）の作成</span>
-                        <button type="button" onClick={() => setShowAddStepForm(false)} className="text-slate-400 hover:text-slate-600 p-1"><IconX /></button>
+                        <button type="button" onClick={() => setShowAddStepForm(false)} className="text-slate-400 hover:text-slate-605 p-1"><IconX /></button>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -2810,7 +2810,7 @@
                             {stepTasks.length > 0 && (
                               <div className="flex flex-wrap gap-1.5 items-center px-4 py-2 bg-slate-100/40 rounded-2xl max-w-full lg:max-w-md xl:max-w-xl self-start lg:self-auto" onClick={(e) => e.stopPropagation()}>
                                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider shrink-0 mr-1 select-none">タスク:</span>
-                                {stepTasks.map((t) => {
+                                {stepTasks.map((t, tIdx) => {
                                   const isTaskDone = t.status === 'completed';
                                   const isTaskWorking = t.status === 'in_progress';
                                   return (
@@ -2840,7 +2840,7 @@
                                       }`}
                                       title={t.title}
                                     >
-                                      <span>{isTaskDone ? '✓' : isTaskWorking ? '⚡' : '🔘'}</span>
+                                      <span>{isTaskDone ? '✓' : isTaskWorking ? '⚡' : '🔘'} #{index + 1}-{tIdx + 1}</span>
                                       <span className="truncate max-w-[80px]">{t.title}</span>
                                     </button>
                                   );
@@ -2975,7 +2975,7 @@
                                             </button>
                                             <button 
                                               onClick={(e) => { e.stopPropagation(); startEditing(task); }} 
-                                              className="p-1 text-slate-400 hover:text-indigo-606 hover:bg-slate-50 rounded-md transition" 
+                                              className="p-1 text-slate-405 hover:text-indigo-606 hover:bg-slate-50 rounded-md transition" 
                                               title="詳細・期日などをインライン編集"
                                             >
                                               <IconEdit2 className="h-3.5 w-3.5" />
@@ -3114,7 +3114,7 @@
                                               <span className={`text-[9.5px] font-black px-2.5 py-0.5 rounded-full border shadow-xs select-none ${dClass.badge}`}>
                                                 {task.assignee}
                                               </span>
-                                              <div className="flex items-center gap-1 text-[10.5px] text-slate-400 font-mono font-bold select-none">
+                                              <div className="flex items-center gap-1 text-[10.5px] text-slate-405 font-mono font-bold select-none">
                                                 <IconCalendar />
                                                 <span className={isLate ? 'text-rose-600 font-black animate-pulse' : ''}>{task.dueDate}</span>
                                               </div>
@@ -3582,7 +3582,7 @@
                                 </button>
                                 <button 
                                   onClick={(e) => handleDeleteProjectByList(proj.id, e)}
-                                  className="text-slate-405 hover:text-rose-600 p-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-100 rounded-xl transition-all"
+                                  className="text-slate-405 hover:text-rose-650 p-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-100 rounded-xl transition-all"
                                   title="この案件を完全に削除"
                                 >
                                   <IconTrash2 className="h-4 w-4" />
