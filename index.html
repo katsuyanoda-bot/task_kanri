@@ -338,6 +338,8 @@
             dueDate: '2026-05-18',
             status: 'completed',
             isHighPriority: false,
+            startedAt: '2026-05-15',
+            completedAt: '2026-05-18',
             contextLogs: [
               { 
                 id: 'c1', 
@@ -361,6 +363,7 @@
             dueDate: '2026-05-25',
             status: 'in_progress',
             isHighPriority: true,
+            startedAt: '2026-05-19',
             contextLogs: [
               { 
                 id: 'c2', 
@@ -384,6 +387,7 @@
             dueDate: '2026-05-27',
             status: 'in_progress',
             isHighPriority: false,
+            startedAt: '2026-05-20',
             contextLogs: [
               { 
                 id: 'c3', 
@@ -408,6 +412,8 @@
             dueDate: '2026-05-22',
             status: 'completed',
             isHighPriority: false,
+            startedAt: '2026-05-20',
+            completedAt: '2026-05-22',
             contextLogs: [
               { id: 'c4', date: '2026-05-20 15:00', text: '既存のバッチ処理を改修すれば対応可能と判断。工数1.5人月。', links: [], completed: true, to: null, dueDate: null, isHighlighted: false }
             ]
@@ -416,7 +422,7 @@
             id: 't5',
             stepId: 3,
             title: '申込書・見積フォーマット of 整備',
-            description: '無料枠記載を含めた新しい申込書テンプレートの作成、および法務特約事項 of 作成。',
+            description: '無料枠記載を含めた新しい申込書テンプレート of 作成、および法務特約事項 of 作成。',
             assignee: '自分 (事務)',
             department: 'backoffice',
             dueDate: '2026-06-05',
@@ -1517,16 +1523,61 @@
         showAlert('時系列状況メモを更新しました。');
       };
 
-      // --- タスクステータス変更 ---
+      // --- タスクステータス変更 (タイムスタンプ自動記録付き) ---
       const changeTaskStatus = (taskId, newStatus) => {
         const updatedTasks = tasks.map(t => {
           if (t.id === taskId) {
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            
             const updated = { ...t, status: newStatus };
-            if (newStatus === 'completed' && t.status !== 'completed') {
-              const now = new Date();
-              const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-              updated.contextLogs = [{ id: `sys_${Date.now()}`, date: dateStr, text: '✅ タスクを完了にマークしました。', links: [], completed: true, isSystem: true, to: null, dueDate: null, isHighlighted: false }, ...(t.contextLogs || [])];
+            
+            if (newStatus === 'in_progress') {
+              // 進行中になった日付を記録
+              if (!t.startedAt) {
+                updated.startedAt = TODAY_STR;
+              }
+              updated.completedAt = null; // 完了日はクリア
+              
+              const sysLog = { 
+                id: `sys_${Date.now()}`, 
+                date: dateStr, 
+                text: '⚡ タスクを着手（進行中）にマークしました。', 
+                links: [], 
+                completed: false, 
+                isSystem: true, 
+                to: null, 
+                dueDate: null, 
+                isHighlighted: false 
+              };
+              updated.contextLogs = [sysLog, ...(t.contextLogs || [])];
+              
+            } else if (newStatus === 'completed') {
+              // 完了日を記録
+              updated.completedAt = TODAY_STR;
+              if (!t.startedAt) {
+                updated.startedAt = TODAY_STR; // 着手日がなければ即時完了として記録
+              }
+              
+              const sysLog = { 
+                id: `sys_${Date.now()}`, 
+                date: dateStr, 
+                text: '✅ タスクを完了にマークしました。', 
+                links: [], 
+                completed: true, 
+                isSystem: true, 
+                to: null, 
+                dueDate: null, 
+                isHighlighted: false 
+              };
+              updated.contextLogs = [sysLog, ...(t.contextLogs || [])];
+              
+            } else if (newStatus === 'pending') {
+              // 未対応に戻した場合は着手日・完了日をリセット
+              updated.startedAt = null;
+              updated.completedAt = null;
             }
+            
             return updated;
           }
           return t;
@@ -1561,6 +1612,8 @@
           dueDate: newTaskDueDate || todayStr,
           status: 'pending',
           isHighPriority: false,
+          startedAt: null,
+          completedAt: null,
           contextLogs: []
         };
 
@@ -1603,7 +1656,7 @@
         showAlert('タスクを編集・保存しました。');
       };
 
-      // --- 欠落していたタスク削除関数 (deleteTask) の実装 ---
+      // --- タスク削除関数 (deleteTask) の実装 ---
       const deleteTask = (taskId) => {
         if (!activeProject) return;
         triggerConfirm(
@@ -1615,6 +1668,17 @@
             showAlert('タスクを削除しました。');
           }
         );
+      };
+
+      // --- 所要日数/経過日数計算ヘルパー ---
+      const getDurationDays = (task) => {
+        if (!task.startedAt) return null;
+        const start = new Date(task.startedAt);
+        const end = task.completedAt ? new Date(task.completedAt) : new Date(TODAY_STR);
+        
+        const diffTime = end - start;
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays >= 0 ? diffDays : 0;
       };
 
       // 部署マスタの更新
@@ -2121,7 +2185,7 @@
                     <div className="grid grid-cols-3 gap-3">
                       <div>
                         <label className="block text-slate-500 font-bold mb-1">ステータス</label>
-                        <select value={newProjStatus} onChange={e=>setNewProjStatus(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 font-bold focus:border-indigo-500 focus:outline-none">
+                        <select value={newProjStatus} onChange={e=>setNewProjStatus(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 font-bold focus:outline-none">
                           <option value="pending">未着手</option>
                           <option value="in_progress">進行中</option>
                           <option value="completed">完了</option>
@@ -2133,7 +2197,7 @@
                       </div>
                       <div>
                         <label className="block text-slate-500 font-bold mb-1">終了目標日</label>
-                        <input type="date" value={newProjEnd} onChange={e=>setNewProjEnd(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 font-mono focus:border-indigo-550" />
+                        <input type="date" value={newProjEnd} onChange={e=>setNewProjEnd(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 font-mono focus:outline-none" />
                       </div>
                     </div>
 
@@ -2158,7 +2222,7 @@
                     <button onClick={() => setShowSettingsModal(false)} className="text-slate-400 hover:text-slate-600 p-1"><IconX /></button>
                   </div>
 
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-550 leading-relaxed">
                     プロジェクトに紐づく「部署」を追加・変更・削除できます。部署を選択して、タスクカードやステップの外枠として美しく色分けするカラーをカスタマイズしてください。
                   </p>
 
@@ -2621,7 +2685,7 @@
                                     <span key={lnk.id} className="inline-flex items-center gap-1.5 text-[11px] bg-purple-100 text-purple-805 border border-purple-200 px-2.5 py-1 rounded-full font-bold shadow-xs">
                                       <IconLink className="h-3 w-3" />
                                       <span className="truncate max-w-[120px]">{lnk.label}</span>
-                                      <button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-purple-400 hover:text-rose-600 font-extrabold text-xs ml-1">×</button>
+                                      <button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-purple-400 hover:text-rose-605 font-extrabold text-xs ml-1">×</button>
                                     </span>
                                   ))}
                                 </div>
@@ -2687,7 +2751,7 @@
                                   </button>
                                   <button 
                                     onClick={(e) => handleDeleteStep(step.id, step.name, e)}
-                                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-white hover:border-slate-200 border border-transparent rounded-lg transition"
+                                    className="p-1.5 text-slate-400 hover:text-rose-650 hover:bg-white hover:border-slate-200 border border-transparent rounded-lg transition"
                                     title="この大ステップを配下タスクごと全削除"
                                   >
                                     <IconTrash2 className="h-3.5 w-3.5" />
@@ -2696,7 +2760,7 @@
                               </div>
                               
                               <div className="flex flex-col gap-2 pl-8">
-                                <p className="text-slate-600 font-bold text-xs">{step.desc}</p>
+                                <p className="text-slate-605 font-bold text-xs">{step.desc}</p>
                                 
                                 <div className="flex items-center gap-3 flex-wrap">
                                   {step.startDate && step.dueDate && (
@@ -2706,7 +2770,7 @@
                                     </div>
                                   )}
 
-                                  {/* 大ステップ：登録済み参考リンクバッジの表示 */}
+                                  {/* 大ステップ：登録済み参考リンクバッジ表示 */}
                                   {step.links && step.links.length > 0 && (
                                     <div className="flex items-center gap-1.5 flex-wrap">
                                       {step.links.map(lnk => (
@@ -2820,7 +2884,14 @@
                                   
                                   // クロスブラウザでの不整合を解決した文字列 localeCompare ソート
                                   const sortedLogs = task.contextLogs ? [...task.contextLogs].sort((a, b) => b.date.localeCompare(a.date)) : [];
-                                  const isTaskCollapsed = !!collapsedTasks[task.id];
+                                  
+                                  // 完了タスクはデフォルトで折り畳み、未完了タスクはデフォルト展開
+                                  const isTaskCollapsed = collapsedTasks[task.id] !== undefined 
+                                    ? collapsedTasks[task.id] 
+                                    : isCompleted;
+
+                                  // 実働日数/経過日数の計算
+                                  const durationDays = getDurationDays(task);
 
                                   return (
                                     <div 
@@ -2829,22 +2900,23 @@
                                       onDragStart={(e) => handleTaskDragStart(step.id, taskIndex, e)}
                                       onDragOver={(e) => handleTaskDragOver(step.id, taskIndex, e)}
                                       onDragEnd={handleTaskDragEnd}
-                                      className={`group relative border-4 rounded-3xl p-4 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xs hover:shadow-md ${
+                                      onClick={() => toggleTaskCollapse(task.id)}
+                                      className={`group relative border-4 rounded-3xl p-4 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xs hover:shadow-md cursor-pointer select-none ${
                                         isCompleted 
-                                          ? 'border-slate-200 opacity-60 bg-slate-50/70' 
+                                          ? 'border-slate-200 opacity-60 bg-slate-50/70 shadow-inner' 
                                           : task.isHighPriority 
-                                            ? 'border-rose-400 bg-gradient-to-br from-rose-50/10 via-white to-white ring-1 ring-rose-400/5'
+                                            ? 'border-rose-400 bg-gradient-to-br from-rose-50/10 via-white to-white ring-1 ring-rose-400/5 shadow-sm'
                                             : `${dClass.borderStrong} bg-white` 
                                       } ${draggedTaskInfo?.stepId === step.id && draggedTaskInfo?.index === taskIndex ? 'drag-ghost' : ''}`}
                                     >
                                       {/* タスク右上のホバーアクションエリア */}
-                                      <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10">
+                                      <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
                                         
                                         {/* ホバー時に表示される並び替え＆編集操作ボタン */}
                                         {!isCompleted && (
                                           <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 mr-1 bg-white/90 border border-slate-100 p-0.5 rounded-lg backdrop-blur-xs">
                                             <button 
-                                              onClick={(e) => moveTaskOrder(step.id, taskIndex, -1, e)}
+                                              onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }}
                                               disabled={taskIndex === 0}
                                               className={`p-1 bg-white border border-slate-200 rounded-md transition shadow-xs ${taskIndex === 0 ? 'opacity-25 cursor-not-allowed' : 'text-slate-400 hover:text-indigo-605'}`}
                                               title="この大ステップ内で上（前）に移動"
@@ -2852,15 +2924,15 @@
                                               <IconDragHandle />
                                             </button>
                                             <button 
-                                              onClick={() => startEditing(task)} 
+                                              onClick={(e) => { e.stopPropagation(); startEditing(task); }} 
                                               className="p-1 text-slate-400 hover:text-indigo-606 hover:bg-slate-50 rounded-md transition" 
                                               title="詳細・期日などをインライン編集"
                                             >
                                               <IconEdit2 className="h-3.5 w-3.5" />
                                             </button>
                                             <button 
-                                              onClick={() => deleteTask(task.id)} 
-                                              className="p-1 text-slate-400 hover:text-rose-600 hover:bg-slate-50 rounded-md transition" 
+                                              onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }} 
+                                              className="p-1 text-slate-400 hover:text-rose-650 hover:bg-slate-50 rounded-md transition" 
                                               title="このタスクカードを削除"
                                             >
                                               <IconTrash2 className="h-3.5 w-3.5" />
@@ -2878,7 +2950,7 @@
                                           }`}
                                         >
                                           <IconFlag className="h-2.5 w-2.5" />
-                                          {task.isHighPriority ? '最優先' : '優先度トグル'}
+                                          {task.isHighPriority ? '最優先' : '優先度'}
                                         </button>
 
                                         {/* 進行状況(ステータス)直接選択セレクトUI */}
@@ -2902,8 +2974,8 @@
                                         {/* タスク個別アコーディオン開閉ボタン */}
                                         {editingTaskId !== task.id && (
                                           <button 
-                                            onClick={() => toggleTaskCollapse(task.id)}
-                                            className="p-1 text-slate-400 hover:text-indigo-605 hover:bg-slate-100 rounded-lg transition ml-0.5"
+                                            onClick={(e) => { e.stopPropagation(); toggleTaskCollapse(task.id); }}
+                                            className="p-1 text-slate-400 hover:text-indigo-650 hover:bg-slate-100 rounded-lg transition ml-0.5"
                                             title={isTaskCollapsed ? '展開する' : '折りたたむ'}
                                           >
                                             {isTaskCollapsed ? <IconChevronRight className="h-4.5 w-4.5" /> : <IconChevronDown className="h-4.5 w-4.5" />}
@@ -2913,7 +2985,7 @@
 
                                       {/* 1. タスクインライン編集モード */}
                                       {editingTaskId === task.id ? (
-                                        <div className="space-y-3.5 text-xs w-full pl-1 pr-4 mt-6 animate-in fade-in duration-150">
+                                        <div className="space-y-3.5 text-xs w-full pl-1 pr-4 mt-6 animate-in fade-in duration-150" onClick={(e) => e.stopPropagation()}>
                                           <span className="font-extrabold text-indigo-600 block mb-1">✏️ タスクの詳細編集 (# {index + 1}-{taskIndex + 1})</span>
                                           <input 
                                             type="text" 
@@ -2974,14 +3046,14 @@
                                         </div>
                                       ) : (
                                         // 2. タスク通常表示
-                                        <div className="space-y-4 flex-1 flex flex-col justify-between pl-1 pr-4 mt-6">
+                                        <div className="space-y-3.5 flex-1 flex flex-col justify-between pl-1 pr-4 mt-6">
                                           <div className="space-y-2.5">
                                             <h4 className="font-extrabold text-sm text-slate-800 leading-snug flex items-start gap-1.5 pr-24">
                                               <span className={`text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold ${dClass.bg} ${dClass.text} shrink-0 mt-0.5`}>#{index + 1}-{taskIndex + 1}</span>
                                               <span>{task.title}</span>
                                             </h4>
                                             
-                                            <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                                            <div className="flex flex-wrap items-center gap-2 pt-0.5">
                                               <span className={`text-[9.5px] font-black px-2.5 py-0.5 rounded-full border shadow-xs ${dClass.badge}`}>
                                                 {task.assignee}
                                               </span>
@@ -2989,6 +3061,23 @@
                                                 <IconCalendar />
                                                 <span className={isLate ? 'text-rose-600 font-black animate-pulse' : ''}>{task.dueDate}</span>
                                               </div>
+
+                                              {/* 🕒 着手リードタイム/経過日数の可視化マイクロバッジ */}
+                                              {task.startedAt && (
+                                                <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2.5 py-0.5 rounded-lg border shadow-xs ${
+                                                  isCompleted 
+                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                                                    : 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse'
+                                                }`}>
+                                                  <IconClock className="h-2.5 w-2.5" />
+                                                  <span>
+                                                    {isCompleted 
+                                                      ? `${task.startedAt.split('-').slice(1).join('/')} 〜 ${task.completedAt.split('-').slice(1).join('/')} (所要 ${durationDays} 日)`
+                                                      : `${task.startedAt.split('-').slice(1).join('/')} 着手 (${durationDays} 日経過)`
+                                                    }
+                                                  </span>
+                                                </span>
+                                              )}
                                             </div>
 
                                             {!isTaskCollapsed && task.description && (
@@ -3000,7 +3089,7 @@
 
                                           {/* アコーディオン展開時に表示する「状況時系列メモ」 */}
                                           {!isTaskCollapsed && (
-                                            <div className="space-y-3 pt-2 animate-in fade-in">
+                                            <div className="space-y-3 pt-2 animate-in fade-in" onClick={(e) => e.stopPropagation()}>
                                               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2.5 shadow-inner">
                                                 <div className="flex justify-between items-center pb-1.5 border-b border-slate-200">
                                                   <span className="text-[9.5px] font-black text-slate-400 uppercase flex items-center gap-1 tracking-wider">
@@ -3059,7 +3148,7 @@
                                                         <IconLink />
                                                         <input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-200 rounded-lg px-2 py-1 text-[9px] font-bold" />
                                                         <input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-200 rounded-lg px-2 py-1 text-[9px]" />
-                                                        <button onClick={handleAddLinkToNewLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-750 border border-indigo-200 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0">追加</button>
+                                                        <button onClick={handleAddLinkToNewLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0">追加</button>
                                                       </div>
 
                                                       {/* ストック中の一時リンク一覧表示 */}
@@ -3131,7 +3220,7 @@
                                                                   <IconLink />
                                                                   <input type="text" placeholder="名前" value={tmpEditLinkLabel} onChange={e=>setTmpEditLinkLabel(e.target.value)} className="w-16 border border-slate-200 rounded px-1.5 py-0.5 text-[9px] font-bold" />
                                                                   <input type="text" placeholder="URL" value={tmpEditLinkUrl} onChange={e=>setTmpEditLinkUrl(e.target.value)} className="flex-1 border border-slate-200 rounded px-1.5 py-0.5 text-[9px]" />
-                                                                  <button onClick={handleAddLinkToEditLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-750 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-black">追加</button>
+                                                                  <button onClick={handleAddLinkToEditLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-black">追加</button>
                                                                 </div>
 
                                                                 {/* リンク一覧 */}
@@ -3375,7 +3464,7 @@
                                 </div>
                               </div>
                             </td>
-                            {/* 📊 進捗バー */}
+                            {/* 📊 進捗率 */}
                             <td className="py-3.5 px-4 border border-slate-200">
                               <div className="flex items-center gap-2 min-w-[120px]">
                                 <div className="h-2 flex-1 bg-slate-100 border border-slate-200 rounded-full overflow-hidden shadow-inner">
@@ -3416,7 +3505,7 @@
                                 </button>
                                 <button 
                                   onClick={(e) => handleDeleteProjectByList(proj.id, e)}
-                                  className="text-slate-400 hover:text-rose-600 p-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-100 rounded-xl transition-all"
+                                  className="text-slate-405 hover:text-rose-600 p-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-100 rounded-xl transition-all"
                                   title="この案件を完全に削除"
                                 >
                                   <IconTrash2 className="h-4 w-4" />
