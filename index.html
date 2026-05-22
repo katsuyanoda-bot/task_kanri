@@ -473,6 +473,14 @@
       const [editFormData, setEditFormData] = useState({});
       const [editTaskImages, setEditTaskImages] = useState([]);
 
+      const [newTaskLinks, setNewTaskLinks] = useState([]);
+      const [tmpTaskLinkLabel, setTmpTaskLinkLabel] = useState('');
+      const [tmpTaskLinkUrl, setTmpTaskLinkUrl] = useState('');
+
+      const [editTaskLinks, setEditTaskLinks] = useState([]);
+      const [tmpEditTaskLinkLabel, setTmpEditTaskLinkLabel] = useState('');
+      const [tmpEditTaskLinkUrl, setTmpEditTaskLinkUrl] = useState('');
+
       const isOverdue = (dueDate, status) => { if (status === 'completed' || status === 'not_applicable') return false; return new Date(dueDate) < new Date(TODAY_STR); };
 
       const projectProgress = useMemo(() => {
@@ -606,6 +614,11 @@
       const handleAddLinkToEditLog = (e) => { e.preventDefault(); if(tmpEditLinkUrl.trim()){ setEditLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpEditLinkLabel.trim()||'リンク',url:tmpEditLinkUrl.trim()}]); setTmpEditLinkLabel(''); setTmpEditLinkUrl(''); }};
       const handleRemoveLinkFromEditLog = (id,e) => { e.preventDefault(); setEditLogLinks(p=>p.filter(l=>l.id!==id)); };
 
+      const handleAddLinkToNewTask = (e) => { e.preventDefault(); if(tmpTaskLinkUrl.trim()) { setNewTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpTaskLinkLabel.trim()||'リンク',url:tmpTaskLinkUrl.trim()}]); setTmpTaskLinkLabel(''); setTmpTaskLinkUrl(''); }};
+      const handleRemoveLinkFromNewTask = (id,e) => { e.preventDefault(); setNewTaskLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddLinkToEditTask = (e) => { e.preventDefault(); if(tmpEditTaskLinkUrl.trim()) { setEditTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpEditTaskLinkLabel.trim()||'リンク',url:tmpEditTaskLinkUrl.trim()}]); setTmpEditTaskLinkLabel(''); setTmpEditTaskLinkUrl(''); }};
+      const handleRemoveLinkFromEditTask = (id,e) => { e.preventDefault(); setEditTaskLinks(p=>p.filter(l=>l.id!==id)); };
+
       const addLog = (taskId) => {
         if (!newLogText.trim() && newLogImages.length === 0) return;
         const now = new Date(); const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -634,9 +647,9 @@
         })});
       };
       const toggleTaskPriority = (taskId) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, isHighPriority: !t.isHighPriority } : t) });
-      const handleAddTask = (stepId, e) => { e.preventDefault(); if (!newTaskTitle.trim()) return; saveProjectToFirestore({ ...activeProject, tasks: [...tasks, { id: `t_${Date.now()}`, stepId, title: newTaskTitle.trim(), description: newTaskDesc.trim(), assignee: newTaskAssignee.trim(), department: newTaskDept, dueDate: newTaskDueDate || new Date().toISOString().split('T')[0], status: 'pending', isHighPriority: false, startedAt: null, completedAt: null, attachedImages: [...newTaskImages], contextLogs: [] }] }); setAddingTaskStepId(null); showAlert('追加しました'); };
-      const startEditing = (task) => { setEditingTaskId(task.id); setEditTaskImages(task.attachedImages ? [...task.attachedImages] : []); setEditFormData({ title: task.title, description: task.description || '', assignee: task.assignee, department: task.department, dueDate: task.dueDate }); };
-      const saveEdit = (taskId) => { saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, attachedImages: [...editTaskImages] } : t) }); setEditingTaskId(null); showAlert('保存しました'); };
+      const handleAddTask = (stepId, e) => { e.preventDefault(); if (!newTaskTitle.trim()) return; saveProjectToFirestore({ ...activeProject, tasks: [...tasks, { id: `t_${Date.now()}`, stepId, title: newTaskTitle.trim(), description: newTaskDesc.trim(), assignee: newTaskAssignee.trim(), department: newTaskDept, dueDate: newTaskDueDate || new Date().toISOString().split('T')[0], status: 'pending', isHighPriority: false, startedAt: null, completedAt: null, attachedImages: [...newTaskImages], contextLogs: [], links: [...newTaskLinks] }] }); setAddingTaskStepId(null); showAlert('追加しました'); };
+      const startEditing = (task) => { setEditingTaskId(task.id); setEditTaskImages(task.attachedImages ? [...task.attachedImages] : []); setEditTaskLinks(task.links ? [...task.links] : []); setEditFormData({ title: task.title, description: task.description || '', assignee: task.assignee, department: task.department, dueDate: task.dueDate }); };
+      const saveEdit = (taskId) => { saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, attachedImages: [...editTaskImages], links: [...editTaskLinks] } : t) }); setEditingTaskId(null); showAlert('保存しました'); };
       const deleteTask = (taskId) => triggerConfirm('削除', '削除しますか？', () => { saveProjectToFirestore({ ...activeProject, tasks: tasks.filter(t => t.id !== taskId) }); showAlert('削除完了'); });
 
       const handleCopyToClipboard = (text, msg) => {
@@ -1032,7 +1045,7 @@
                                 </div>
                               </div>
                               {addingTaskStepId !== step.id && (
-                                <button onClick={(e) => { e.stopPropagation(); setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); setNewTaskImages([]); const fb = deptList[0]?.key || 'backoffice'; setNewTaskDept(fb); setNewTaskAssignee(fb === 'backoffice' ? '自分 (事務)' : '担当者'); }} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-black text-xs px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs"><IconPlus /> タスク追加</button>
+                                <button onClick={(e) => { e.stopPropagation(); setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); setNewTaskImages([]); setNewTaskLinks([]); setTmpTaskLinkLabel(''); setTmpTaskLinkUrl(''); const fb = deptList[0]?.key || 'backoffice'; setNewTaskDept(fb); setNewTaskAssignee(fb === 'backoffice' ? '自分 (事務)' : '担当者'); }} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-black text-xs px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs"><IconPlus /> タスク追加</button>
                               )}
                             </div>
                           </div>
@@ -1064,6 +1077,23 @@
                                     <div><label className="block text-slate-400 font-bold mb-1">担当個人名</label><input type="text" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-slate-700 dark:text-slate-200 font-bold" /></div>
                                     <div className="col-span-2"><label className="block text-slate-400 font-bold mb-1">完了期日</label><input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-slate-700 dark:text-slate-200 font-mono font-bold" /></div>
                                   </div>
+                                  
+                                  <div className="col-span-1 md:col-span-2 border-t border-slate-200 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
+                                    <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1"><IconLink className="h-3 w-3"/> 関連リンク</span>
+                                    <div className="flex items-center gap-2">
+                                      <input type="text" placeholder="リンク名 (例: 仕様書)" value={tmpTaskLinkLabel} onChange={e => setTmpTaskLinkLabel(e.target.value)} className="w-32 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
+                                      <input type="text" placeholder="URL (https://...)" value={tmpTaskLinkUrl} onChange={e => setTmpTaskLinkUrl(e.target.value)} className="flex-1 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
+                                      <button type="button" onClick={handleAddLinkToNewTask} className="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
+                                    </div>
+                                    {newTaskLinks.length > 0 && (
+                                      <div className="flex flex-wrap gap-1.5 pt-1">
+                                        {newTaskLinks.map(lnk => (
+                                          <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold"><IconLink className="h-2.5 w-2.5"/><span className="truncate max-w-[120px] ml-1">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromNewTask(lnk.id, e)} className="text-slate-400 hover:text-rose-500 font-bold text-[10px] ml-1">×</button></span>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+
                                 </div>
                                 <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                                   <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-white dark:bg-slate-800 border text-slate-500 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
@@ -1117,6 +1147,23 @@
                                           <div><label className="text-[10px] text-slate-400 font-bold block mb-0.5">担当者名</label><input type="text" value={editFormData.assignee} onChange={e => setEditFormData({...editFormData, assignee: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200" /></div>
                                           <div><label className="text-[10px] text-slate-400 font-bold block mb-0.5">完了期日</label><input type="date" value={editFormData.dueDate} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-mono text-slate-700 dark:text-slate-200" /></div>
                                         </div>
+
+                                        <div className="col-span-1 md:col-span-3 border-t border-slate-200 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
+                                          <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1"><IconLink className="h-3 w-3"/> 関連リンクの編集</span>
+                                          <div className="flex items-center gap-2">
+                                            <input type="text" placeholder="リンク名" value={tmpEditTaskLinkLabel} onChange={e => setTmpEditTaskLinkLabel(e.target.value)} className="w-28 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
+                                            <input type="text" placeholder="URL (https://...)" value={tmpEditTaskLinkUrl} onChange={e => setTmpEditTaskLinkUrl(e.target.value)} className="flex-1 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
+                                            <button type="button" onClick={handleAddLinkToEditTask} className="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
+                                          </div>
+                                          {editTaskLinks.length > 0 && (
+                                            <div className="flex flex-wrap gap-1.5 pt-1">
+                                              {editTaskLinks.map(lnk => (
+                                                <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold"><IconLink className="h-2.5 w-2.5"/><span className="truncate max-w-[120px] ml-1">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromEditTask(lnk.id, e)} className="text-slate-400 hover:text-rose-500 font-bold text-[10px] ml-1">×</button></span>
+                                              ))}
+                                            </div>
+                                          )}
+                                        </div>
+
                                         <div className="flex justify-end gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-700">
                                           <button onClick={() => setEditingTaskId(null)} className="bg-slate-100 dark:bg-slate-800 text-slate-500 px-3 py-1.5 rounded-xl font-bold">戻る</button>
                                           <button onClick={() => saveEdit(task.id)} className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl font-bold">保存</button>
@@ -1149,6 +1196,18 @@
                                               </div>
                                             </div>
                                           )}
+                                          
+                                          {task.links && task.links.length > 0 && (
+                                            <div className="flex flex-wrap items-center gap-1.5 pt-2 mt-2 border-t border-slate-100 dark:border-slate-700/50" onClick={(e) => e.stopPropagation()}>
+                                              <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 flex items-center gap-0.5"><IconLink className="h-2.5 w-2.5"/> 関連リンク:</span>
+                                              {task.links.map(lnk => (
+                                                <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-lg transition font-bold shadow-xs">
+                                                  <IconExternalLink className="h-2.5 w-2.5" /><span>{lnk.label}</span>
+                                                </a>
+                                              ))}
+                                            </div>
+                                          )}
+
                                         </div>
 
                                         {!tCol && (
