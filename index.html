@@ -8,6 +8,25 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
+  <!-- Tailwindの独自カラースケール設定（未定義クラスによる表示崩れを防止） -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            slate: { 55: '#f8fafc', 150: '#e2e8f0', 202: '#e2e8f0', 205: '#e2e8f0', 250: '#e2e8f0', 350: '#cbd5e1', 404: '#94a3b8', 405: '#94a3b8', 450: '#94a3b8', 455: '#94a3b8', 505: '#64748b', 550: '#64748b', 555: '#64748b', 605: '#475569', 606: '#475569', 650: '#475569', 655: '#475569', 705: '#334155', 750: '#334155', 755: '#334155', 805: '#1e293b', 850: '#1e293b', 855: '#1e293b', 955: '#0f172a' },
+            purple: { 55: '#faf5ff' },
+            indigo: { 150: '#e0e7ff', 450: '#818cf8', 455: '#818cf8', 505: '#6366f1', 550: '#6366f1', 605: '#4f46e5', 606: '#4f46e5', 650: '#4f46e5', 655: '#4f46e5', 750: '#3730a3', 755: '#3730a3' },
+            emerald: { 55: '#ecfdf5', 555: '#10b981' },
+            rose: { 55: '#fff1f2', 150: '#ffe4e6', 550: '#f43f5e', 605: '#e11d48', 650: '#e11d48', 655: '#e11d48', 850: '#881337' },
+            amber: { 955: '#78350f' },
+            blue: { 606: '#2563eb' }
+          }
+        }
+      }
+    }
+  </script>
+
   <!-- React 18 & ReactDOM 18 CDN -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
@@ -534,7 +553,7 @@
       });
     };
 
-    // --- 所要日数/経過日数計算ヘルパー (安全なグローバルスコープへの配置でTDZエラーを100%回避) ---
+    // --- 所要日数/経過日数計算ヘルパー ---
     const getDurationDays = (task) => {
       if (!task || !task.startedAt) return null;
       const start = new Date(task.startedAt);
@@ -937,7 +956,7 @@
       const renderStepDeadlineBadge = (step, progress) => {
         if (progress === 100) {
           return (
-            <span className="bg-emerald-55 text-emerald-800 border border-emerald-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full shadow-sm select-none">
+            <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full shadow-sm select-none">
               ✅ STEP完了
             </span>
           );
@@ -1444,7 +1463,7 @@
       };
 
       const addLog = (taskId) => {
-        // 【バグ修正】テキストも画像も完全に空の場合のみ処理をガードする
+        // テキストも画像も完全に空の場合のみ処理をガードする
         if (!newLogText.trim() && newLogImages.length === 0) return;
         
         const now = new Date();
@@ -1782,6 +1801,14 @@
         }
       };
 
+      // URLをクリップボードにコピーする関数 (追加)
+      const handleCopyProjectUrl = (projectId, e) => {
+        if (e) e.stopPropagation();
+        const url = new URL(window.location.href);
+        url.searchParams.set('pid', projectId);
+        handleCopyToClipboard(url.toString(), '共有用URLをクリップボードにコピーしました！');
+      };
+
       // 部署マスタの更新
       const handleCreateDept = async (e) => {
         e.preventDefault();
@@ -1954,21 +1981,21 @@
       };
 
       return (
-        <div className="min-h-screen bg-slate-50 text-slate-805 font-sans antialiased pb-16">
+        <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-16">
           
           {/* A. トースト（アラート）メッセージの常設通知ボックス */}
           {alertMessage && (
             <div className="fixed bottom-6 right-6 bg-slate-900/95 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] whitespace-pre-wrap max-w-sm flex items-center gap-2 border border-slate-700 backdrop-blur-md animate-bounce">
-              <IconInfo className="h-5 w-5 text-indigo-450 shrink-0" />
+              <IconInfo className="h-5 w-5 text-indigo-400 shrink-0" />
               <span className="font-bold leading-relaxed">{alertMessage}</span>
             </div>
           )}
 
           {/* B. アプリケーションワイドのカスタム確認モーダル */}
           {confirmModal.isOpen && (
-            <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-xs flex items-center justify-center z-[100] animate-in fade-in duration-200">
+            <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
               <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-200 mx-4">
-                <div className="flex items-center gap-3 pb-3 border-b border-slate-100 text-rose-650">
+                <div className="flex items-center gap-3 pb-3 border-b border-slate-100 text-rose-600">
                   <div className="p-2 bg-rose-50 rounded-2xl">
                     <IconWarning className="h-6 w-6 text-rose-600" />
                   </div>
@@ -1976,14 +2003,14 @@
                     {confirmModal.title}
                   </h3>
                 </div>
-                <p className="text-xs text-slate-555 whitespace-pre-line leading-relaxed">
+                <p className="text-xs text-slate-500 whitespace-pre-line leading-relaxed">
                   {confirmModal.message}
                 </p>
                 <div className="flex justify-end gap-2 px-1 pt-3 border-t border-slate-100 text-xs">
                   <button 
                     type="button" 
                     onClick={closeConfirm} 
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-605 px-4 py-2.5 rounded-2xl font-bold transition-all"
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2.5 rounded-2xl font-bold transition-all"
                   >
                     キャンセル
                   </button>
@@ -2002,7 +2029,7 @@
           {/* C. 画像等倍拡大表示モーダル（ライトボックス） */}
           {lightboxImage && (
             <div 
-              className="fixed inset-0 bg-slate-955/90 z-[200] flex items-center justify-center p-4 cursor-zoom-out animate-in fade-in duration-250"
+              className="fixed inset-0 bg-slate-900/90 z-[200] flex items-center justify-center p-4 cursor-zoom-out animate-in fade-in duration-200"
               onClick={() => setLightboxImage(null)}
             >
               <div className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white p-2.5 rounded-full transition-all cursor-pointer">
@@ -2028,7 +2055,7 @@
                   <h1 className="text-xs font-black text-slate-900 leading-tight">Project Loom</h1>
                   <p className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">
                     マイ・プロジェクト ECDダッシュボード 
-                    {!useFirebase && <span className="ml-1 text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded font-black text-[7.5px] tracking-normal">LOCAL-STORE</span>}
+                    {!useFirebase && <span className="ml-1 text-emerald-600 bg-emerald-50 px-1 py-0.5 rounded font-black text-[7.5px] tracking-normal">LOCAL-STORE</span>}
                   </p>
                 </div>
               </div>
@@ -2040,10 +2067,10 @@
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${
                     viewMode === 'board' 
                       ? 'bg-white text-indigo-700 shadow-sm' 
-                      : 'text-slate-605 hover:text-slate-900'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <IconCalendar className="h-3 w-3 text-indigo-505" />
+                  <IconCalendar className="h-3 w-3 text-indigo-500" />
                   <span>📋 進行ダッシュボード</span>
                 </button>
                 <button
@@ -2051,10 +2078,10 @@
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${
                     viewMode === 'database' 
                       ? 'bg-white text-indigo-700 shadow-sm' 
-                      : 'text-slate-605 hover:text-slate-900'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <IconDatabase className="h-3 w-3 text-indigo-505" />
+                  <IconDatabase className="h-3 w-3 text-indigo-500" />
                   <span>🗃️ 案件データベース</span>
                 </button>
               </div>
@@ -2063,7 +2090,7 @@
                 {/* ⚙️ 部署・カラー設定トリガー */}
                 <button 
                   onClick={() => setShowSettingsModal(true)}
-                  className="flex items-center gap-1 text-[11px] font-extrabold text-slate-650 hover:text-purple-755 bg-slate-50 hover:bg-purple-50/60 border border-slate-200 hover:border-purple-300 px-3 py-2 rounded-xl transition-all shadow-xs"
+                  className="flex items-center gap-1 text-[11px] font-extrabold text-slate-600 hover:text-purple-700 bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-300 px-3 py-2 rounded-xl transition-all shadow-xs"
                 >
                   <IconSettings className="h-3.5 w-3.5" />
                   <span>⚙️ マスタ設定</span>
@@ -2072,8 +2099,8 @@
                 {/* フォルダ全体の進捗バー */}
                 <div className="flex items-center gap-2.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs">
                   <div className="text-right leading-none">
-                    <span className="text-[8px] text-slate-404 font-extrabold block mb-0.5 uppercase tracking-wide">完了率</span>
-                    <span className="text-[9px] font-black text-slate-505 font-mono">{activeProject ? activeProject.code : '---'}</span>
+                    <span className="text-[8px] text-slate-400 font-extrabold block mb-0.5 uppercase tracking-wide">完了率</span>
+                    <span className="text-[9px] font-black text-slate-500 font-mono">{activeProject ? activeProject.code : '---'}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="h-1.5 w-16 bg-slate-200 rounded-full overflow-hidden shadow-inner">
@@ -2082,7 +2109,7 @@
                         style={{ width: `${projectProgress}%` }}
                       ></div>
                     </div>
-                    <span className="text-[10px] font-black text-indigo-655 font-mono">{projectProgress}%</span>
+                    <span className="text-[10px] font-black text-indigo-600 font-mono">{projectProgress}%</span>
                   </div>
                 </div>
               </div>
@@ -2093,7 +2120,7 @@
               {/* 連結パンくず型 案件セレクター */}
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 {/* 1. 大分類選択 */}
-                <div className="flex items-center gap-1.5 bg-white border border-slate-250 rounded-xl px-2.5 py-1 shadow-xs hover:border-purple-300 transition-colors">
+                <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl px-2.5 py-1 shadow-xs hover:border-purple-300 transition-colors">
                   <IconFolder className="h-3.5 w-3.5 text-purple-600 shrink-0" />
                   <select 
                     value={selectedFolderId} 
@@ -2123,7 +2150,7 @@
                 <IconChevronRight className="h-3 w-3 text-slate-400 shrink-0" />
 
                 {/* 2. 案件プロジェクト選択 */}
-                <div className="flex items-center gap-1.5 bg-white border border-slate-250 rounded-xl px-2.5 py-1 shadow-xs hover:border-indigo-300 transition-colors">
+                <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl px-2.5 py-1 shadow-xs hover:border-indigo-300 transition-colors">
                   <span className="text-[10px] shrink-0 leading-none">📄</span>
                   <select 
                     value={currentProjectId} 
@@ -2173,7 +2200,7 @@
                           <div className="text-[9px] font-black text-slate-700 truncate max-w-[90px] leading-tight">
                             {idx + 1}. {step.name}
                           </div>
-                          <span className="text-[8px] text-slate-404 font-mono font-bold leading-none">{completedSub}/{totalSub}</span>
+                          <span className="text-[8px] text-slate-400 font-mono font-bold leading-none">{completedSub}/{totalSub}</span>
                         </div>
 
                         <div className="flex items-center gap-1 shrink-0 leading-none">
@@ -2182,7 +2209,7 @@
                               🚨遅延 {lates}
                             </span>
                           ) : (
-                            <div className="h-1 w-8 bg-slate-100 rounded-full overflow-hidden shadow-inner w-8">
+                            <div className="h-1 w-8 bg-slate-100 rounded-full overflow-hidden shadow-inner">
                               <div className={`h-full ${dClass.bar}`} style={{ width: `${progress}%` }} />
                             </div>
                           )}
@@ -2209,10 +2236,10 @@
                     <div className="space-y-2">
                       {editingProject ? (
                         <div className="space-y-3.5 bg-slate-50/60 p-4 rounded-3xl border border-slate-200 text-xs shadow-inner animate-in fade-in duration-150">
-                          <span className="font-extrabold text-indigo-655 block mb-1">✏️ 案件プロジェクト階層・情報の変更</span>
+                          <span className="font-extrabold text-indigo-600 block mb-1">✏️ 案件プロジェクト階層・情報の変更</span>
                           <div className="grid grid-cols-2 gap-3">
                             <div>
-                              <label className="text-[10px] text-slate-450 font-bold block mb-0.5">所属大分類フォルダ</label>
+                              <label className="text-[10px] text-slate-400 font-bold block mb-0.5">所属大分類フォルダ</label>
                               <select 
                                 value={projectForm.folderId} 
                                 onChange={e => setProjectForm({...projectForm, folderId: e.target.value})} 
@@ -2224,7 +2251,7 @@
                               </select>
                             </div>
                             <div>
-                              <label className="text-[10px] text-slate-450 font-bold block mb-0.5">ステータス</label>
+                              <label className="text-[10px] text-slate-400 font-bold block mb-0.5">ステータス</label>
                               <select 
                                 value={projectForm.status || 'pending'} 
                                 onChange={e => setProjectForm({...projectForm, status: e.target.value})} 
@@ -2238,32 +2265,32 @@
                           </div>
                           <div className="grid grid-cols-2 gap-3">
                             <div>
-                              <label className="text-[10px] text-slate-450 font-bold block mb-0.5">案件プロジェクト名</label>
+                              <label className="text-[10px] text-slate-400 font-bold block mb-0.5">案件プロジェクト名</label>
                               <input type="text" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} className="w-full border border-slate-300 rounded-xl p-2 focus:border-indigo-500 focus:outline-none bg-white text-xs font-bold" />
                             </div>
                             <div>
-                              <label className="text-[10px] text-slate-450 font-bold block mb-0.5">案件コード</label>
+                              <label className="text-[10px] text-slate-400 font-bold block mb-0.5">案件コード</label>
                               <input type="text" value={projectForm.code} onChange={e => setProjectForm({...projectForm, code: e.target.value})} className="w-full border border-slate-300 rounded-xl p-2 focus:border-indigo-500 focus:outline-none bg-white text-xs font-bold font-mono" />
                             </div>
                           </div>
                           <div className="grid grid-cols-2 gap-3 text-[10px]">
                             <div>
-                              <label className="font-bold text-slate-450 block mb-0.5">開始予定日</label>
+                              <label className="font-bold text-slate-400 block mb-0.5">開始予定日</label>
                               <input type="date" value={projectForm.startDate} onChange={e => setProjectForm({...projectForm, startDate: e.target.value})} className="w-full border border-slate-300 rounded-xl p-2 font-mono text-xs focus:outline-none bg-white font-bold" />
                             </div>
                             <div>
-                              <label className="font-bold text-slate-450 block mb-0.5">目標完了日</label>
+                              <label className="font-bold text-slate-400 block mb-0.5">目標完了日</label>
                               <input type="date" value={projectForm.endDate} onChange={e => setProjectForm({...projectForm, endDate: e.target.value})} className="w-full border border-slate-300 rounded-xl p-2 font-mono text-xs focus:outline-none bg-white font-bold" />
                             </div>
                           </div>
                           <div className="flex justify-end gap-1.5 pt-1.5 border-t border-slate-200">
-                            <button type="button" onClick={() => setEditingProject(false)} className="text-[10px] text-slate-550 hover:bg-slate-100 px-3 py-1.5 rounded-xl font-bold transition">戻る</button>
+                            <button type="button" onClick={() => setEditingProject(false)} className="text-[10px] text-slate-500 hover:bg-slate-100 px-3 py-1.5 rounded-xl font-bold transition">戻る</button>
                             <button type="button" onClick={saveProjectEdit} className="text-[10px] bg-indigo-600 text-white px-4 py-1.5 rounded-xl font-bold shadow-md shadow-indigo-100">変更を適用</button>
                           </div>
                         </div>
                       ) : (
                         <div>
-                          <div className="flex items-center gap-2 text-xs text-slate-404 font-extrabold flex-wrap">
+                          <div className="flex items-center gap-2 text-xs text-slate-400 font-extrabold flex-wrap">
                             <IconCalendar />
                             <span>期間: {activeProject.startDate} 〜 {activeProject.endDate}</span>
                             <span className="ml-1 bg-purple-100 text-purple-700 font-black border border-purple-200 rounded-xl px-2 py-0.5 text-[9.5px] shadow-xs">
@@ -2274,12 +2301,12 @@
                             </span>
                           </div>
                           <div className="flex items-center gap-2 mt-1.5 flex-wrap group/project-title">
-                            <h2 className="text-base font-black text-slate-850 leading-tight">
+                            <h2 className="text-base font-black text-slate-800 leading-tight">
                               {activeProject.name}
                             </h2>
                             <button 
                               onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(activeProject.name, '案件名をコピーしました！'); }}
-                              className="opacity-0 group-hover/project-title:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-250 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs select-none"
+                              className="opacity-0 group-hover/project-title:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs select-none"
                               title="案件プロジェクト名をコピー"
                             >
                               📋 コピー
@@ -2289,7 +2316,7 @@
                               className="text-slate-300 hover:text-rose-600 p-1 rounded-xl transition-all ml-1"
                               title="この案件プロジェクトを削除する"
                             >
-                              <IconTrash2 className="h-4.5 w-4.5" />
+                              <IconTrash2 className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
@@ -2301,13 +2328,13 @@
                       <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
                         <button 
                           onClick={() => { setEditingProject(true); setProjectForm(activeProject); }}
-                          className="text-[10px] text-indigo-605 hover:text-indigo-800 font-black flex items-center gap-1 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 px-3 py-2 rounded-xl transition shadow-xs"
+                          className="text-[10px] text-indigo-600 hover:text-indigo-800 font-black flex items-center gap-1 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 px-3 py-2 rounded-xl transition shadow-xs"
                         >
                           <IconEdit2 className="h-3 w-3" /> 案件の編集・移動
                         </button>
                         <button 
                           onClick={(e) => handleCopyProjectUrl(activeProject.id, e)}
-                          className="text-[10px] text-slate-605 hover:text-slate-850 font-black flex items-center gap-1 bg-white border border-slate-300 hover:bg-slate-50 px-3 py-2 rounded-xl transition shadow-xs"
+                          className="text-[10px] text-slate-600 hover:text-slate-800 font-black flex items-center gap-1 bg-white border border-slate-300 hover:bg-slate-50 px-3 py-2 rounded-xl transition shadow-xs"
                           title="この案件の直リンクURLをコピーする"
                         >
                           <IconLink className="h-3 w-3 text-slate-400" /> コピー共有
@@ -2317,7 +2344,7 @@
 
                   </div>
                 ) : (
-                  <p className="text-slate-404 text-xs italic bg-white p-6 border rounded-3xl text-center shadow-xs">案件プロジェクトが未作成、または選択されていません。上部ヘッダーの「＋」ボタンから追加してください。</p>
+                  <p className="text-slate-400 text-xs italic bg-white p-6 border rounded-3xl text-center shadow-xs">案件プロジェクトが未作成、または選択されていません。上部ヘッダーの「＋」ボタンから追加してください。</p>
                 )}
 
                 {/* 大ステップ（STEP）の動的追加ボタン */}
@@ -2334,24 +2361,24 @@
                         setTmpStepLinkLabel('');
                         setTmpStepLinkUrl('');
                       }}
-                      className="bg-purple-55/15 hover:bg-purple-100 text-purple-700 font-black border border-purple-200 text-xs px-4 py-3 rounded-2xl flex items-center gap-1.5 transition-all shadow-xs"
+                      className="bg-purple-50 hover:bg-purple-100 text-purple-700 font-black border border-purple-200 text-xs px-4 py-3 rounded-2xl flex items-center gap-1.5 transition-all shadow-xs"
                     >
                       <IconPlus /> 新しい大ステップ（大工程）を追加
                     </button>
                   ) : activeProject ? (
-                    <form onSubmit={handleAddStep} className="w-full bg-purple-50/20 border border-purple-300 rounded-3xl p-5 space-y-4 text-xs animate-in fade-in duration-200">
+                    <form onSubmit={handleAddStep} className="w-full bg-purple-50 border border-purple-300 rounded-3xl p-5 space-y-4 text-xs animate-in fade-in duration-200">
                       <div className="flex justify-between items-center pb-1.5 border-b border-purple-100">
                         <span className="font-extrabold text-purple-800">➕ 新規大ステップ（STEP）の作成</span>
-                        <button type="button" onClick={() => setShowAddStepForm(false)} className="text-slate-450 hover:text-slate-605 p-1"><IconX /></button>
+                        <button type="button" onClick={() => setShowAddStepForm(false)} className="text-slate-400 hover:text-slate-600 p-1"><IconX /></button>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-slate-605 font-bold mb-1">大ステップ名称（工程名） <span className="text-rose-500">*</span></label>
-                          <input required type="text" placeholder="例: テスト運用 ＆ 最終調整" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 text-slate-705 bg-white focus:outline-none" />
+                          <label className="block text-slate-600 font-bold mb-1">大ステップ名称（工程名） <span className="text-rose-500">*</span></label>
+                          <input required type="text" placeholder="例: テスト運用 ＆ 最終調整" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 text-slate-700 bg-white focus:outline-none" />
                         </div>
                         <div>
-                          <label className="block text-slate-605 font-bold mb-1">ステップ詳細説明・進捗目標など</label>
-                          <input type="text" placeholder="例: 実際の取引先アカウントを用いた検証" value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 text-slate-705 bg-white focus:outline-none" />
+                          <label className="block text-slate-600 font-bold mb-1">ステップ詳細説明・進捗目標など</label>
+                          <input type="text" placeholder="例: 実際の取引先アカウントを用いた検証" value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 text-slate-700 bg-white focus:outline-none" />
                         </div>
                       </div>
 
@@ -2359,11 +2386,11 @@
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-slate-600 font-bold mb-1">予定開始日</label>
-                          <input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 text-slate-705 font-mono font-bold" />
+                          <input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 text-slate-700 font-mono font-bold" />
                         </div>
                         <div>
-                          <label className="block text-slate-605 font-bold mb-1">完了予定日(締切)</label>
-                          <input type="date" value={newStepDueDate} onChange={e => setNewStepDueDate(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 text-slate-705 font-mono font-bold" />
+                          <label className="block text-slate-600 font-bold mb-1">完了予定日(締切)</label>
+                          <input type="date" value={newStepDueDate} onChange={e => setNewStepDueDate(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 text-slate-700 font-mono font-bold" />
                         </div>
                       </div>
 
@@ -2373,7 +2400,7 @@
                         <select 
                           value={newStepDeptKey} 
                           onChange={e => setNewStepDeptKey(e.target.value)} 
-                          className="w-full border border-slate-300 rounded-xl p-2.5 bg-white text-slate-705 text-xs font-bold focus:outline-none"
+                          className="w-full border border-slate-300 rounded-xl p-2.5 bg-white text-slate-700 text-xs font-bold focus:outline-none"
                         >
                           {deptList.map(d => (
                             <option key={d.key} value={d.key}>{d.label}</option>
@@ -2390,14 +2417,14 @@
                             placeholder="例: 社内要件定義書" 
                             value={tmpStepLinkLabel} 
                             onChange={e => setTmpStepLinkLabel(e.target.value)} 
-                            className="w-40 border border-slate-200 bg-white rounded-xl p-2 focus:outline-none text-slate-705"
+                            className="w-40 border border-slate-200 bg-white rounded-xl p-2 focus:outline-none text-slate-700"
                           />
                           <input 
                             type="text" 
                             placeholder="例: https://notion.so/..." 
                             value={tmpStepLinkUrl} 
-                            onChange={e => setTmpEditStepLinkUrl(e.target.value)} 
-                            className="flex-1 border border-slate-200 bg-white rounded-xl p-2 focus:outline-none text-slate-705"
+                            onChange={e => setTmpStepLinkUrl(e.target.value)} 
+                            className="flex-1 border border-slate-200 bg-white rounded-xl p-2 focus:outline-none text-slate-700"
                           />
                           <button 
                             type="button" 
@@ -2412,10 +2439,10 @@
                         {newStepLinks.length > 0 && (
                           <div className="flex flex-wrap gap-2 pt-1">
                             {newStepLinks.map(lnk => (
-                              <span key={lnk.id} className="inline-flex items-center gap-1.5 text-xs bg-purple-100 text-purple-805 border border-purple-200 px-3 py-1 rounded-full font-bold shadow-xs">
+                              <span key={lnk.id} className="inline-flex items-center gap-1.5 text-xs bg-purple-100 text-purple-800 border border-purple-200 px-3 py-1 rounded-full font-bold shadow-xs">
                                 <IconLink className="h-3 w-3" />
                                 <span>{lnk.label}</span>
-                                <button type="button" onClick={(e) => handleRemoveLinkFromNewStep(lnk.id, e)} className="text-purple-400 hover:text-purple-855 font-extrabold text-xs ml-1">×</button>
+                                <button type="button" onClick={(e) => handleRemoveLinkFromNewStep(lnk.id, e)} className="text-purple-400 hover:text-purple-800 font-extrabold text-xs ml-1">×</button>
                               </span>
                             ))}
                           </div>
@@ -2423,7 +2450,7 @@
                       </div>
 
                       <div className="flex flex-wrap justify-end gap-2 pt-2 border-t border-purple-100">
-                        <button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-100 text-slate-605 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
+                        <button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-100 text-slate-600 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
                         <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-2xl font-bold shadow-md shadow-purple-100">ステップを作成</button>
                       </div>
                     </form>
@@ -2459,7 +2486,7 @@
                         {isEditingThisStep ? (
                           <div 
                             onClick={(e) => e.stopPropagation()} 
-                            className="p-5 bg-purple-50/25 border-b border-purple-100 flex flex-col gap-4 animate-in fade-in"
+                            className="p-5 bg-purple-50 border-b border-purple-100 flex flex-col gap-4 animate-in fade-in"
                           >
                             <div className="flex items-center gap-3">
                               <span className="bg-purple-600 text-white font-black text-[10px] px-3 py-1 rounded-lg shrink-0">STEP {index + 1} 編集</span>
@@ -2469,7 +2496,7 @@
                                 placeholder="ステップ名を入力..." 
                                 value={editStepName} 
                                 onChange={e => setEditStepName(e.target.value)} 
-                                className="flex-1 font-bold text-sm border border-purple-200 rounded-xl p-2 focus:border-purple-500 focus:outline-none bg-white shadow-inner text-slate-705"
+                                className="flex-1 font-bold text-sm border border-purple-200 rounded-xl p-2 focus:border-purple-500 focus:outline-none bg-white shadow-inner text-slate-700"
                               />
                             </div>
                             <input 
@@ -2477,18 +2504,18 @@
                               placeholder="ステップの簡潔な説明・進捗目安..." 
                               value={editStepDesc} 
                               onChange={e => setEditStepDesc(e.target.value)} 
-                              className="w-full text-xs border border-purple-200 rounded-xl p-2 focus:border-purple-500 focus:outline-none bg-white shadow-inner text-slate-705"
+                              className="w-full text-xs border border-purple-200 rounded-xl p-2 focus:border-purple-500 focus:outline-none bg-white shadow-inner text-slate-700"
                             />
 
                             {/* 開始日・期限の編集 */}
                             <div className="grid grid-cols-2 gap-4 text-xs">
                               <div>
-                                <label className="block text-slate-605 font-bold mb-0.5">開始予定日</label>
-                                <input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border border-purple-200 rounded-xl p-2 font-mono text-xs focus:outline-none bg-white font-bold text-slate-705" />
+                                <label className="block text-slate-600 font-bold mb-0.5">開始予定日</label>
+                                <input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border border-purple-200 rounded-xl p-2 font-mono text-xs focus:outline-none bg-white font-bold text-slate-700" />
                               </div>
                               <div>
-                                <label className="block text-slate-655 font-bold mb-0.5">完了予定日(期日)</label>
-                                <input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border border-purple-200 rounded-xl p-2 font-mono text-xs focus:outline-none bg-white font-bold text-slate-705" />
+                                <label className="block text-slate-600 font-bold mb-0.5">完了予定日(期日)</label>
+                                <input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border border-purple-200 rounded-xl p-2 font-mono text-xs focus:outline-none bg-white font-bold text-slate-700" />
                               </div>
                             </div>
 
@@ -2498,7 +2525,7 @@
                               <select 
                                 value={editStepDeptKey} 
                                 onChange={e => setEditStepDeptKey(e.target.value)} 
-                                className="w-full border border-purple-200 rounded-xl p-2 bg-white focus:outline-none text-xs font-bold text-slate-705"
+                                className="w-full border border-purple-200 rounded-xl p-2 bg-white focus:outline-none text-xs font-bold text-slate-700"
                               >
                                 {deptList.map(d => (
                                   <option key={d.key} value={d.key}>{d.label}</option>
@@ -2515,14 +2542,14 @@
                                   placeholder="リンク名" 
                                   value={tmpEditStepLinkLabel} 
                                   onChange={e => setTmpEditStepLinkLabel(e.target.value)} 
-                                  className="w-32 border border-slate-200 bg-white rounded-xl p-2 text-xs font-bold focus:outline-none text-slate-705"
+                                  className="w-32 border border-slate-200 bg-white rounded-xl p-2 text-xs font-bold focus:outline-none text-slate-700"
                                 />
                                 <input 
                                   type="text" 
                                   placeholder="URL" 
                                   value={tmpEditStepLinkUrl} 
                                   onChange={e => setTmpEditStepLinkUrl(e.target.value)} 
-                                  className="flex-1 border border-slate-200 bg-white rounded-xl p-2 text-xs focus:outline-none text-slate-705"
+                                  className="flex-1 border border-slate-200 bg-white rounded-xl p-2 text-xs focus:outline-none text-slate-700"
                                 />
                                 <button 
                                   type="button" 
@@ -2537,10 +2564,10 @@
                               {editStepLinks.length > 0 && (
                                 <div className="flex flex-wrap gap-2 pt-1">
                                   {editStepLinks.map(lnk => (
-                                    <span key={lnk.id} className="inline-flex items-center gap-1.5 text-[11px] bg-purple-100 text-purple-805 border border-purple-200 px-2.5 py-1 rounded-full font-bold shadow-xs">
+                                    <span key={lnk.id} className="inline-flex items-center gap-1.5 text-[11px] bg-purple-100 text-purple-800 border border-purple-200 px-2.5 py-1 rounded-full font-bold shadow-xs">
                                       <IconLink className="h-3 w-3" />
                                       <span className="truncate max-w-[120px]">{lnk.label}</span>
-                                      <button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-purple-400 hover:text-rose-605 font-extrabold text-xs ml-1">×</button>
+                                      <button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-purple-400 hover:text-rose-600 font-extrabold text-xs ml-1">×</button>
                                     </span>
                                   ))}
                                 </div>
@@ -2548,7 +2575,7 @@
                             </div>
 
                             <div className="flex flex-wrap justify-end gap-2 pt-1.5 border-t border-purple-100">
-                              <button type="button" onClick={() => setEditingStepId(null)} className="text-xs text-slate-655 px-4 py-2 bg-white border border-slate-200 rounded-xl font-bold transition">キャンセル</button>
+                              <button type="button" onClick={() => setEditingStepId(null)} className="text-xs text-slate-600 px-4 py-2 bg-white border border-slate-200 rounded-xl font-bold transition">キャンセル</button>
                               <button type="button" onClick={(e) => saveStepEdit(step.id, e)} className="text-xs bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-xl font-bold shadow-md transition">変更を確定</button>
                             </div>
                           </div>
@@ -2569,7 +2596,7 @@
 
                                 <span className={`${stepClasses.bar} text-white font-black text-[10px] px-2.5 py-0.5 rounded shadow-xs`}>STEP {index + 1}</span>
                                 
-                                <h3 className="font-black text-sm text-slate-855 flex items-center gap-1.5 leading-none select-text">
+                                <h3 className="font-black text-sm text-slate-800 flex items-center gap-1.5 leading-none select-text">
                                   {step.name}
                                   <button 
                                     onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(step.name, 'ステップ名をコピーしました！'); }}
@@ -2578,8 +2605,8 @@
                                   >
                                     📋 コピー
                                   </button>
-                                  <span className="text-slate-405 ml-1">
-                                    {isStepCollapsed ? <IconChevronRight className="h-4.5 w-4.5" /> : <IconChevronDown className="h-4.5 w-4.5" />}
+                                  <span className="text-slate-400 ml-1">
+                                    {isStepCollapsed ? <IconChevronRight className="h-4 w-4" /> : <IconChevronDown className="h-4 w-4" />}
                                   </span>
                                 </h3>
                                 
@@ -2591,7 +2618,7 @@
                                   <button 
                                     onClick={(e) => moveStepOrder(index, -1, e)}
                                     disabled={index === 0}
-                                    className={`p-1.5 rounded-lg transition border border-transparent hover:border-slate-205 hover:bg-white ${index === 0 ? 'opacity-25 cursor-not-allowed' : 'text-slate-505'}`}
+                                    className={`p-1.5 rounded-lg transition border border-transparent hover:border-slate-200 hover:bg-white ${index === 0 ? 'opacity-25 cursor-not-allowed' : 'text-slate-500'}`}
                                     title="上（前）に移動"
                                   >
                                     <IconArrowUp />
@@ -2599,7 +2626,7 @@
                                   <button 
                                     onClick={(e) => moveStepOrder(index, 1, e)}
                                     disabled={index === stepList.length - 1}
-                                    className={`p-1.5 rounded-lg transition border border-transparent hover:border-slate-205 hover:bg-white ${index === stepList.length - 1 ? 'opacity-25 cursor-not-allowed' : 'text-slate-505'}`}
+                                    className={`p-1.5 rounded-lg transition border border-transparent hover:border-slate-200 hover:bg-white ${index === stepList.length - 1 ? 'opacity-25 cursor-not-allowed' : 'text-slate-500'}`}
                                     title="下（後）に移動"
                                   >
                                     <IconArrowDown />
@@ -2607,14 +2634,14 @@
 
                                   <button 
                                     onClick={(e) => startEditingStep(step, e)}
-                                    className="p-1.5 text-slate-404 hover:text-purple-600 hover:bg-white hover:border-slate-200 border border-transparent rounded-lg transition"
+                                    className="p-1.5 text-slate-400 hover:text-purple-600 hover:bg-white hover:border-slate-200 border border-transparent rounded-lg transition"
                                     title="ステップの詳細・主担当・期日・関連URLを変更"
                                   >
                                     <IconEdit2 className="h-3.5 w-3.5" />
                                   </button>
                                   <button 
                                     onClick={(e) => handleDeleteStep(step.id, step.name, e)}
-                                    className="p-1.5 text-slate-404 hover:text-rose-650 hover:bg-white hover:border-slate-200 border border-transparent rounded-lg transition"
+                                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-white hover:border-slate-200 border border-transparent rounded-lg transition"
                                     title="この大ステップを配下タスクごと全削除"
                                   >
                                     <IconTrash2 className="h-3.5 w-3.5" />
@@ -2623,7 +2650,7 @@
                               </div>
                               
                               <div className="flex flex-col gap-2 pl-8">
-                                <p className="text-slate-605 font-bold text-xs select-text">{step.desc}</p>
+                                <p className="text-slate-600 font-bold text-xs select-text">{step.desc}</p>
                                 
                                 <div className="flex items-center gap-3 flex-wrap">
                                   {step.startDate && step.dueDate && (
@@ -2658,7 +2685,7 @@
                             {/* 中央: 所属タスク簡易チップス一覧 */}
                             {stepTasks.length > 0 && (
                               <div className="flex flex-wrap gap-1.5 items-center px-4 py-2 bg-slate-100/40 rounded-2xl max-w-full lg:max-w-md xl:max-w-xl self-start lg:self-auto" onClick={(e) => e.stopPropagation()}>
-                                <span className="text-[9px] font-black text-slate-404 uppercase tracking-wider shrink-0 mr-1 select-none">タスク:</span>
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider shrink-0 mr-1 select-none">タスク:</span>
                                 {stepTasks.map((t, tIdx) => {
                                   const isTaskDone = t.status === 'completed';
                                   const isTaskWorking = t.status === 'in_progress';
@@ -2682,7 +2709,7 @@
                                           ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100' 
                                           : isTaskWorking
                                             ? 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 animate-pulse'
-                                            : 'bg-white border-slate-200 text-slate-605 hover:bg-slate-100'
+                                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
                                       }`}
                                       title={t.title}
                                     >
@@ -2697,7 +2724,7 @@
                             {/* 右側: STEP個別の進捗率と追加ボタン */}
                             <div className="flex items-center gap-4 pl-8 lg:pl-0 shrink-0" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center gap-2">
-                                <span className="text-[10px] text-slate-404 font-extrabold uppercase">進捗</span>
+                                <span className="text-[10px] text-slate-400 font-extrabold uppercase">進捗</span>
                                 <div className="h-2 w-20 bg-slate-200 rounded-full overflow-hidden shadow-inner">
                                   <div className={`h-full ${stepClasses.bar} transition-all duration-300`} style={{ width: `${stepProgress}%` }}></div>
                                 </div>
@@ -2707,7 +2734,7 @@
                               {addingTaskStepId !== step.id && (
                                 <button 
                                   onClick={(e) => { e.stopPropagation(); setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); setNewTaskImages([]); const fallbackDept = deptList[0]?.key || 'backoffice'; setNewTaskDept(fallbackDept); setNewTaskAssignee(fallbackDept === 'backoffice' ? '自分 (事務)' : '担当者'); }}
-                                  className="bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-350 text-slate-805 font-black text-xs px-3 py-2 rounded-xl flex items-center gap-1 transition shadow-xs"
+                                  className="bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-800 font-black text-xs px-3 py-2 rounded-xl flex items-center gap-1 transition shadow-xs"
                                 >
                                   <IconPlus /> タスク追加
                                 </button>
@@ -2724,11 +2751,11 @@
                               <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-5 bg-purple-50/10 border-b border-slate-200 space-y-4 text-xs animate-in slide-in-from-top-2 duration-200">
                                 <div className="flex justify-between items-center pb-2 border-b border-slate-200">
                                   <span className="font-black text-purple-800">➕ STEP {index + 1} の中にタスクを新規作成</span>
-                                  <button type="button" onClick={() => setAddingTaskStepId(null)} className="text-slate-404 hover:text-slate-605 p-1"><IconX /></button>
+                                  <button type="button" onClick={() => setAddingTaskStepId(null)} className="text-slate-400 hover:text-slate-600 p-1"><IconX /></button>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <div className="space-y-3">
-                                    <input required type="text" placeholder="タスク名を入力してください..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full border border-slate-205 bg-white rounded-xl p-2.5 text-slate-705 font-bold focus:outline-none focus:border-indigo-455 shadow-inner" />
+                                    <input required type="text" placeholder="タスク名を入力してください..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full border border-slate-200 bg-white rounded-xl p-2.5 text-slate-700 font-bold focus:outline-none focus:border-indigo-400 shadow-inner" />
                                     
                                     {/* 📋 画像コピペ・ドロップエリア付き詳細テキストエリア */}
                                     <div className="relative group/input">
@@ -2739,7 +2766,7 @@
                                         onPaste={(e) => handlePasteOnTextInput(e, setNewTaskImages)}
                                         onDragOver={(e) => e.preventDefault()}
                                         onDrop={(e) => handleDropOnTextInput(e, setNewTaskImages)}
-                                        className="w-full border border-slate-205 bg-white rounded-xl p-2.5 text-slate-705 focus:outline-none focus:border-indigo-400 shadow-inner min-h-[120px]" 
+                                        className="w-full border border-slate-200 bg-white rounded-xl p-2.5 text-slate-700 focus:outline-none focus:border-indigo-400 shadow-inner min-h-[120px]" 
                                         rows={4} 
                                       />
                                       <span className="absolute bottom-2 right-2.5 text-[8.5px] text-slate-400 font-extrabold select-none opacity-60 group-hover/input:opacity-100 transition-opacity">📸 画像ペースト / D&D対応</span>
@@ -2766,7 +2793,7 @@
                                   </div>
                                   <div className="grid grid-cols-2 gap-3 self-start">
                                     <div>
-                                      <label className="block text-slate-404 font-bold mb-1">担当部署</label>
+                                      <label className="block text-slate-400 font-bold mb-1">担当部署</label>
                                       <select value={newTaskDept} onChange={e => {
                                         const dept = e.target.value;
                                         const found = deptList.find(d => d.key === dept);
@@ -2775,24 +2802,24 @@
                                         else if (found) defaultName = `${found.label}担当`;
                                         setNewTaskDept(dept);
                                         setNewTaskAssignee(defaultName);
-                                      }} className="w-full border border-slate-200 rounded-xl p-2 bg-white text-slate-705 font-bold">
+                                      }} className="w-full border border-slate-200 rounded-xl p-2 bg-white text-slate-700 font-bold">
                                         {deptList.map(d => (
                                           <option key={d.key} value={d.key}>{d.label}</option>
                                         ))}
                                       </select>
                                     </div>
                                     <div>
-                                      <label className="block text-slate-404 font-bold mb-1">担当個人・チーム名</label>
-                                      <input type="text" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="w-full border border-slate-205 rounded-xl p-2 text-slate-705 font-bold focus:outline-none focus:border-indigo-400" />
+                                      <label className="block text-slate-400 font-bold mb-1">担当個人・チーム名</label>
+                                      <input type="text" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2 text-slate-700 font-bold focus:outline-none focus:border-indigo-400" />
                                     </div>
                                     <div className="col-span-2">
-                                      <label className="block text-slate-404 font-bold mb-1">完了期日(デッドライン)</label>
-                                      <input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full border border-slate-205 rounded-xl p-2 text-slate-705 font-mono font-bold" />
+                                      <label className="block text-slate-400 font-bold mb-1">完了期日(デッドライン)</label>
+                                      <input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2 text-slate-700 font-mono font-bold" />
                                     </div>
                                   </div>
                                 </div>
                                 <div className="flex flex-wrap justify-end gap-2 pt-2 border-t border-slate-100">
-                                  <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-white border border-slate-200 text-slate-555 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
+                                  <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-white border border-slate-200 text-slate-500 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
                                   <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-2xl font-bold shadow-md shadow-purple-100">作成する</button>
                                 </div>
                               </form>
@@ -2838,25 +2865,25 @@
                                       {/* タスク右上ホバーアクション */}
                                       <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
                                         {!isCompleted && (
-                                          <div className="opacity-0 group-hover/task-card:opacity-100 transition-opacity flex items-center gap-1 mr-1 bg-white/90 border border-slate-100 p-0.5 rounded-lg backdrop-blur-xs">
+                                          <div className="opacity-0 group-hover/task-card:opacity-100 transition-opacity flex items-center gap-1 mr-1 bg-white/90 border border-slate-100 p-0.5 rounded-lg backdrop-blur-sm">
                                             <button 
                                               onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }}
                                               disabled={taskIndex === 0}
-                                              className={`p-1 bg-white border border-slate-200 rounded-md transition shadow-xs ${taskIndex === 0 ? 'opacity-25 cursor-not-allowed' : 'text-slate-405 hover:text-indigo-655'}`}
+                                              className={`p-1 bg-white border border-slate-200 rounded-md transition shadow-xs ${taskIndex === 0 ? 'opacity-25 cursor-not-allowed' : 'text-slate-400 hover:text-indigo-600'}`}
                                               title="この大ステップ内で上（前）に移動"
                                             >
                                               <IconDragHandle />
                                             </button>
                                             <button 
                                               onClick={(e) => { e.stopPropagation(); startEditing(task); }} 
-                                              className="p-1 text-slate-450 hover:text-indigo-606 hover:bg-slate-50 rounded-md transition" 
+                                              className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-md transition" 
                                               title="詳細・期日などをインライン編集"
                                             >
                                               <IconEdit2 className="h-3.5 w-3.5" />
                                             </button>
                                             <button 
                                               onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }} 
-                                              className="p-1 text-slate-404 hover:text-rose-655 hover:bg-slate-50 rounded-md transition" 
+                                              className="p-1 text-slate-400 hover:text-rose-600 hover:bg-slate-50 rounded-md transition" 
                                               title="このタスクカードを削除"
                                             >
                                               <IconTrash2 className="h-3.5 w-3.5" />
@@ -2868,7 +2895,7 @@
                                           onClick={(e) => { e.stopPropagation(); toggleTaskPriority(task.id); }}
                                           className={`flex items-center gap-0.5 text-[9px] font-black px-2.5 py-1.5 rounded-xl transition-all shadow-xs border ${
                                             task.isHighPriority 
-                                              ? 'bg-rose-550 text-white border-rose-600 bg-rose-500 shadow-md shadow-rose-100' 
+                                              ? 'bg-rose-500 text-white border-rose-600 shadow-md shadow-rose-100' 
                                               : 'bg-rose-50/70 text-rose-600 border-rose-200 hover:bg-rose-100/50'
                                           }`}
                                         >
@@ -2896,10 +2923,10 @@
                                         {editingTaskId !== task.id && (
                                           <button 
                                             onClick={(e) => { e.stopPropagation(); toggleTaskCollapse(task.id); }}
-                                            className="p-1 text-slate-404 hover:text-indigo-650 hover:bg-slate-100 rounded-lg transition ml-0.5"
+                                            className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition ml-0.5"
                                             title={isTaskCollapsed ? '展開する' : '折りたたむ'}
                                           >
-                                            {isTaskCollapsed ? <IconChevronRight className="h-4.5 w-4.5" /> : <IconChevronDown className="h-4.5 w-4.5" />}
+                                            {isTaskCollapsed ? <IconChevronRight className="h-4 w-4" /> : <IconChevronDown className="h-4 w-4" />}
                                           </button>
                                         )}
                                       </div>
@@ -2912,7 +2939,7 @@
                                             type="text" 
                                             value={editFormData.title} 
                                             onChange={e => setEditFormData({...editFormData, title: e.target.value})}
-                                            className="w-full font-bold border border-slate-350 rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none text-slate-705"
+                                            className="w-full font-bold border border-slate-300 rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none text-slate-700"
                                             placeholder="タスク名"
                                           />
                                           
@@ -2924,16 +2951,16 @@
                                               onPaste={(e) => handlePasteOnTextInput(e, setEditTaskImages)}
                                               onDragOver={(e) => e.preventDefault()}
                                               onDrop={(e) => handleDropOnTextInput(e, setEditTaskImages)}
-                                              className="w-full border border-slate-350 rounded-xl p-2.5 focus:border-indigo-550 focus:outline-none min-h-[100px] text-slate-705"
+                                              className="w-full border border-slate-300 rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none min-h-[100px] text-slate-700"
                                               rows={3}
                                               placeholder="詳細や論点・調整要件... (ここに画像をペースト[Ctrl+V] / D&Dで追加可能)"
                                             />
-                                            <span className="absolute bottom-1 right-2 text-[8px] text-slate-404 font-extrabold select-none opacity-60">📸 画像ペースト / D&D対応</span>
+                                            <span className="absolute bottom-1 right-2 text-[8px] text-slate-400 font-extrabold select-none opacity-60">📸 画像ペースト / D&D対応</span>
                                           </div>
 
                                           {/* 編集中の添付画像プレビュー */}
                                           {editTaskImages.length > 0 && (
-                                            <div className="flex flex-wrap gap-2 p-2 bg-slate-50 rounded-xl border border-slate-205">
+                                            <div className="flex flex-wrap gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200">
                                               {editTaskImages.map((src, imgIdx) => (
                                                 <div key={imgIdx} className="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-300 group">
                                                   <img src={src} className="w-full h-full object-cover" />
@@ -2951,7 +2978,7 @@
 
                                           <div className="grid grid-cols-3 gap-2">
                                             <div>
-                                              <label className="text-[10px] text-slate-404 font-bold block mb-0.5">担当部署</label>
+                                              <label className="text-[10px] text-slate-400 font-bold block mb-0.5">担当部署</label>
                                               <select 
                                                 value={editFormData.department} 
                                                 onChange={e => {
@@ -2960,7 +2987,7 @@
                                                   const updatedAssignee = dKey === 'backoffice' ? '自分 (事務)' : (found ? `${found.label}担当` : '担当者');
                                                   setEditFormData({ ...editFormData, department: dKey, assignee: updatedAssignee });
                                                 }}
-                                                className="w-full border border-slate-300 rounded-xl p-2 text-xs bg-white focus:outline-none font-bold text-slate-705"
+                                                className="w-full border border-slate-300 rounded-xl p-2 text-xs bg-white focus:outline-none font-bold text-slate-700"
                                               >
                                                 {deptList.map(d => (
                                                   <option key={d.key} value={d.key}>{d.label}</option>
@@ -2968,22 +2995,22 @@
                                               </select>
                                             </div>
                                             <div>
-                                              <label className="text-[10px] text-slate-450 font-bold block mb-0.5">担当者名</label>
+                                              <label className="text-[10px] text-slate-400 font-bold block mb-0.5">担当者名</label>
                                               <input 
                                                 type="text"
                                                 value={editFormData.assignee}
                                                 onChange={e => setEditFormData({...editFormData, assignee: e.target.value})}
-                                                className="w-full border border-slate-300 rounded-xl p-2 text-xs focus:outline-none font-bold text-slate-705"
+                                                className="w-full border border-slate-300 rounded-xl p-2 text-xs focus:outline-none font-bold text-slate-700"
                                                 placeholder="例: 経理 (田中)"
                                               />
                                             </div>
                                             <div>
-                                              <label className="text-[10px] text-slate-450 font-bold block mb-0.5">完了期日</label>
+                                              <label className="text-[10px] text-slate-400 font-bold block mb-0.5">完了期日</label>
                                               <input 
                                                 type="date" 
                                                 value={editFormData.dueDate} 
                                                 onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})}
-                                                className="w-full border border-slate-300 rounded-xl p-2 text-xs focus:outline-none font-mono font-bold text-slate-705"
+                                                className="w-full border border-slate-300 rounded-xl p-2 text-xs focus:outline-none font-mono font-bold text-slate-700"
                                               />
                                             </div>
                                           </div>
@@ -2996,7 +3023,7 @@
                                         // 2. タスク通常表示
                                         <div className="space-y-3.5 flex-1 flex flex-col justify-between pl-1 pr-4 mt-6">
                                           <div className="space-y-2.5">
-                                            <h4 className="font-extrabold text-sm text-slate-805 leading-snug flex items-start gap-1.5 pr-24 select-text">
+                                            <h4 className="font-extrabold text-sm text-slate-800 leading-snug flex items-start gap-1.5 pr-24 select-text">
                                               <span className={`text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold ${dClass.bg} ${dClass.text} shrink-0 mt-0.5 select-none`}>#{index + 1}-{taskIndex + 1}</span>
                                               <span>{task.title}</span>
                                               <button 
@@ -3012,7 +3039,7 @@
                                               <span className={`text-[9.5px] font-black px-2.5 py-0.5 rounded-full border shadow-xs select-none ${dClass.badge}`}>
                                                 {task.assignee}
                                               </span>
-                                              <div className="flex items-center gap-1 text-[10.5px] text-slate-405 font-mono font-bold select-none">
+                                              <div className="flex items-center gap-1 text-[10.5px] text-slate-400 font-mono font-bold select-none">
                                                 <IconCalendar />
                                                 <span className={isLate ? 'text-rose-600 font-black animate-pulse' : ''}>{task.dueDate}</span>
                                               </div>
@@ -3071,7 +3098,7 @@
                                             <div className="space-y-3 pt-2" onClick={(e) => e.stopPropagation()}>
                                               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2.5 shadow-inner">
                                                 <div className="flex justify-between items-center pb-1.5 border-b border-slate-200 select-none">
-                                                  <span className="text-[9.5px] font-black text-slate-404 uppercase flex items-center gap-1 tracking-wider">
+                                                  <span className="text-[9.5px] font-black text-slate-400 uppercase flex items-center gap-1 tracking-wider">
                                                     <IconClock /> 調整・状況時系列メモ
                                                   </span>
                                                   {addingLogTaskId !== task.id && !isCompleted && (
@@ -3104,10 +3131,10 @@
                                                         onDragOver={(e) => e.preventDefault()}
                                                         onDrop={(e) => handleDropOnTextInput(e, setNewLogImages)}
                                                         placeholder="調整状況や次のタスクをメモ... (ここに画像をペースト[Ctrl+V] / D&Dで追加可能)"
-                                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-705 font-bold focus:outline-none focus:border-indigo-400 min-h-[80px]" 
+                                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 font-bold focus:outline-none focus:border-indigo-400 min-h-[80px]" 
                                                         rows={2.5} 
                                                       />
-                                                      <span className="absolute bottom-1 right-2 text-[8px] text-slate-404 font-extrabold select-none opacity-60">📸 画像コピペ / D&D対応</span>
+                                                      <span className="absolute bottom-1 right-2 text-[8px] text-slate-400 font-extrabold select-none opacity-60">📸 画像コピペ / D&D対応</span>
                                                     </div>
 
                                                     {/* 新規メモ用添付画像プレビュー */}
@@ -3130,7 +3157,7 @@
                                                     
                                                     <div className="grid grid-cols-2 gap-2 text-[10px]">
                                                       <div>
-                                                        <label className="block text-slate-404 font-bold mb-0.5">TO (依頼先部門)</label>
+                                                        <label className="block text-slate-400 font-bold mb-0.5">TO (依頼先部門)</label>
                                                         <select value={newLogTo} onChange={e=>setNewLogTo(e.target.value)} className="w-full border border-slate-200 rounded-lg p-1.5 bg-white font-bold text-slate-600">
                                                           <option value="">指定なし</option>
                                                           {deptList.map(d => (
@@ -3140,8 +3167,8 @@
                                                         </select>
                                                       </div>
                                                       <div>
-                                                        <label className="block text-slate-450 font-bold mb-0.5">回答期限など</label>
-                                                        <input type="date" value={newLogDueDate} onChange={e=>setNewLogDueDate(e.target.value)} className="w-full border border-slate-200 rounded-lg p-1 font-mono font-bold text-slate-755" />
+                                                        <label className="block text-slate-400 font-bold mb-0.5">回答期限など</label>
+                                                        <input type="date" value={newLogDueDate} onChange={e=>setNewLogDueDate(e.target.value)} className="w-full border border-slate-200 rounded-lg p-1 font-mono font-bold text-slate-700" />
                                                       </div>
                                                     </div>
 
@@ -3150,9 +3177,9 @@
                                                       <span className="text-[9px] font-bold text-slate-400 block uppercase">🔗 関連リンク</span>
                                                       <div className="flex items-center gap-1">
                                                         <IconLink />
-                                                        <input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-200 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-705" />
-                                                        <input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-200 rounded-lg px-2 py-1 text-[9px] text-slate-755" />
-                                                        <button onClick={handleAddLinkToNewLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-750 border border-indigo-200 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0">追加</button>
+                                                        <input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-200 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-700" />
+                                                        <input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-200 rounded-lg px-2 py-1 text-[9px] text-slate-700" />
+                                                        <button onClick={handleAddLinkToNewLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0">追加</button>
                                                       </div>
 
                                                       {newLogLinks.length > 0 && (
@@ -3160,7 +3187,7 @@
                                                           {newLogLinks.map(lnk => (
                                                             <span key={lnk.id} className="inline-flex items-center gap-1 text-[9px] bg-slate-100 border border-slate-200 text-slate-600 px-2 py-0.5 rounded-lg font-bold">
                                                               <span className="truncate max-w-[85px]">{lnk.label}</span>
-                                                              <button onClick={(e) => handleRemoveLinkFromNewLog(lnk.id, e)} className="text-slate-404 hover:text-rose-600 font-bold text-[10px]">×</button>
+                                                              <button onClick={(e) => handleRemoveLinkFromNewLog(lnk.id, e)} className="text-slate-400 hover:text-rose-600 font-bold text-[10px]">×</button>
                                                             </span>
                                                           ))}
                                                         </div>
@@ -3169,7 +3196,7 @@
 
                                                     {/* 【UXカイゼン】空メモ送信防止のため、文字も画像も空の場合はボタンを無効化（disabled）する */}
                                                     <div className="flex flex-wrap justify-end gap-1.5 mt-1 pt-2 border-t border-slate-100">
-                                                      <button onClick={() => setAddingLogTaskId(null)} className="text-[9px] text-slate-404 hover:bg-slate-50 px-2.5 py-1.5 rounded-lg font-bold">キャンセル</button>
+                                                      <button onClick={() => setAddingLogTaskId(null)} className="text-[9px] text-slate-400 hover:bg-slate-50 px-2.5 py-1.5 rounded-lg font-bold">キャンセル</button>
                                                       <button 
                                                         onClick={() => addLog(task.id)} 
                                                         disabled={!newLogText.trim() && newLogImages.length === 0}
@@ -3191,13 +3218,13 @@
                                                         <div 
                                                           key={log.id} 
                                                           className={`group/log relative border rounded-xl p-3 shadow-xs transition flex flex-col gap-1.5 ${
-                                                            log.completed ? 'opacity-40 bg-emerald-50/10 border-emerald-100' : 
-                                                            log.isHighlighted ? 'bg-amber-50/35 border-amber-300 ring-1 ring-amber-300/10' : 'bg-white border-slate-200'
+                                                            log.completed ? 'opacity-40 bg-emerald-50 text-emerald-100' : 
+                                                            log.isHighlighted ? 'bg-amber-50 border-amber-300 ring-1 ring-amber-300' : 'bg-white border-slate-200'
                                                           }`}
                                                         >
                                                           {isEditingThisLog ? (
                                                             /* --- メモのインライン編集モード --- */
-                                                            <div className="space-y-2.5 text-xs w-full bg-slate-50/60 p-2.5 rounded-xl border border-slate-200">
+                                                            <div className="space-y-2.5 text-xs w-full bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                                                               <span className="font-bold text-[10px] text-indigo-600 block">✏️ メモをインライン編集</span>
                                                               <div className="relative group/editmemo">
                                                                 <textarea 
@@ -3206,16 +3233,16 @@
                                                                   onPaste={(e) => handlePasteOnTextInput(e, setEditLogImages)}
                                                                   onDragOver={(e) => e.preventDefault()}
                                                                   onDrop={(e) => handleDropOnTextInput(e, setEditLogImages)}
-                                                                  className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-slate-705 focus:outline-none font-bold min-h-[60px]"
+                                                                  className="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-slate-700 focus:outline-none font-bold min-h-[60px]"
                                                                   rows={2}
                                                                   placeholder="詳細内容を入力... (画像ペースト / D&D対応)"
                                                                 />
-                                                                <span className="absolute bottom-1 right-2 text-[8px] text-slate-404 font-extrabold select-none opacity-60">📸 画像対応</span>
+                                                                <span className="absolute bottom-1 right-2 text-[8px] text-slate-400 font-extrabold select-none opacity-60">📸 画像対応</span>
                                                               </div>
 
                                                               {/* メモ編集中の添付画像一覧 */}
                                                               {editLogImages.length > 0 && (
-                                                                <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100 rounded-xl border border-slate-202">
+                                                                <div className="flex flex-wrap gap-2 p-1.5 bg-slate-100 rounded-xl border border-slate-200">
                                                                   {editLogImages.map((src, imgIdx) => (
                                                                     <div key={imgIdx} className="relative w-10 h-10 rounded-lg overflow-hidden border border-slate-300 group">
                                                                       <img src={src} className="w-full h-full object-cover" />
@@ -3233,8 +3260,8 @@
                                                               
                                                               <div className="grid grid-cols-2 gap-2 text-[9px]">
                                                                 <div>
-                                                                  <label className="block text-slate-404 font-bold mb-0.5">TO (担当)</label>
-                                                                  <select value={editLogTo} onChange={e=>setEditLogTo(e.target.value)} className="w-full border border-slate-200 bg-white p-1 font-bold rounded text-slate-705">
+                                                                  <label className="block text-slate-400 font-bold mb-0.5">TO (担当)</label>
+                                                                  <select value={editLogTo} onChange={e=>setEditLogTo(e.target.value)} className="w-full border border-slate-200 bg-white p-1 font-bold rounded text-slate-700">
                                                                     <option value="">指定なし</option>
                                                                     {deptList.map(d => (
                                                                       <option key={d.key} value={d.label}>{d.label}</option>
@@ -3243,28 +3270,28 @@
                                                                   </select>
                                                                 </div>
                                                                 <div>
-                                                                  <label className="block text-slate-404 font-bold mb-0.5">期限日</label>
-                                                                  <input type="date" value={editLogDueDate} onChange={e=>setEditLogDueDate(e.target.value)} className="w-full border border-slate-200 p-0.5 font-mono font-bold rounded text-slate-750" />
+                                                                  <label className="block text-slate-400 font-bold mb-0.5">期限日</label>
+                                                                  <input type="date" value={editLogDueDate} onChange={e=>setEditLogDueDate(e.target.value)} className="w-full border border-slate-200 p-0.5 font-mono font-bold rounded text-slate-700" />
                                                                 </div>
                                                               </div>
 
                                                               {/* 関連リンク編集 */}
                                                               <div className="border-t border-slate-200 pt-2 space-y-1.5">
-                                                                <span className="text-[9px] font-bold text-slate-404 block uppercase">関連リンク編集</span>
+                                                                <span className="text-[9px] font-bold text-slate-400 block uppercase">関連リンク編集</span>
                                                                 <div className="flex items-center gap-1">
                                                                   <IconLink />
-                                                                  <input type="text" placeholder="名前" value={tmpEditLinkLabel} onChange={e=>setTmpEditLinkLabel(e.target.value)} className="w-16 border border-slate-205 rounded px-1.5 py-0.5 text-[9px] font-bold text-slate-705" />
-                                                                  <input type="text" placeholder="URL" value={tmpEditLinkUrl} onChange={e=>setTmpEditLinkUrl(e.target.value)} className="flex-1 border border-slate-205 rounded px-1.5 py-0.5 text-[9px] text-slate-705" />
-                                                                  <button onClick={handleAddLinkToEditLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-750 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-black">追加</button>
+                                                                  <input type="text" placeholder="名前" value={tmpEditLinkLabel} onChange={e=>setTmpEditLinkLabel(e.target.value)} className="w-16 border border-slate-200 rounded px-1.5 py-0.5 text-[9px] font-bold text-slate-700" />
+                                                                  <input type="text" placeholder="URL" value={tmpEditLinkUrl} onChange={e=>setTmpEditLinkUrl(e.target.value)} className="flex-1 border border-slate-200 rounded px-1.5 py-0.5 text-[9px] text-slate-700" />
+                                                                  <button onClick={handleAddLinkToEditLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-black">追加</button>
                                                                 </div>
 
                                                                 {/* リンク一覧 */}
                                                                 {editLogLinks.length > 0 && (
                                                                   <div className="flex flex-wrap gap-1.5 pt-1">
                                                                     {editLogLinks.map(lnk => (
-                                                                      <span key={lnk.id} className="inline-flex items-center gap-1 text-[9px] bg-slate-100 border border-slate-200 text-slate-605 px-1.5 py-0.5 rounded font-bold">
+                                                                      <span key={lnk.id} className="inline-flex items-center gap-1 text-[9px] bg-slate-100 border border-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-bold">
                                                                         <span className="truncate max-w-[85px]">{lnk.label}</span>
-                                                                        <button onClick={(e) => handleRemoveLinkFromEditLog(lnk.id, e)} className="text-slate-455 hover:text-rose-650 font-bold text-[10px]">×</button>
+                                                                        <button onClick={(e) => handleRemoveLinkFromEditLog(lnk.id, e)} className="text-slate-400 hover:text-rose-600 font-bold text-[10px]">×</button>
                                                                       </span>
                                                                     ))}
                                                                   </div>
@@ -3272,7 +3299,7 @@
                                                               </div>
 
                                                               <div className="flex flex-wrap justify-end gap-1.5 pt-1.5 border-t border-slate-200">
-                                                                <button onClick={() => setEditingLogId(null)} className="text-[9px] text-slate-555 px-2 py-0.5">キャンセル</button>
+                                                                <button onClick={() => setEditingLogId(null)} className="text-[9px] text-slate-500 px-2 py-0.5">キャンセル</button>
                                                                 <button 
                                                                   onClick={() => saveLogEdit(task.id, log.id)} 
                                                                   disabled={!editLogText.trim() && editLogImages.length === 0}
@@ -3286,7 +3313,7 @@
                                                             /* --- メモの通常表示モード --- */
                                                             <React.Fragment>
                                                               <div className="flex justify-between items-center border-b border-slate-100 pb-1 select-none">
-                                                                <span className="text-[8px] font-mono text-slate-404 font-bold flex items-center gap-0.5 leading-none">
+                                                                <span className="text-[8px] font-mono text-slate-400 font-bold flex items-center gap-0.5 leading-none">
                                                                   <IconClock /> {log.date}
                                                                   {log.isHighlighted && <span className="ml-1.5 bg-amber-100 text-amber-800 border border-amber-300 text-[7.5px] px-1.5 py-0.5 rounded font-bold">📌 重要・ピン留め</span>}
                                                                 </span>
@@ -3294,29 +3321,29 @@
                                                                 <div className="opacity-0 group-hover/log:opacity-100 transition-opacity flex items-center gap-1.5 bg-white/95 border border-slate-200 rounded-lg p-0.5 z-10 shadow-xs absolute top-2 right-2">
                                                                   <button 
                                                                     onClick={() => startEditingLog(log)}
-                                                                    className="p-1 text-slate-404 hover:text-indigo-655 rounded transition"
+                                                                    className="p-1 text-slate-400 hover:text-indigo-600 rounded transition"
                                                                     title="このメモ内容を編集"
                                                                   >
                                                                     <IconEdit2 className="h-3 w-3" />
                                                                   </button>
                                                                   <button 
                                                                     onClick={() => toggleLogHighlight(task.id, log.id)}
-                                                                    className={`p-1 rounded transition ${log.isHighlighted ? 'text-amber-500 bg-amber-50' : 'text-slate-404 hover:text-amber-500 hover:bg-slate-55'}`}
+                                                                    className={`p-1 rounded transition ${log.isHighlighted ? 'text-amber-500 bg-amber-50' : 'text-slate-400 hover:text-amber-500 hover:bg-slate-50'}`}
                                                                     title={log.isHighlighted ? 'ピン留め解除' : '重要な状況としてピン留めする'}
                                                                   >
                                                                     <IconPin className="h-3 w-3" />
                                                                   </button>
-                                                                  <button onClick={() => toggleLogComplete(task.id, log.id)} className={`p-1 rounded hover:bg-slate-55 ${log.completed ? 'text-slate-300 hover:text-emerald-555' : 'text-slate-404 hover:text-emerald-600'}`} title={log.completed ? '未完了に戻す' : '対応完了マークにする'}>
+                                                                  <button onClick={() => toggleLogComplete(task.id, log.id)} className={`p-1 rounded hover:bg-slate-50 ${log.completed ? 'text-slate-300 hover:text-emerald-500' : 'text-slate-400 hover:text-emerald-600'}`} title={log.completed ? '未完了に戻す' : '対応完了マークにする'}>
                                                                     <IconCheck className="h-3 w-3" />
                                                                   </button>
-                                                                  <button onClick={() => deleteLog(task.id, log.id)} className="p-1 text-slate-404 hover:text-rose-500 hover:bg-slate-55 rounded shadow-xs" title="この時系列メモを削除">
+                                                                  <button onClick={() => deleteLog(task.id, log.id)} className="p-1 text-slate-400 hover:text-rose-500 hover:bg-slate-50 rounded shadow-xs" title="この時系列メモを削除">
                                                                     <IconTrash2 className="h-3 w-3" />
                                                                   </button>
                                                                 </div>
                                                               </div>
 
                                                               <div className="relative group/logtext w-full pr-14 space-y-2">
-                                                                <p className={`text-[11px] text-slate-655 leading-relaxed font-bold whitespace-pre-wrap select-text ${log.completed ? 'line-through text-slate-300 font-medium' : ''}`}>
+                                                                <p className={`text-[11px] text-slate-600 leading-relaxed font-bold whitespace-pre-wrap select-text ${log.completed ? 'line-through text-slate-300 font-medium' : ''}`}>
                                                                   {log.text}
                                                                 </p>
 
@@ -3337,7 +3364,7 @@
 
                                                                 <button 
                                                                   onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(log.text, 'メモ内容をコピーしました！'); }}
-                                                                  className="absolute right-0 top-0 opacity-0 group-hover/logtext:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-50 border border-slate-150 text-slate-500 rounded text-[9px] font-bold shadow-xs select-none"
+                                                                  className="absolute right-0 top-0 opacity-0 group-hover/logtext:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-500 rounded text-[9px] font-bold shadow-xs select-none"
                                                                   title="このメモのテキストをコピー"
                                                                 >
                                                                   📋 コピー
@@ -3346,10 +3373,10 @@
                                                               
                                                               <div className="flex flex-wrap items-center gap-1.5 mt-0.5 select-none">
                                                                 {log.to && (
-                                                                  <span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 hover:bg-indigo-150 border border-indigo-200 text-indigo-700 px-2 py-0.5 rounded-lg transition font-black">
+                                                                  <span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 px-2 py-0.5 rounded-lg transition font-black">
                                                                     <span>TO: {log.to}</span>
                                                                     {!isCompleted && (
-                                                                      <button onClick={() => clearLogField(task.id, log.id, 'to')} className="text-indigo-400 hover:text-rose-650 font-bold text-[10px] ml-1">×</button>
+                                                                      <button onClick={() => clearLogField(task.id, log.id, 'to')} className="text-indigo-400 hover:text-rose-600 font-bold text-[10px] ml-1">×</button>
                                                                     )}
                                                                   </span>
                                                                 )}
@@ -3358,19 +3385,19 @@
                                                                   <span className="inline-flex items-center gap-1 text-[9px] bg-rose-50 hover:bg-rose-100 text-rose-700 px-2 py-0.5 rounded-lg border border-rose-200 transition font-mono font-bold">
                                                                     <span>期日: {log.dueDate}</span>
                                                                     {!isCompleted && (
-                                                                      <button onClick={() => clearLogField(task.id, log.id, 'dueDate')} className="text-rose-404 hover:text-rose-655 font-bold text-[10px] ml-1">×</button>
+                                                                      <button onClick={() => clearLogField(task.id, log.id, 'dueDate')} className="text-rose-400 hover:text-rose-600 font-bold text-[10px] ml-1">×</button>
                                                                     )}
                                                                   </span>
                                                                 )}
 
                                                                 {/* 複数登録リンク */}
                                                                 {log.links && log.links.map(lnk => (
-                                                                  <span key={lnk.id} className="inline-flex items-center gap-1 text-[9px] bg-slate-100 hover:bg-slate-150 border border-slate-200 text-slate-600 px-2 py-0.5 rounded-lg transition">
+                                                                  <span key={lnk.id} className="inline-flex items-center gap-1 text-[9px] bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 px-2 py-0.5 rounded-lg transition">
                                                                     <a href={lnk.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-0.5 font-bold">
                                                                       <IconExternalLink /> {lnk.label}
                                                                     </a>
                                                                     {!isCompleted && (
-                                                                      <button onClick={() => removeSingleLinkFromLog(task.id, log.id, lnk.id)} className="text-slate-404 hover:text-rose-600 font-bold text-[10px] ml-1" title="リンクのみ削除">×</button>
+                                                                      <button onClick={() => removeSingleLinkFromLog(task.id, log.id, lnk.id)} className="text-slate-400 hover:text-rose-600 font-bold text-[10px] ml-1" title="リンクのみ削除">×</button>
                                                                     )}
                                                                   </span>
                                                                 ))}
@@ -3381,7 +3408,7 @@
                                                       );
                                                     })
                                                   ) : (
-                                                    <p className="text-[10px] text-slate-404 font-bold text-center py-4 bg-white border border-dashed border-slate-200 rounded-xl">時系列の議論・メモ履歴は空です</p>
+                                                    <p className="text-[10px] text-slate-400 font-bold text-center py-4 bg-white border border-dashed border-slate-200 rounded-xl">時系列の議論・メモ履歴は空です</p>
                                                   )}
                                                 </div>
                                               </div>
@@ -3394,7 +3421,7 @@
                                   );
                                 })
                               ) : (
-                                <div className="col-span-2 text-center py-10 bg-white border-2 border-dashed border-slate-200 rounded-2xl text-slate-404 text-xs font-bold leading-relaxed">
+                                <div className="col-span-2 text-center py-10 bg-white border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs font-bold leading-relaxed">
                                   現在、このステップに登録されている確認タスクはありません。<br />
                                   右上の「＋ タスク追加」ボタンから最初の確認事項を起票しましょう！
                                 </div>
@@ -3415,7 +3442,7 @@
               <div className="bg-white border border-slate-200 rounded-3xl shadow-xs overflow-hidden p-6 space-y-5 animate-in fade-in duration-150">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
                   <div className="space-y-1">
-                    <h2 className="text-base font-black text-slate-855 flex items-center gap-2">
+                    <h2 className="text-base font-black text-slate-800 flex items-center gap-2">
                       <IconDatabase className="text-indigo-600" />
                       ECD案件一覧データベース (Notion風ビュー)
                     </h2>
@@ -3426,7 +3453,7 @@
                       setNewProjFolderId(selectedFolderId);
                       setShowAddProjectModal(true);
                     }}
-                    className="bg-indigo-650 hover:bg-indigo-700 text-white font-extrabold text-xs px-4.5 py-3 rounded-2xl flex items-center gap-1.5 transition-all shadow-md shadow-indigo-100 shrink-0"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs px-4.5 py-3 rounded-2xl flex items-center gap-1.5 transition-all shadow-md shadow-indigo-100 shrink-0"
                   >
                     <IconPlus /> 新規案件を起票する
                   </button>
@@ -3463,7 +3490,7 @@
                       placeholder="案件名やECD管理コードでリアルタイム検索..."
                       value={dbFilterText}
                       onChange={(e) => setDbFilterText(e.target.value)}
-                      className="w-full border border-slate-200 rounded-xl p-2.5 pl-3.5 text-xs text-slate-705 font-bold bg-white focus:outline-none focus:border-indigo-400 shadow-xs"
+                      className="w-full border border-slate-200 rounded-xl p-2.5 pl-3.5 text-xs text-slate-700 font-bold bg-white focus:outline-none focus:border-indigo-400 shadow-xs"
                     />
                   </div>
                 </div>
@@ -3471,7 +3498,7 @@
                 <div className="overflow-x-auto rounded-2xl border border-slate-200">
                   <table className="w-full text-xs text-left border-collapse">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-605 font-black text-[10.5px] uppercase tracking-wider">
+                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-black text-[10.5px] uppercase tracking-wider">
                         <th className="py-3 px-4 border border-slate-200 text-center w-28">ステータス</th>
                         <th className="py-3 px-4 border border-slate-200">所属大分類</th>
                         <th className="py-3 px-4 border border-slate-200">案件プロジェクト名称</th>
@@ -3500,7 +3527,7 @@
                               </span>
                             </td>
                             {/* 📁 大分類フォルダ */}
-                            <td className="py-3.5 px-4 border border-slate-200 font-black text-slate-555">
+                            <td className="py-3.5 px-4 border border-slate-200 font-black text-slate-500">
                               <span className="inline-flex items-center gap-1">
                                 <IconFolder className="h-3.5 w-3.5 text-purple-600" />
                                 {folderName}
@@ -3511,11 +3538,11 @@
                               {proj.name}
                             </td>
                             {/* 🏷️ コード */}
-                            <td className="py-3.5 px-4 border border-slate-200 font-mono text-slate-555 font-bold uppercase tracking-wider">
+                            <td className="py-3.5 px-4 border border-slate-200 font-mono text-slate-500 font-bold uppercase tracking-wider">
                               {proj.code}
                             </td>
                             {/* 📅 期間 */}
-                            <td className="py-3.5 px-4 border border-slate-200 font-mono text-slate-555 font-bold">
+                            <td className="py-3.5 px-4 border border-slate-200 font-mono text-slate-500 font-bold">
                               {proj.startDate} 〜 {proj.endDate}
                             </td>
                             {/* 📋 タスク内訳 */}
@@ -3558,7 +3585,7 @@
                               <div className="flex items-center justify-center gap-1.5">
                                 <button 
                                   onClick={() => handleOpenProjectFromDb(proj)}
-                                  className="flex items-center gap-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-750 border border-indigo-200 font-black px-2.5 py-1.5 rounded-xl transition-all shadow-xs text-[11px]"
+                                  className="flex items-center gap-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-black px-2.5 py-1.5 rounded-xl transition-all shadow-xs text-[11px]"
                                   title="この案件を進行ダッシュボードで開く"
                                 >
                                   <IconEye className="h-3.5 w-3.5" />
@@ -3566,14 +3593,14 @@
                                 </button>
                                 <button 
                                   onClick={(e) => handleCopyProjectUrl(proj.id, e)}
-                                  className="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-605 border border-slate-300 font-bold px-2 py-1.5 rounded-xl transition-all shadow-xs"
+                                  className="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 font-bold px-2 py-1.5 rounded-xl transition-all shadow-xs"
                                   title="Notion・社内共有用のURLをコピー"
                                 >
-                                  <IconLink className="h-3.5 w-3.5 text-slate-404" />
+                                  <IconLink className="h-3.5 w-3.5 text-slate-400" />
                                 </button>
                                 <button 
                                   onClick={(e) => handleDeleteProjectByList(proj.id, e)}
-                                  className="text-slate-405 hover:text-rose-650 p-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-100 rounded-xl transition-all"
+                                  className="text-slate-400 hover:text-rose-600 p-1.5 hover:bg-rose-50 border border-transparent hover:border-rose-100 rounded-xl transition-all"
                                   title="この案件を完全に削除"
                                 >
                                   <IconTrash2 className="h-4 w-4" />
@@ -3584,7 +3611,7 @@
                         );
                       }) : (
                         <tr>
-                          <td colSpan="9" className="py-12 text-center text-slate-404 font-bold">条件に一致する調整案件がありません。</td>
+                          <td colSpan="9" className="py-12 text-center text-slate-400 font-bold">条件に一致する調整案件がありません。</td>
                         </tr>
                       )}
                     </tbody>
