@@ -253,7 +253,7 @@
         bg: 'bg-rose-50/30',
         border: 'border-rose-200',
         borderStrong: 'border-rose-300',
-        badge: 'bg-rose-100 text-rose-800 border-rose-300',
+        badge: 'bg-rose-100 text-rose-850 border-rose-300',
         bar: 'bg-rose-600',
         accentBar: 'bg-rose-500'
       },
@@ -399,7 +399,7 @@
                 dueDate: '2026-05-27', 
                 isHighlighted: false 
               },
-              { id: 'c3-prev', date: '2026-05-20 16:00', text: '営業部とのすり合わせ開始。', links: [], completed: true, to: '営業 (山田)', dueDate: null, isHighlighted: false }
+              { id: 'c3-prev', date: '2026-05-20 16:00', text: '営業部とのすすり合わせ開始。', links: [], completed: true, to: '営業 (山田)', dueDate: null, isHighlighted: false }
             ]
           },
           {
@@ -1670,6 +1670,43 @@
         );
       };
 
+      // --- 共通コピーハンドラー (セキュリティ制限対応) ---
+      const handleCopyToClipboard = (text, successMsg) => {
+        const copyWithExecCommand = () => {
+          const textArea = document.createElement("textarea");
+          textArea.value = text;
+          textArea.style.top = "0";
+          textArea.style.left = "0";
+          textArea.style.position = "fixed";
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+              showAlert(successMsg || 'クリップボードにコピーしました！');
+            } else {
+              showAlert('コピーに失敗しました。');
+            }
+          } catch (err) {
+            showAlert('コピーに失敗しました。');
+          }
+          document.body.removeChild(textArea);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text)
+            .then(() => {
+              showAlert(successMsg || 'クリップボードにコピーしました！');
+            })
+            .catch(() => {
+              copyWithExecCommand();
+            });
+        } else {
+          copyWithExecCommand();
+        }
+      };
+
       // --- 所要日数/経過日数計算ヘルパー ---
       const getDurationDays = (task) => {
         if (!task.startedAt) return null;
@@ -1846,46 +1883,6 @@
         }
       };
 
-      const handleCopyProjectUrl = (projId, e) => {
-        if (e) e.stopPropagation();
-        const baseUrl = window.location.origin + window.location.pathname;
-        const projectUrl = `${baseUrl}?pid=${projId}`;
-
-        const copyWithExecCommand = () => {
-          const textArea = document.createElement("textarea");
-          textArea.value = projectUrl;
-          textArea.style.top = "0";
-          textArea.style.left = "0";
-          textArea.style.position = "fixed";
-          document.body.appendChild(textArea);
-          textArea.focus();
-          textArea.select();
-          try {
-            const successful = document.execCommand('copy');
-            if (successful) {
-              showAlert(`案件の共有用URLをクリップボードにコピーしました！ Notion等に貼ってご活用ください。`);
-            } else {
-              showAlert(`URLの自動コピーに失敗しました。以下をご利用ください: ${projectUrl}`);
-            }
-          } catch (err) {
-            showAlert(`URLの自動コピーに失敗しました。以下をご利用ください: ${projectUrl}`);
-          }
-          document.body.removeChild(textArea);
-        };
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(projectUrl)
-            .then(() => {
-              showAlert(`案件の共有用URLをクリップボードにコピーしました！ Notion等に貼ってご活用ください。`);
-            })
-            .catch(() => {
-              copyWithExecCommand();
-            });
-        } else {
-          copyWithExecCommand();
-        }
-      };
-
       const handleOpenProjectFromDb = (proj) => {
         setSelectedFolderId(proj.folderId);
         setCurrentProjectId(proj.id);
@@ -1943,7 +1940,7 @@
             {/* 1段目: アプリロゴ、ビュー切替、マスタ設定 */}
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="bg-indigo-600 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white p-2.5 rounded-2xl font-black text-sm shadow-md shadow-indigo-100 leading-none">
+                <div className="bg-indigo-600 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white p-2 rounded-2xl font-black text-sm shadow-md shadow-indigo-100 leading-none">
                   PL
                 </div>
                 <div>
@@ -2120,238 +2117,6 @@
 
           <main className="max-w-7xl mx-auto p-6 space-y-6">
 
-            {/* 大分類フォルダ追加モーダル */}
-            {showAddFolderModal && (
-              <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-xs flex items-center justify-center z-50 animate-in fade-in duration-200">
-                <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
-                  <div className="flex justify-between items-center pb-2.5 border-b border-slate-100">
-                    <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-                      <IconFolder className="text-purple-650" />
-                      大分類フォルダの新規追加
-                    </h3>
-                    <button onClick={() => setShowAddFolderModal(false)} className="text-slate-400 hover:text-slate-600 p-1"><IconX /></button>
-                  </div>
-                  <form onSubmit={handleCreateFolder} className="space-y-4 text-xs">
-                    <div>
-                      <label className="block text-slate-500 font-bold mb-1">フォルダ名称 <span className="text-rose-500">*</span></label>
-                      <input required type="text" placeholder="例: 新規開発プロジェクト" value={newFolderName} onChange={e=>setNewFolderName(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 focus:border-indigo-500 focus:outline-none" />
-                    </div>
-                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
-                      <button type="button" onClick={() => setShowAddFolderModal(false)} className="bg-slate-100 text-slate-600 px-4 py-2.5 rounded-2xl">キャンセル</button>
-                      <button type="submit" className="bg-indigo-600 text-white font-bold px-4 py-2.5 rounded-2xl shadow-md shadow-indigo-100">フォルダを作成</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-
-            {/* 新規案件フォルダの追加モーダル */}
-            {showAddProjectModal && (
-              <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-xs flex items-center justify-center z-50 animate-in fade-in duration-200">
-                <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto scrollbar-thin">
-                  <div className="flex justify-between items-center pb-2.5 border-b border-slate-100">
-                    <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-                      <IconPlus className="text-indigo-600" />
-                      新規案件プロジェクトの起票
-                    </h3>
-                    <button onClick={() => setShowAddProjectModal(false)} className="text-slate-400 hover:text-slate-600 p-1"><IconX /></button>
-                  </div>
-
-                  <form onSubmit={handleCreateProject} className="space-y-4 text-xs">
-                    <div>
-                      <label className="block text-slate-500 font-bold mb-1">作成先フォルダ階層 (大分類) <span className="text-rose-500">*</span></label>
-                      <select 
-                        value={newProjFolderId} 
-                        onChange={e => setNewProjFolderId(e.target.value)}
-                        className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 font-bold focus:outline-none"
-                      >
-                        {folders.map(f => (
-                          <option key={f.id} value={f.id}>{f.name}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      <div className="md:col-span-2">
-                        <label className="block text-slate-500 font-bold mb-1">案件プロジェクト名称 <span className="text-rose-500">*</span></label>
-                        <input required type="text" placeholder="例: 【ECD】新紹介料率の導入" value={newProjName} onChange={e=>setNewProjName(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 focus:border-indigo-500 focus:outline-none" />
-                      </div>
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">ECDコード</label>
-                        <input type="text" placeholder="例: ECD-2026-Q3" value={newProjCode} onChange={e=>setNewProjCode(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 focus:border-indigo-500 focus:outline-none" />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3">
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">ステータス</label>
-                        <select value={newProjStatus} onChange={e=>setNewProjStatus(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 font-bold focus:outline-none">
-                          <option value="pending">未着手</option>
-                          <option value="in_progress">進行中</option>
-                          <option value="completed">完了</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">開始日</label>
-                        <input type="date" value={newProjStart} onChange={e=>setNewProjStart(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 font-mono focus:border-indigo-500 focus:outline-none" />
-                      </div>
-                      <div>
-                        <label className="block text-slate-500 font-bold mb-1">終了目標日</label>
-                        <input type="date" value={newProjEnd} onChange={e=>setNewProjEnd(e.target.value)} className="w-full border border-slate-200 rounded-xl p-2.5 bg-white text-slate-700 font-mono focus:outline-none" />
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
-                      <button type="button" onClick={() => setShowAddProjectModal(false)} className="bg-slate-100 text-slate-600 px-4 py-2.5 rounded-2xl">キャンセル</button>
-                      <button type="submit" className="bg-indigo-600 text-white font-bold px-4 py-2.5 rounded-2xl shadow-md shadow-indigo-100">案件を起票する</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-
-            {/* ⚙️ 部署＆カラーのマスタ設定モーダル */}
-            {showSettingsModal && (
-              <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-xs flex items-center justify-center z-50 animate-in fade-in duration-200">
-                <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-5 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto scrollbar-thin">
-                  <div className="flex justify-between items-center pb-2.5 border-b border-slate-100">
-                    <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-                      <IconSettings className="text-purple-650" />
-                      部署 ＆ カラーマスタ設定
-                    </h3>
-                    <button onClick={() => setShowSettingsModal(false)} className="text-slate-400 hover:text-slate-600 p-1"><IconX /></button>
-                  </div>
-
-                  <p className="text-xs text-slate-550 leading-relaxed">
-                    プロジェクトに紐づく「部署」を追加・変更・削除できます。部署を選択して、タスクカードやステップの外枠として美しく色分けするカラーをカスタマイズしてください。
-                  </p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-5 pt-1">
-                    {/* 左側：部署一覧の追加と選択リスト */}
-                    <div className="md:col-span-5 space-y-3">
-                      <span className="block text-[10px] font-black text-slate-400 uppercase tracking-wider">📁 登録部署リスト</span>
-                      <div className="space-y-1.5 max-h-[170px] overflow-y-auto pr-1 scrollbar-thin">
-                        {deptList.map(dept => {
-                          const isSelected = selectedSettingsDeptKey === dept.key;
-                          const dColorInfo = colorClassesMap[dept.color] || colorClassesMap.slate;
-                          return (
-                            <div 
-                              key={dept.key}
-                              onClick={() => setSelectedSettingsDeptKey(dept.key)}
-                              className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-between cursor-pointer transition-all ${
-                                isSelected 
-                                  ? 'border-indigo-400 bg-indigo-50/30 shadow-xs' 
-                                  : 'border-slate-100 bg-slate-55 hover:bg-slate-100/55'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2.5 truncate">
-                                <span className={`w-3 h-3 rounded-full ${dColorInfo.bar}`} />
-                                <span className="truncate text-slate-800">{dept.label}</span>
-                              </div>
-                              <button 
-                                type="button" 
-                                onClick={(e) => { e.stopPropagation(); handleDeleteDept(dept.key); }}
-                                className="text-slate-400 hover:text-rose-650 p-1"
-                                title="この部署を削除する"
-                              >
-                                <IconX className="h-3.5 w-3.5" />
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* 部署の新規作成フォーム */}
-                      <form onSubmit={handleCreateDept} className="border-t border-slate-100 pt-3 space-y-2">
-                        <span className="block text-[10px] font-black text-slate-400 uppercase tracking-wider">➕ 新規部署を追加</span>
-                        <div className="flex gap-1.5">
-                          <input 
-                            required
-                            type="text" 
-                            placeholder="部署・担当名..." 
-                            value={newDeptLabel}
-                            onChange={e => setNewDeptLabel(e.target.value)}
-                            className="flex-1 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-indigo-400"
-                          />
-                          <button 
-                            type="submit"
-                            className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 rounded-xl text-xs transition"
-                          >
-                            追加
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-
-                    {/* 右側：選択した部署に対する「設定編集（カラー選択＆名前変更）」 */}
-                    <div className="md:col-span-7 bg-slate-50 border border-slate-150 rounded-2xl p-4 space-y-4">
-                      {selectedSettingsDeptKey && deptList.find(d => d.key === selectedSettingsDeptKey) ? (
-                        (() => {
-                          const activeDept = deptList.find(d => d.key === selectedSettingsDeptKey);
-                          const currentSelectedColor = activeDept.color;
-                          return (
-                            <div className="space-y-4 text-xs">
-                              <span className="block font-black text-slate-800 border-b border-slate-200 pb-1.5">
-                                📝 「{activeDept.label}」の詳細設定
-                              </span>
-
-                              {/* 部署名のインライン書き換え */}
-                              <div>
-                                <label className="block text-[10px] text-slate-400 font-bold mb-1">部署名・担当名</label>
-                                <input 
-                                  type="text" 
-                                  value={activeDept.label}
-                                  onChange={e => handleRenameDept(activeDept.key, e.target.value)}
-                                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-700 font-bold focus:outline-none focus:border-indigo-400"
-                                />
-                              </div>
-
-                              {/* 部署へのカラー紐づけ */}
-                              <div>
-                                <label className="block text-[10px] text-slate-400 font-bold mb-1">ラベルに紐づけるテーマカラー</label>
-                                <div className="grid grid-cols-2 gap-2">
-                                  {Object.keys(colorClassesMap).map(colorKey => {
-                                    const isSelected = currentSelectedColor === colorKey;
-                                    const cMap = colorClassesMap[colorKey];
-                                    return (
-                                      <button
-                                        key={colorKey}
-                                        type="button"
-                                        onClick={() => updateDeptColorSetting(activeDept.key, colorKey)}
-                                        className={`w-full p-2.5 rounded-xl text-left font-extrabold text-[11px] border flex items-center gap-2 transition-all ${
-                                          isSelected 
-                                            ? `${cMap.bg} ${cMap.text} ${cMap.borderStrong} ring-1 ring-indigo-500/20 shadow-sm`
-                                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-350'
-                                        }`}
-                                      >
-                                        <span className={`w-3 h-3 rounded-full ${cMap.bar}`} />
-                                        <span className="capitalize">{colorKey}</span>
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })()
-                      ) : (
-                        <p className="text-slate-400 text-center py-12 text-xs">部署を選択してください。</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end pt-3.5 border-t border-slate-100">
-                    <button 
-                      onClick={() => setShowSettingsModal(false)}
-                      className="bg-indigo-650 hover:bg-indigo-700 text-white font-extrabold px-5 py-3 rounded-2xl text-xs shadow-md shadow-indigo-100 transition"
-                    >
-                      マスタを確定して反映
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* 📋 進行ダッシュボード */}
             {viewMode === 'board' && (
               <React.Fragment>
@@ -2427,16 +2192,25 @@
                               {projectStatusOptions.find(o => o.value === (activeProject.status || 'pending'))?.label}
                             </span>
                           </div>
-                          <h2 className="text-base font-black text-slate-805 leading-tight flex items-center gap-2 mt-1.5 flex-wrap">
-                            {activeProject.name}
+                          <div className="flex items-center gap-2 mt-1.5 flex-wrap group/project-title">
+                            <h2 className="text-base font-black text-slate-850 leading-tight">
+                              {activeProject.name}
+                            </h2>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(activeProject.name, '案件名をコピーしました！'); }}
+                              className="opacity-0 group-hover/project-title:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-250 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 shadow-xs"
+                              title="案件プロジェクト名をコピー"
+                            >
+                              📋 コピー
+                            </button>
                             <button 
                               onClick={handleDeleteProject}
-                              className="text-slate-300 hover:text-rose-600 p-1 rounded-xl transition-all"
+                              className="text-slate-300 hover:text-rose-600 p-1 rounded-xl transition-all ml-1"
                               title="この案件プロジェクトを削除する"
                             >
                               <IconTrash2 className="h-4.5 w-4.5" />
                             </button>
-                          </h2>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -2595,7 +2369,7 @@
                         onDragStart={(e) => handleDragStart(index, e)}
                         onDragOver={(e) => handleDragOver(index, e)}
                         onDragEnd={handleDragEnd}
-                        className={`bg-white rounded-3xl shadow-xs overflow-hidden border-4 transition-all duration-300 ${
+                        className={`bg-white rounded-3xl shadow-xs overflow-hidden border-4 transition-all duration-300 group/step-card ${
                           isStepCollapsed ? 'border-slate-200' : stepClasses.borderStrong
                         } ${draggedStepIndex === index ? 'drag-ghost' : ''}`}
                       >
@@ -2713,9 +2487,16 @@
 
                                 <span className={`${stepClasses.bar} text-white font-black text-[10px] px-2.5 py-0.5 rounded shadow-xs`}>STEP {index + 1}</span>
                                 
-                                <h3 className="font-black text-sm text-slate-805 flex items-center gap-1.5 leading-none">
+                                <h3 className="font-black text-sm text-slate-805 flex items-center gap-1.5 leading-none select-text">
                                   {step.name}
-                                  <span className="text-slate-400">
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(step.name, 'ステップ名をコピーしました！'); }}
+                                    className="opacity-0 group-hover/step-card:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs"
+                                    title="ステップ名をコピー"
+                                  >
+                                    📋 コピー
+                                  </button>
+                                  <span className="text-slate-405 ml-1">
                                     {isStepCollapsed ? <IconChevronRight className="h-4.5 w-4.5" /> : <IconChevronDown className="h-4.5 w-4.5" />}
                                   </span>
                                 </h3>
@@ -2760,7 +2541,7 @@
                               </div>
                               
                               <div className="flex flex-col gap-2 pl-8">
-                                <p className="text-slate-605 font-bold text-xs">{step.desc}</p>
+                                <p className="text-slate-605 font-bold text-xs select-text">{step.desc}</p>
                                 
                                 <div className="flex items-center gap-3 flex-wrap">
                                   {step.startDate && step.dueDate && (
@@ -2804,14 +2585,7 @@
 
                               {addingTaskStepId !== step.id && (
                                 <button 
-                                  onClick={() => {
-                                    setAddingTaskStepId(step.id);
-                                    setNewTaskTitle('');
-                                    setNewTaskDesc('');
-                                    const fallbackDept = deptList[0]?.key || 'backoffice';
-                                    setNewTaskDept(fallbackDept);
-                                    setNewTaskAssignee(fallbackDept === 'backoffice' ? '自分 (事務)' : '担当者');
-                                  }}
+                                  onClick={(e) => { e.stopPropagation(); setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); const fallbackDept = deptList[0]?.key || 'backoffice'; setNewTaskDept(fallbackDept); setNewTaskAssignee(fallbackDept === 'backoffice' ? '自分 (事務)' : '担当者'); }}
                                   className="bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-800 font-black text-xs px-3 py-2 rounded-xl flex items-center gap-1 transition shadow-xs"
                                 >
                                   <IconPlus /> タスク追加
@@ -2901,7 +2675,7 @@
                                       onDragOver={(e) => handleTaskDragOver(step.id, taskIndex, e)}
                                       onDragEnd={handleTaskDragEnd}
                                       onClick={() => toggleTaskCollapse(task.id)}
-                                      className={`group relative border-4 rounded-3xl p-4 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xs hover:shadow-md cursor-pointer select-none ${
+                                      className={`group/task-card relative border-4 rounded-3xl p-4 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xs hover:shadow-md cursor-pointer ${
                                         isCompleted 
                                           ? 'border-slate-200 opacity-60 bg-slate-50/70 shadow-inner' 
                                           : task.isHighPriority 
@@ -2914,11 +2688,11 @@
                                         
                                         {/* ホバー時に表示される並び替え＆編集操作ボタン */}
                                         {!isCompleted && (
-                                          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 mr-1 bg-white/90 border border-slate-100 p-0.5 rounded-lg backdrop-blur-xs">
+                                          <div className="opacity-0 group-hover/task-card:opacity-100 transition-opacity flex items-center gap-1 mr-1 bg-white/90 border border-slate-100 p-0.5 rounded-lg backdrop-blur-xs">
                                             <button 
                                               onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }}
                                               disabled={taskIndex === 0}
-                                              className={`p-1 bg-white border border-slate-200 rounded-md transition shadow-xs ${taskIndex === 0 ? 'opacity-25 cursor-not-allowed' : 'text-slate-400 hover:text-indigo-605'}`}
+                                              className={`p-1 bg-white border border-slate-200 rounded-md transition shadow-xs ${taskIndex === 0 ? 'opacity-25 cursor-not-allowed' : 'text-slate-405 hover:text-indigo-605'}`}
                                               title="この大ステップ内で上（前）に移動"
                                             >
                                               <IconDragHandle />
@@ -3048,23 +2822,30 @@
                                         // 2. タスク通常表示
                                         <div className="space-y-3.5 flex-1 flex flex-col justify-between pl-1 pr-4 mt-6">
                                           <div className="space-y-2.5">
-                                            <h4 className="font-extrabold text-sm text-slate-800 leading-snug flex items-start gap-1.5 pr-24">
-                                              <span className={`text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold ${dClass.bg} ${dClass.text} shrink-0 mt-0.5`}>#{index + 1}-{taskIndex + 1}</span>
+                                            <h4 className="font-extrabold text-sm text-slate-805 leading-snug flex items-start gap-1.5 pr-24 select-text">
+                                              <span className={`text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold ${dClass.bg} ${dClass.text} shrink-0 mt-0.5 select-none`}>#{index + 1}-{taskIndex + 1}</span>
                                               <span>{task.title}</span>
+                                              <button 
+                                                onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.title, 'タスク名をコピーしました！'); }}
+                                                className="opacity-0 group-hover/task-card:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs select-none"
+                                                title="タスク名をコピー"
+                                              >
+                                                📋 コピー
+                                              </button>
                                             </h4>
                                             
                                             <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                                              <span className={`text-[9.5px] font-black px-2.5 py-0.5 rounded-full border shadow-xs ${dClass.badge}`}>
+                                              <span className={`text-[9.5px] font-black px-2.5 py-0.5 rounded-full border shadow-xs select-none ${dClass.badge}`}>
                                                 {task.assignee}
                                               </span>
-                                              <div className="flex items-center gap-1 text-[10.5px] text-slate-400 font-mono font-bold">
+                                              <div className="flex items-center gap-1 text-[10.5px] text-slate-400 font-mono font-bold select-none">
                                                 <IconCalendar />
                                                 <span className={isLate ? 'text-rose-600 font-black animate-pulse' : ''}>{task.dueDate}</span>
                                               </div>
 
                                               {/* 🕒 着手リードタイム/経過日数の可視化マイクロバッジ */}
                                               {task.startedAt && (
-                                                <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2.5 py-0.5 rounded-lg border shadow-xs ${
+                                                <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2.5 py-0.5 rounded-lg border shadow-xs select-none ${
                                                   isCompleted 
                                                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
                                                     : 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse'
@@ -3081,9 +2862,18 @@
                                             </div>
 
                                             {!isTaskCollapsed && task.description && (
-                                              <p className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap bg-slate-50 border border-slate-200 rounded-2xl p-3 shadow-inner mt-2.5">
-                                                {task.description}
-                                              </p>
+                                              <div className="relative group/desc" onClick={(e) => e.stopPropagation()}>
+                                                <p className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap bg-slate-50 border border-slate-200 rounded-2xl p-3 shadow-inner mt-2.5 select-text">
+                                                  {task.description}
+                                                </p>
+                                                <button 
+                                                  onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }}
+                                                  className="absolute top-2 right-2 opacity-0 group-hover/desc:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shadow-xs select-none"
+                                                  title="タスクの説明をコピー"
+                                                >
+                                                  📋 コピー
+                                                </button>
+                                              </div>
                                             )}
                                           </div>
 
@@ -3091,7 +2881,7 @@
                                           {!isTaskCollapsed && (
                                             <div className="space-y-3 pt-2 animate-in fade-in" onClick={(e) => e.stopPropagation()}>
                                               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2.5 shadow-inner">
-                                                <div className="flex justify-between items-center pb-1.5 border-b border-slate-200">
+                                                <div className="flex justify-between items-center pb-1.5 border-b border-slate-200 select-none">
                                                   <span className="text-[9.5px] font-black text-slate-400 uppercase flex items-center gap-1 tracking-wider">
                                                     <IconClock /> 調整・状況時系列メモ
                                                   </span>
@@ -3220,7 +3010,7 @@
                                                                   <IconLink />
                                                                   <input type="text" placeholder="名前" value={tmpEditLinkLabel} onChange={e=>setTmpEditLinkLabel(e.target.value)} className="w-16 border border-slate-200 rounded px-1.5 py-0.5 text-[9px] font-bold" />
                                                                   <input type="text" placeholder="URL" value={tmpEditLinkUrl} onChange={e=>setTmpEditLinkUrl(e.target.value)} className="flex-1 border border-slate-200 rounded px-1.5 py-0.5 text-[9px]" />
-                                                                  <button onClick={handleAddLinkToEditLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-black">追加</button>
+                                                                  <button onClick={handleAddLinkToEditLog} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-750 border border-indigo-200 px-2 py-0.5 rounded text-[9px] font-black">追加</button>
                                                                 </div>
 
                                                                 {/* リンク一覧 */}
@@ -3244,7 +3034,7 @@
                                                           ) : (
                                                             /* --- メモの通常表示モード --- */
                                                             <React.Fragment>
-                                                              <div className="flex justify-between items-center border-b border-slate-100 pb-1">
+                                                              <div className="flex justify-between items-center border-b border-slate-100 pb-1 select-none">
                                                                 <span className="text-[8px] font-mono text-slate-400 font-bold flex items-center gap-0.5 leading-none">
                                                                   <IconClock /> {log.date}
                                                                   {log.isHighlighted && <span className="ml-1.5 bg-amber-100 text-amber-800 border border-amber-300 text-[7.5px] px-1.5 py-0.5 rounded font-bold">📌 重要・ピン留め</span>}
@@ -3274,9 +3064,20 @@
                                                                 </div>
                                                               </div>
 
-                                                              <p className={`text-[11px] text-slate-655 leading-relaxed font-bold whitespace-pre-wrap ${log.completed ? 'line-through text-slate-300 font-medium' : ''}`}>{log.text}</p>
+                                                              <div className="relative group/logtext w-full pr-14">
+                                                                <p className={`text-[11px] text-slate-655 leading-relaxed font-bold whitespace-pre-wrap select-text ${log.completed ? 'line-through text-slate-300 font-medium' : ''}`}>
+                                                                  {log.text}
+                                                                </p>
+                                                                <button 
+                                                                  onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(log.text, 'メモ内容をコピーしました！'); }}
+                                                                  className="absolute right-0 top-0 opacity-0 group-hover/logtext:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-50 border border-slate-150 text-slate-500 rounded text-[9px] font-bold shadow-xs select-none"
+                                                                  title="このメモのテキストをコピー"
+                                                                >
+                                                                  📋 コピー
+                                                                </button>
+                                                              </div>
                                                               
-                                                              <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                                                              <div className="flex flex-wrap items-center gap-1.5 mt-0.5 select-none">
                                                                 {log.to && (
                                                                   <span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 hover:bg-indigo-150 border border-indigo-200 text-indigo-700 px-2 py-0.5 rounded-lg transition font-black">
                                                                     <span>TO: {log.to}</span>
