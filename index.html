@@ -306,6 +306,7 @@
       { value: 'pending', label: '未着手', className: 'bg-slate-100 text-slate-606 border-slate-202' },
       { value: 'in_progress', label: '進行中', className: 'bg-blue-50 text-blue-606 border-blue-202' },
       { value: 'completed', label: '完了', className: 'bg-emerald-50 text-emerald-606 border-emerald-202' },
+      { value: 'not_applicable', label: '対応なし', className: 'bg-slate-200 text-slate-500 border-slate-300' }
     ];
 
     const initialProjects = [
@@ -916,28 +917,34 @@
       const [editTaskImages, setEditTaskImages] = useState([]); // タスク編集時画像
 
       const isOverdue = (dueDate, status) => {
-        if (status === 'completed') return false;
+        if (status === 'completed' || status === 'not_applicable') return false;
         return new Date(dueDate) < new Date(TODAY_STR); 
       };
 
       const projectProgress = useMemo(() => {
         if (tasks.length === 0) return 0;
-        const completed = tasks.filter(t => t.status === 'completed').length;
-        return Math.round((completed / tasks.length) * 100);
+        const validTasks = tasks.filter(t => t.status !== 'not_applicable');
+        if (validTasks.length === 0) return 100;
+        const completed = validTasks.filter(t => t.status === 'completed').length;
+        return Math.round((completed / validTasks.length) * 100);
       }, [tasks]);
 
       const getStepProgress = (stepId) => {
         const stepTasks = tasks.filter(t => t.stepId === stepId);
         if (stepTasks.length === 0) return 0;
-        const completed = stepTasks.filter(t => t.status === 'completed').length;
-        return Math.round((completed / stepTasks.length) * 100);
+        const validTasks = stepTasks.filter(t => t.status !== 'not_applicable');
+        if (validTasks.length === 0) return 100;
+        const completed = validTasks.filter(t => t.status === 'completed').length;
+        return Math.round((completed / validTasks.length) * 100);
       };
 
       const calculateProjectProgressById = (proj) => {
         const pTasks = proj.tasks || [];
         if (pTasks.length === 0) return 0;
-        const completed = pTasks.filter(t => t.status === 'completed').length;
-        return Math.round((completed / pTasks.length) * 100);
+        const validTasks = pTasks.filter(t => t.status !== 'not_applicable');
+        if (validTasks.length === 0) return 100;
+        const completed = validTasks.filter(t => t.status === 'completed').length;
+        return Math.round((completed / validTasks.length) * 100);
       };
 
       const countLateTasksByProject = (proj) => {
@@ -950,7 +957,8 @@
         const completed = pTasks.filter(t => t.status === 'completed').length;
         const inProgress = pTasks.filter(t => t.status === 'in_progress').length;
         const notStarted = pTasks.filter(t => t.status === 'pending' || t.status === 'blocked').length;
-        return { completed, inProgress, notStarted, total: pTasks.length };
+        const notApplicable = pTasks.filter(t => t.status === 'not_applicable').length;
+        return { completed, inProgress, notStarted, notApplicable, total: pTasks.length };
       };
 
       const renderStepDeadlineBadge = (step, progress) => {
@@ -1663,6 +1671,26 @@
               };
               updated.contextLogs = [sysLog, ...(t.contextLogs || [])];
               
+            } else if (newStatus === 'not_applicable') {
+              updated.completedAt = TODAY_STR;
+              if (!t.startedAt) {
+                updated.startedAt = TODAY_STR; 
+              }
+              
+              const sysLog = { 
+                id: `sys_${Date.now()}`, 
+                date: dateStr, 
+                text: '🚫 タスクを「対応なし」にマークしました。', 
+                links: [], 
+                completed: true, 
+                isSystem: true, 
+                to: null, 
+                dueDate: null, 
+                isHighlighted: false,
+                attachedImages: []
+              };
+              updated.contextLogs = [sysLog, ...(t.contextLogs || [])];
+              
             } else if (newStatus === 'pending') {
               updated.startedAt = null;
               updated.completedAt = null;
@@ -2260,6 +2288,7 @@
                                 <option value="pending">未着手</option>
                                 <option value="in_progress">進行中</option>
                                 <option value="completed">完了</option>
+                                <option value="not_applicable">対応なし</option>
                               </select>
                             </div>
                           </div>
@@ -2689,6 +2718,7 @@
                                 {stepTasks.map((t, tIdx) => {
                                   const isTaskDone = t.status === 'completed';
                                   const isTaskWorking = t.status === 'in_progress';
+                                  const isTaskNA = t.status === 'not_applicable';
                                   return (
                                     <button
                                       key={t.id}
@@ -2709,11 +2739,13 @@
                                           ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100' 
                                           : isTaskWorking
                                             ? 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 animate-pulse'
-                                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
+                                            : isTaskNA
+                                              ? 'bg-slate-200 border-slate-300 text-slate-500 hover:bg-slate-300'
+                                              : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
                                       }`}
                                       title={t.title}
                                     >
-                                      <span>{isTaskDone ? '✓' : isTaskWorking ? '⚡' : '🔘'} #{index + 1}-{tIdx + 1}</span>
+                                      <span>{isTaskDone ? '✓' : isTaskWorking ? '⚡' : isTaskNA ? '🚫' : '🔘'} #{index + 1}-{tIdx + 1}</span>
                                       <span className="truncate max-w-[80px]">{t.title}</span>
                                     </button>
                                   );
@@ -2832,6 +2864,7 @@
                                   const isBlocked = task.status === 'blocked';
                                   const isCompleted = task.status === 'completed';
                                   const isInProgress = task.status === 'in_progress';
+                                  const isTaskNA = task.status === 'not_applicable';
                                   const isLate = isOverdue(task.dueDate, task.status);
                                   
                                   const assignedDeptColorKey = deptList.find(d => d.key === task.department)?.color || 'slate';
@@ -2841,7 +2874,7 @@
                                   
                                   const isTaskCollapsed = collapsedTasks[task.id] !== undefined 
                                     ? collapsedTasks[task.id] 
-                                    : isCompleted;
+                                    : (isCompleted || isTaskNA);
 
                                   const durationDays = getDurationDays(task);
 
@@ -2855,7 +2888,7 @@
                                       onDragEnd={handleTaskDragEnd}
                                       onClick={() => toggleTaskCollapse(task.id)}
                                       className={`group/task-card relative border-4 rounded-3xl p-4 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xs hover:shadow-md cursor-pointer ${
-                                        isCompleted 
+                                        isCompleted || isTaskNA
                                           ? 'border-slate-200 opacity-60 bg-slate-50/70 shadow-inner' 
                                           : task.isHighPriority 
                                             ? 'border-rose-400 bg-gradient-to-br from-rose-50/10 via-white to-white ring-1 ring-rose-400/5 shadow-sm'
@@ -2864,7 +2897,7 @@
                                     >
                                       {/* タスク右上ホバーアクション */}
                                       <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
-                                        {!isCompleted && (
+                                        {(!isCompleted && !isTaskNA) && (
                                           <div className="opacity-100 flex items-center gap-1 mr-1 bg-white/90 border border-slate-200 p-0.5 rounded-lg shadow-sm">
                                             <button 
                                               onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }}
@@ -2912,12 +2945,15 @@
                                               ? 'bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-100' 
                                               : task.status === 'in_progress'
                                                 ? 'bg-blue-500 text-white border-blue-600 shadow-md shadow-blue-100'
-                                                : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+                                                : task.status === 'not_applicable'
+                                                  ? 'bg-slate-400 text-white border-slate-500 shadow-md shadow-slate-200'
+                                                  : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
                                           }`}
                                         >
                                           <option value="pending" className="bg-white text-slate-800">🔘 未対応</option>
                                           <option value="in_progress" className="bg-white text-slate-800">⚡ 進行中</option>
                                           <option value="completed" className="bg-white text-slate-800">✅ 完了マーク</option>
+                                          <option value="not_applicable" className="bg-white text-slate-800">🚫 対応なし</option>
                                         </select>
 
                                         {editingTaskId !== task.id && (
@@ -3048,13 +3084,17 @@
                                                 <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2.5 py-0.5 rounded-lg border shadow-xs select-none ${
                                                   isCompleted 
                                                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-                                                    : 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse'
+                                                    : isTaskNA
+                                                      ? 'bg-slate-100 text-slate-500 border-slate-200'
+                                                      : 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse'
                                                 }`}>
                                                   <IconClock className="h-2.5 w-2.5" />
                                                   <span>
                                                     {isCompleted 
                                                       ? `${task.startedAt.split('-').slice(1).join('/')} 〜 ${task.completedAt.split('-').slice(1).join('/')} (所要 ${durationDays} 日)`
-                                                      : `${task.startedAt.split('-').slice(1).join('/')} 着手 (${durationDays} 日経過)`
+                                                      : isTaskNA
+                                                        ? `${task.startedAt.split('-').slice(1).join('/')} 〜 ${task.completedAt.split('-').slice(1).join('/')} (対応なし)`
+                                                        : `${task.startedAt.split('-').slice(1).join('/')} 着手 (${durationDays} 日経過)`
                                                     }
                                                   </span>
                                                 </span>
@@ -3106,7 +3146,7 @@
                                                   <span className="text-[9.5px] font-black text-slate-400 uppercase flex items-center gap-1 tracking-wider">
                                                     <IconClock /> 調整・状況時系列メモ
                                                   </span>
-                                                  {addingLogTaskId !== task.id && !isCompleted && (
+                                                  {addingLogTaskId !== task.id && !isCompleted && !isTaskNA && (
                                                     <button 
                                                       onClick={() => {
                                                         setAddingLogTaskId(task.id);
@@ -3487,6 +3527,7 @@
                     <option value="pending">未着手</option>
                     <option value="in_progress">進行中</option>
                     <option value="completed">完了</option>
+                    <option value="not_applicable">対応なし</option>
                   </select>
 
                   <div className="flex-1 relative">
@@ -3520,7 +3561,7 @@
                         const prog = calculateProjectProgressById(proj);
                         const lates = countLateTasksByProject(proj);
                         const folderName = folders.find(f => f.id === proj.folderId)?.name || '未分類';
-                        const { completed, inProgress, notStarted, total } = countTaskStatus(proj);
+                        const { completed, inProgress, notStarted, notApplicable, total } = countTaskStatus(proj);
                         const statusObj = projectStatusOptions.find(o => o.value === (proj.status || 'pending'));
 
                         return (
@@ -3552,7 +3593,7 @@
                             </td>
                             {/* 📋 タスク内訳 */}
                             <td className="py-2 px-4 border border-slate-200 align-middle">
-                              <div className="flex flex-col gap-0.5 text-[9.5px] w-20 mx-auto font-mono font-bold leading-none">
+                              <div className="flex flex-col gap-0.5 text-[9.5px] w-24 mx-auto font-mono font-bold leading-none">
                                 <div className="flex justify-between items-center text-slate-500 bg-slate-50 px-1 py-0.5 rounded border border-slate-100">
                                   <span>未着手</span><span>{notStarted}</span>
                                 </div>
@@ -3562,6 +3603,11 @@
                                 <div className="flex justify-between items-center text-emerald-600 bg-emerald-50 px-1 py-0.5 rounded border border-emerald-100">
                                   <span>完了</span><span>{completed}</span>
                                 </div>
+                                {notApplicable > 0 && (
+                                  <div className="flex justify-between items-center text-slate-500 bg-slate-100 px-1 py-0.5 rounded border border-slate-200">
+                                    <span>対応なし</span><span>{notApplicable}</span>
+                                  </div>
+                                )}
                               </div>
                             </td>
                             {/* 📊 進捗率 */}
