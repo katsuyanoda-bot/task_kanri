@@ -2306,7 +2306,7 @@
                             </h2>
                             <button 
                               onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(activeProject.name, '案件名をコピーしました！'); }}
-                              className="opacity-0 group-hover/project-title:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs select-none"
+                              className="opacity-100 p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs select-none transition-colors"
                               title="案件プロジェクト名をコピー"
                             >
                               📋 コピー
@@ -2600,7 +2600,7 @@
                                   {step.name}
                                   <button 
                                     onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(step.name, 'ステップ名をコピーしました！'); }}
-                                    className="opacity-0 group-hover/step-card:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs select-none"
+                                    className="opacity-100 p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs select-none transition-colors"
                                     title="ステップ名をコピー"
                                   >
                                     📋 コピー
@@ -2865,7 +2865,7 @@
                                       {/* タスク右上ホバーアクション */}
                                       <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
                                         {!isCompleted && (
-                                          <div className="opacity-0 group-hover/task-card:opacity-100 transition-opacity flex items-center gap-1 mr-1 bg-white/90 border border-slate-100 p-0.5 rounded-lg backdrop-blur-sm">
+                                          <div className="opacity-100 flex items-center gap-1 mr-1 bg-white/90 border border-slate-200 p-0.5 rounded-lg shadow-sm">
                                             <button 
                                               onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }}
                                               disabled={taskIndex === 0}
@@ -3028,7 +3028,7 @@
                                               <span>{task.title}</span>
                                               <button 
                                                 onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.title, 'タスク名をコピーしました！'); }}
-                                                className="opacity-0 group-hover/task-card:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs select-none"
+                                                className="opacity-100 p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 shadow-xs select-none transition-colors"
                                                 title="タスク名をコピー"
                                               >
                                                 📋 コピー
@@ -3061,34 +3061,39 @@
                                               )}
                                             </div>
 
-                                            {!isTaskCollapsed && task.description && (
-                                              <div className="relative group/desc space-y-2" onClick={(e) => e.stopPropagation()}>
-                                                <p className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap bg-slate-50 border border-slate-200 rounded-2xl p-3 shadow-inner mt-2.5 select-text">
-                                                  {task.description}
-                                                </p>
-                                                
-                                                {/* 🖼️ タスク添付画像の通常時インライン一覧 */}
-                                                {task.attachedImages && task.attachedImages.length > 0 && (
-                                                  <div className="flex flex-wrap gap-2 pt-1">
-                                                    {task.attachedImages.map((src, imgIdx) => (
-                                                      <div 
-                                                        key={imgIdx} 
-                                                        onClick={() => setLightboxImage(src)}
-                                                        className="relative max-w-[140px] max-h-[100px] rounded-xl overflow-hidden border border-slate-200 shadow-sm cursor-zoom-in hover:brightness-95 transition-all"
-                                                      >
-                                                        <img src={src} className="w-full h-full object-cover" />
-                                                      </div>
-                                                    ))}
-                                                  </div>
-                                                )}
+                                            {task.description && (
+                                              <div className="relative group/desc space-y-1.5 mt-3" onClick={(e) => e.stopPropagation()}>
+                                                <div className="text-[9.5px] font-bold text-slate-450 ml-1 select-none flex items-center gap-1">
+                                                  <IconInfo className="h-3 w-3" /> 論点・備考
+                                                </div>
+                                                <div className="relative">
+                                                  <p className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap bg-slate-50 border border-slate-200 rounded-2xl p-3 shadow-inner select-text min-h-[40px]">
+                                                    {task.description}
+                                                  </p>
+                                                  
+                                                  {/* 🖼️ タスク添付画像の通常時インライン一覧 */}
+                                                  {task.attachedImages && task.attachedImages.length > 0 && (
+                                                    <div className="flex flex-wrap gap-2 pt-2 px-1">
+                                                      {task.attachedImages.map((src, imgIdx) => (
+                                                        <div 
+                                                          key={imgIdx} 
+                                                          onClick={() => setLightboxImage(src)}
+                                                          className="relative max-w-[140px] max-h-[100px] rounded-xl overflow-hidden border border-slate-200 shadow-sm cursor-zoom-in hover:brightness-95 transition-all"
+                                                        >
+                                                          <img src={src} className="w-full h-full object-cover" />
+                                                        </div>
+                                                      ))}
+                                                    </div>
+                                                  )}
 
-                                                <button 
-                                                  onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }}
-                                                  className="absolute top-2 right-2 opacity-0 group-hover/desc:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shadow-xs select-none"
-                                                  title="タスクの説明をコピー"
-                                                >
-                                                  📋 コピー
-                                                </button>
+                                                  <button 
+                                                    onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }}
+                                                    className="absolute top-2 right-2 opacity-100 p-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors"
+                                                    title="タスクの説明をコピー"
+                                                  >
+                                                    📋 コピー
+                                                  </button>
+                                                </div>
                                               </div>
                                             )}
                                           </div>
@@ -3318,7 +3323,7 @@
                                                                   {log.isHighlighted && <span className="ml-1.5 bg-amber-100 text-amber-800 border border-amber-300 text-[7.5px] px-1.5 py-0.5 rounded font-bold">📌 重要・ピン留め</span>}
                                                                 </span>
                                                                 
-                                                                <div className="opacity-0 group-hover/log:opacity-100 transition-opacity flex items-center gap-1.5 bg-white/95 border border-slate-200 rounded-lg p-0.5 z-10 shadow-xs absolute top-2 right-2">
+                                                                <div className="opacity-100 flex items-center gap-1.5 bg-white/95 border border-slate-200 rounded-lg p-0.5 z-10 shadow-xs absolute top-2 right-2">
                                                                   <button 
                                                                     onClick={() => startEditingLog(log)}
                                                                     className="p-1 text-slate-400 hover:text-indigo-600 rounded transition"
@@ -3364,7 +3369,7 @@
 
                                                                 <button 
                                                                   onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(log.text, 'メモ内容をコピーしました！'); }}
-                                                                  className="absolute right-0 top-0 opacity-0 group-hover/logtext:opacity-100 transition-opacity p-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-500 rounded text-[9px] font-bold shadow-xs select-none"
+                                                                  className="absolute right-0 top-0 opacity-100 p-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-500 rounded text-[9px] font-bold shadow-xs select-none transition-colors"
                                                                   title="このメモのテキストをコピー"
                                                                 >
                                                                   📋 コピー
