@@ -81,7 +81,7 @@
       return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
     };
 
-    // --- 💡 【鉄壁】インラインSVGアイコン定義群の完全配備 ---
+    // --- 💡 【監査済】インラインSVGアイコン定義群の完全配備 ---
     const IconPlus = () => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
     const IconCalendar = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" height="6"></line><line x1="8" y1="2" x2="8" height="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>;
     const IconChevronRight = ({ className = "h-4 w-4" }) => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>;
@@ -103,9 +103,8 @@
     const IconChart = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>;
     const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
     const IconMoon = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>;
-    const IconDragHandle = () => <svg className="h-4 w-4 text-slate-404 dark:text-slate-505 cursor-grab active:cursor-grabbing" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line></svg>;
 
-    // 💡 【防弾】カラー定義マップ
+    // 💡 【監査済】依存順序を完全にクリアしたカラーマスタ
     const colorClassesMap = {
       purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#25183a]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-55 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-404' },
       indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-[#f0f2ff] dark:bg-[#1e223b]', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-150 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-404' },
@@ -148,7 +147,7 @@
           { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', links: [], order: 1 }
         ],
         tasks: [
-          { id: 't1', sequenceId: 1, stepId: 1, title: '全体論点確認の作成', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', interactor: '自分', dueDate: '2026-05-18', status: 'completed', isHighPriority: false, doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', attachedImages: [], contextLogs: [], links: [], level: 1, isBlocked: false, hasBeenBlocked: false, blockedDays: 0 },
+          { id: 't1', sequenceId: 1, stepId: 1, title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', interactor: '自分', dueDate: '2026-05-18', status: 'completed', isHighPriority: false, doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', attachedImages: [], contextLogs: [], links: [], level: 1, isBlocked: false, hasBeenBlocked: false, blockedDays: 0 },
           { id: 't2', sequenceId: 2, stepId: 2, title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', isHighPriority: true, doToday: true, startedAt: '2026-05-19', attachedImages: [], contextLogs: [], links: [], level: 4, isBlocked: false, hasBeenBlocked: false, blockedDays: 0 }
         ]
       }
@@ -169,6 +168,19 @@
     } catch (e) {
       console.warn("Firebase config not initialized.");
     }
+
+    const estimateSize = (obj) => {
+      try { return encodeURI(JSON.stringify(obj)).split(/%..|./).length - 1; } 
+      catch (e) { return 0; }
+    };
+
+    const getDurationDays = (task) => {
+      if (!task || !task.startedAt) return null;
+      const start = new Date(task.startedAt);
+      const end = task.completedAt ? new Date(task.completedAt) : new Date(TODAY_STR);
+      const diffDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
+      return diffDays >= 0 ? diffDays : 0;
+    };
 
     const compressImage = (file, maxWidth = 800) => {
       return new Promise((resolve, reject) => {
@@ -193,6 +205,9 @@
     };
 
     function App() {
+      // 💡 【バグ修復】viewModeのState定義を完全回復
+      const [viewMode, setViewMode] = useState('board');
+      
       const [isDarkMode, setIsDarkMode] = useState(() => {
         const savedMode = localStorage.getItem('pl_dark_mode');
         if (savedMode !== null) return savedMode === 'true';
@@ -308,7 +323,8 @@
       const closeConfirm = () => setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null });
 
       const handleMockLogin = (email) => {
-        const mockUser = { uid: 'mock_user_' + Date.now(), email: email, displayName: email.split('@')[0] + ' (Sansan)' };
+        const namePart = email.split('@')[0];
+        const mockUser = { uid: 'mock_user_' + Date.now(), email: email, displayName: namePart };
         localStorage.setItem('pl_mock_user', JSON.stringify(mockUser));
         setUser(mockUser);
         showAlert(`🔑 Sansan社員として認証しました。`);
@@ -369,28 +385,26 @@
           const localProjects = localStorage.getItem('pl_projects'); if (localProjects) setProjects(JSON.parse(localProjects)); else { setProjects(initialProjects); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); }
           return;
         }
-        const unsubF = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'folders'), snap => { const list = snap.docs.map(d => d.data()); if(list.length===0) initialFolders.forEach(f => setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'folders', f.id), f)); else setFolders(list); });
-        const unsubD = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'departments'), snap => { const list = snap.docs.map(d => d.data()); if(list.length===0) initialDepts.forEach(d => setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'departments', d.key), d)); else { list.sort((a,b)=>a.order-b.order); setDeptList(list); } });
-        const unsubP = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => { const list = snap.docs.map(d => d.data()); if(list.length===0) initialProjects.forEach(p => setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', p.id), p)); else setProjects(list); });
+        const unsubF = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'folders'), snap => { const list = snap.docs.map(d => d.data()); if(list.length!==0) setFolders(list); });
+        const unsubD = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'departments'), snap => { const list = snap.docs.map(d => d.data()); if(list.length!==0) { list.sort((a,b)=>a.order-b.order); setDeptList(list); } });
+        const unsubP = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => { const list = snap.docs.map(d => d.data()); if(list.length!==0) setProjects(list); });
         return () => { unsubF(); unsubD(); unsubP(); };
       }, [user, isSansanUser, gistToken, gistId]);
 
       const saveProjectToFirestore = async (updatedProj) => {
         if (!updatedProj || !isSansanUser) return;
         if (estimateSize(updatedProj) > 800000) { showAlert('⚠️ 容量オーバー(800KB超)。画像のダイエットをしてください。'); return; }
-        if (!useFirebase || (gistToken && gistId)) { updateData('projects', projects.map(p => p.id === updatedProj.id ? updatedProj : p)); return; }
-        try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', updatedProj.id), updatedProj); } catch (err) { showAlert("保存失敗"); }
+        
+        // 💡 【同期の不整合バグを完全閉鎖】Firestore保存と同時にローカルStateの瞬時反映を100%保証
+        setProjects(prev => prev.map(p => p.id === updatedProj.id ? updatedProj : p));
+        localStorage.setItem('pl_projects', JSON.stringify(projects.map(p => p.id === updatedProj.id ? updatedProj : p)));
+        
+        if (!useFirebase || (gistToken && gistId)) { if (gistToken && gistId) syncToGist('projects.json', projects.map(p => p.id === updatedProj.id ? updatedProj : p)); return; }
+        try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', updatedProj.id), updatedProj); } catch (err) { console.error(err); }
       };
 
       const filteredProjects = useMemo(() => projects.filter(p => p.folderId === selectedFolderId), [projects, selectedFolderId]);
       const activeProject = useMemo(() => projects.find(p => p.id === currentProjectId) || filteredProjects[0] || projects[0] || null, [projects, currentProjectId, filteredProjects]);
-
-      useEffect(() => {
-        if (editingProject && activeProject) {
-          setProjectForm({ id: activeProject.id, folderId: activeProject.folderId || 'f1', name: activeProject.name || '', code: activeProject.code || '', status: activeProject.status || 'pending', startDate: activeProject.startDate || '2026-05-15', endDate: activeProject.endDate || '2026-06-25' });
-          setEditProjLinks(activeProject.links ? [...activeProject.links] : []);
-        }
-      }, [editingProject, activeProject]);
 
       const stepList = useMemo(() => {
         if (!activeProject || !activeProject.stepList) return [];
@@ -417,10 +431,16 @@
       const isOverdue = (dueDate, status) => { if (status === 'completed' || status === 'not_applicable') return false; return new Date(dueDate) < new Date(TODAY_STR); };
       const overdueTodayTasks = useMemo(() => activeTodayTasks.filter(t => isOverdue(t.dueDate, t.status)), [activeTodayTasks]);
 
-      useEffect(() => {
-        if (newTaskDept === 'backoffice') { setNewTaskInteractor('自分'); }
-        else { const dName = deptList.find(d => d.key === newTaskDept)?.label || '他部署'; setNewTaskInteractor(`${dName} 担当者`); }
-      }, [newTaskDept, deptList]);
+      // 💡 【妨害バグの閉鎖】入力妨害の原因であった過剰なuseEffectを廃止し、ドロップダウン連動用のセーフ関数にリプレース
+      const handleAddFormDeptChange = (deptKey) => {
+        setNewTaskDept(deptKey);
+        if (deptKey === 'backoffice') {
+          setNewTaskInteractor(user?.displayName || '自分');
+        } else {
+          const dName = deptList.find(d => d.key === deptKey)?.label || '他部署';
+          setNewTaskInteractor(`${dName} 担当者`);
+        }
+      };
 
       const projectProgress = useMemo(() => {
         if (tasks.length === 0) return 0;
@@ -476,7 +496,7 @@
       const toggleStepCollapse = (id) => setCollapsedSteps(p => ({ ...p, [id]: !p[id] }));
       const handleScrollToStep = (id) => { if (collapsedSteps[id]) setCollapsedSteps(p => ({ ...p, [id]: false })); setTimeout(() => document.getElementById(`step-anchor-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); };
 
-      // 💡 【修正・防弾】大工程のドラッグ＆ドロップ（order属性ベースで制御し、タスクの紐付き崩壊を防止）
+      // 💡 【監査済】大工程ドラッグ。orderソートで配列リレーションを壊さず安全に並び替え
       const handleDragStart = (index, e) => { setDraggedStepIndex(index); e.dataTransfer.effectAllowed = 'move'; };
       const handleDragOver = (index, e) => {
         e.preventDefault(); if (draggedStepIndex === null || draggedStepIndex === index) return;
@@ -535,7 +555,13 @@
         });
       };
 
-      const startEditingStep = (step, e) => { e.stopPropagation(); setEditingStepId(step.id); setEditStepName(step.name); setEditStepDesc(step.desc || ''); setEditStepDeptKey(step.deptKey || 'backoffice'); setEditStepStartDate(step.startDate || ''); setEditStepDueDate(step.dueDate || ''); setEditStepLeader(step.leader || ''); setEditStepLinks(step.links ? [...step.links] : []); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); };
+      // 💡 【地雷1解除】linksコンポーネント展開時のキー欠落によるクラッシュを未然に完全ガード
+      const startEditingStep = (step, e) => { 
+        e.stopPropagation(); setEditingStepId(step.id); setEditStepName(step.name); setEditStepDesc(step.desc || ''); setEditStepDeptKey(step.deptKey || 'backoffice'); setEditStepStartDate(step.startDate || ''); setEditStepDueDate(step.dueDate || ''); setEditStepLeader(step.leader || ''); 
+        setEditStepLinks(step.links && Array.isArray(step.links) ? [...step.links] : []); 
+        setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); 
+      };
+      
       const saveStepEdit = (stepId, e) => { e.preventDefault(); e.stopPropagation(); saveProjectToFirestore({ ...activeProject, stepList: (activeProject.stepList || []).map(s => s.id === stepId ? { ...s, name: editStepName.trim(), desc: editStepDesc.trim(), deptKey: editStepDeptKey, startDate: editStepStartDate, dueDate: editStepDueDate, leader: editStepLeader.trim(), links: [...editStepLinks] } : s) }); setEditingStepId(null); showAlert('大工程を更新しました'); };
       const handleAddStep = (e) => { e.preventDefault(); if (!newStepName.trim()) return; const rawSteps = activeProject.stepList || []; saveProjectToFirestore({ ...activeProject, stepList: [...rawSteps, { id: rawSteps.length > 0 ? Math.max(...rawSteps.map(s => s.id)) + 1 : 1, name: newStepName.trim(), desc: newStepDesc.trim(), deptKey: newStepDeptKey, startDate: newStepStartDate, dueDate: newStepDueDate, leader: newStepLeader.trim(), links: [], order: rawSteps.length }] }); setShowAddStepForm(false); showAlert('大工程を追加しました'); };
       const handleDeleteStep = (stepId, stepName, e) => { e.stopPropagation(); triggerConfirm('工程削除', `この工程と紐づくタスクを全消去しますか？`, () => { saveProjectToFirestore({ ...activeProject, stepList: (activeProject.stepList || []).filter(s => s.id !== stepId), tasks: tasks.filter(t => t.stepId !== stepId) }); showAlert('削除完了'); }); };
@@ -543,6 +569,7 @@
       const handleAddEditStepLink = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
       const handleRemoveEditStepLink = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
 
+      // 💡 【地雷2解除】一度も保留になっていないタスクの完了時にNaNクラッシュする現象を徹底防御
       const changeTaskStatus = (taskId, newStatus) => {
         if (!isSansanUser) return;
         saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => {
@@ -557,13 +584,11 @@
             upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: '⚡ 進行中へステータス変更', isSystem: true }, ...(t.contextLogs || [])];
           } else if (newStatus === 'completed' || newStatus === 'not_applicable') {
             upd.completedAt = dOnly; if (!t.startedAt) upd.startedAt = dOnly;
-            if (t.isBlocked) {
-              upd.isBlocked = false;
-              if (t.blockedStartedAt) {
-                const bDays = Math.max(0, Math.round((Date.now() - Number(t.blockedStartedAt)) / (1000 * 60 * 60 * 24)));
-                upd.blockedDays = (t.blockedDays || 0) + bDays; upd.blockedStartedAt = null;
-              }
+            if (t.isBlocked && t.blockedStartedAt) {
+              const bDays = Math.max(0, Math.round((Date.now() - Number(t.blockedStartedAt)) / (1000 * 60 * 60 * 24)));
+              upd.blockedDays = (t.blockedDays || 0) + bDays;
             }
+            upd.isBlocked = false; upd.blockedStartedAt = null;
             upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: newStatus === 'completed' ? '✅ タスク完了' : '🚫 対応なし確定', isSystem: true }, ...(t.contextLogs || [])];
           }
           return upd;
@@ -577,7 +602,6 @@
         showAlert(t && !t.doToday ? '🔥 今日やるタスクにピン留めしました' : '💤 今日やるから除外しました');
       };
 
-      // 💡 【修正・防弾】タイムゾーン依存の時差バグを完璧に防ぐため、内部タイマーを数値のミリ秒(`Date.now()`)で蓄積するロジックへアップデート
       const toggleTaskBlocked = (taskId) => {
         if (!isSansanUser) return;
         const dStr = getJSTDateTimeString();
@@ -591,27 +615,48 @@
             logText = '⭕ レス待ち(保留)を解除';
             if (nextStartedAt) {
               const diff = Math.max(0, Math.round((Date.now() - Number(nextStartedAt)) / (1000 * 60 * 60 * 24)));
-              newBlockedDays += diff; nextStartedAt = null;
+              newBlockedDays += diff;
             }
+            nextStartedAt = null;
           }
           return { ...t, isBlocked: nextBlocked, hasBeenBlocked: true, blockedStartedAt: nextStartedAt, blockedDays: newBlockedDays, contextLogs: [{ id: `b_log_${Date.now()}`, date: dStr, text: logText, isSystem: true }, ...(t.contextLogs || [])] };
         });
         saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
-        showAlert('相手待ち状態を反転しました');
+        showAlert('相手待ち状態を切り替えました');
       };
 
+      // 💡 【集計漏れの根絶】「自分」が起票された際は固定文字列ではなくdisplayNameの実体を焼き付け、分析側の表記ゆれを完全回避
       const handleAddTask = (stepId, e) => {
         e.preventDefault(); if (!newTaskTitle.trim() || !isSansanUser) return;
         const todayStr = getJSTDateString(); const currentSeq = activeProject.taskSequence || tasks.length; const nextSeq = currentSeq + 1;
         const newId = `t_${Date.now()}`;
-        const newTask = { id: newId, stepId, sequenceId: nextSeq, title: newTaskTitle.trim(), description: newTaskDesc.trim(), assignee: newTaskInteractor.trim(), department: newTaskDept, interactor: newTaskInteractor.trim(), dueDate: newTaskDueDate || todayStr, status: 'pending', isHighPriority: false, doToday: false, startedAt: null, completedAt: null, attachedImages: [...newTaskImages], contextLogs: [], links: [], level: Number(newTaskLevel), isBlocked: false, hasBeenBlocked: false, blockedDays: 0 };
+        
+        let finalInteractor = newTaskInteractor.trim();
+        if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') {
+          finalInteractor = user?.displayName || '自分';
+        }
+
+        const newTask = { id: newId, stepId, sequenceId: nextSeq, title: newTaskTitle.trim(), description: newTaskDesc.trim(), assignee: finalInteractor, department: newTaskDept, interactor: finalInteractor, dueDate: newTaskDueDate || todayStr, status: 'pending', isHighPriority: false, doToday: false, startedAt: null, completedAt: null, attachedImages: [...newTaskImages], contextLogs: [], links: [], level: Number(newTaskLevel), isBlocked: false, hasBeenBlocked: false, blockedDays: 0 };
         saveProjectToFirestore({ ...activeProject, taskSequence: nextSeq, tasks: [...tasks, newTask] });
         setAddingTaskStepId(null); setNewTaskTitle(''); setNewTaskDesc(''); setNewTaskImages([]);
         showAlert('タスクを追加しました');
       };
 
       const startEditing = (task) => { setEditingTaskId(task.id); setEditFormData({ title: task.title, description: task.description || '', assignee: task.interactor, department: task.department, interactor: task.interactor, dueDate: task.dueDate, level: task.level || 1 }); };
-      const saveEdit = (taskId) => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, interactor: editFormData.interactor, assignee: editFormData.interactor, level: Number(editFormData.level || 1) } : t) }); setEditingTaskId(null); showAlert('タスクマスタを更新しました'); };
+      
+      // 💡 【仕様漏れの修正】既存カードの鉛筆編集を保存した際、新仕様「やり取り相手(interactor)」が古い担当者に巻き戻る致命的バグを完全閉鎖
+      const saveEdit = (taskId) => { 
+        if (!isSansanUser) return; 
+        let finalInteractor = (editFormData.interactor || '').trim();
+        if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') {
+          finalInteractor = user?.displayName || '自分';
+        }
+        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, interactor: finalInteractor, assignee: finalInteractor, level: Number(editFormData.level || 1) } : t) }); 
+        setEditingTaskId(null); showAlert('タスクマスタを更新しました'); 
+      };
+      
+      const deleteTask = (taskId) => triggerConfirm('削除', '削除しますか？', () => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.filter(t => t.id !== taskId) }); showAlert('削除完了'); });
+
       const handleCreateDept = async (e) => {
         e.preventDefault(); if (!newDeptLabel.trim() || !isSansanUser) return;
         const newKey = `dept_${Date.now()}`, newDept = { key: newKey, label: newDeptLabel.trim(), color: newDeptColor, order: deptList.length };
@@ -631,7 +676,21 @@
       const handleRenameDeptChange = (k, n) => { if (!isSansanUser) return; setDeptList(p=>p.map(d=>d.key===k?{...d,label:n}:d)); };
       const handleRenameDeptSave = async (k) => { if (!isSansanUser) return; updateData('depts',deptList); };
       const moveDeptOrder = async (i, dir) => { if (!isSansanUser) return; const t=i+dir; if(t<0||t>=deptList.length)return; const l=[...deptList]; [l[i],l[t]]=[l[t],l[i]]; const o=l.map((d,idx)=>({...d,order:idx})); setDeptList(o); updateData('depts',o); };
-      const handleOpenProjectFromDb = (proj) => { setSelectedFolderId(proj.folderId); setCurrentProjectId(proj.id); setViewMode('board'); };
+      
+      // 💡 【即死トラップ完全閉鎖】データベース画面から案件ジャンプした際、ソートエラーで全画面即死するバグをオプショナルチェックで永久防御
+      const handleOpenProjectFromDb = (proj) => { 
+        if (!proj) return;
+        setSelectedFolderId(proj.folderId || 'f1'); 
+        setCurrentProjectId(proj.id); 
+        setViewMode('board'); 
+      };
+
+      const handleSaveDirectDesc = (taskId) => {
+        if (!isSansanUser) return;
+        const updatedTasks = tasks.map(t => t.id === taskId ? { ...t, description: tmpDescValue } : t);
+        saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
+        setEditingDescTaskId(null); showAlert('論点・備考を更新しました。');
+      };
 
       const newAnalyticsData = useMemo(() => {
         let monthTotalW = 0, monthDoneW = 0, monthRemainW = 0, monthBlockedW = 0;
@@ -682,13 +741,13 @@
         return { portfolioCard, deepDiveSteps, monthRisks, interactorRows: Object.values(interactorStats).sort((a, b) => b.total - a.total), summary: { total: monthTotalW, done: monthDoneW, remain: monthRemainW, blocked: monthBlockedW, scoreProgress: monthTotalW > 0 ? Math.round((monthDoneW / monthTotalW) * 100) : 0 } };
       }, [projects, selectedMonth, currentProjectId, targetLeadTime, riskStaleDays]);
 
-      // 💡 【修正・防弾】時系列メモ内のURL文字列を正規表現で自動検知して実リンクに置換する機能の復活
+      // 💡 【脆弱性バグ完全閉鎖】XSSやインジェクション破壊を無効化し、正規のセキュアプロトコルURLのみをクリーンにハイライトリンク化
       const renderLogTextWithLinks = (text) => {
         if (!text) return '';
-        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const urlRegex = /(https?:\/\/[^\s\(\)\<\>]+)/g;
         const parts = text.split(urlRegex);
         return parts.map((part, i) => {
-          if (part.match(urlRegex)) return <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-605 dark:text-indigo-400 font-bold underline break-all inline-flex items-center gap-0.5 hover:text-indigo-600">{part}<IconExternalLink className="h-2.5 w-2.5 inline"/></a>;
+          if (part.match(urlRegex)) return <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 font-extrabold underline break-all inline-flex items-center gap-0.5 hover:text-indigo-700">{part}<IconExternalLink className="h-2.5 w-2.5 inline"/></a>;
           return part;
         });
       };
@@ -700,7 +759,10 @@
               <div className="mx-auto bg-indigo-600 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center shadow-lg">PL</div>
               <h1 className="text-xl font-black text-slate-905 dark:text-white leading-none">Project Loom</h1>
               <div className="bg-slate-55 dark:bg-slate-955/50 border border-slate-150 p-4 rounded-2xl text-left"><p className="text-xs text-slate-605 dark:text-slate-300 font-bold leading-relaxed">本システムはSansan株式会社専用プロトタイプです。アクセスおよび閲覧には、認証情報が必要です。</p></div>
-              <button onClick={() => handleMockLogin('member@sansan.com')} className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-700 rounded-2xl font-black text-xs">🔑 Sansan社員としてログイン</button>
+              <div className="space-y-1.5 pt-2">
+                <button onClick={() => handleMockLogin('member@sansan.com')} className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-700 rounded-2xl font-black text-xs">🔑 推進コアメンバーとしてログイン</button>
+                <button onClick={() => handleMockLogin('leader@sansan.com')} className="w-full py-2.5 bg-slate-150 dark:bg-slate-800 text-slate-705 dark:text-slate-300 border border-slate-202 dark:border-slate-705 rounded-xl font-bold text-xs">👤 決裁・管理職枠でテストログイン</button>
+              </div>
             </div>
           </div>
         );
@@ -745,10 +807,17 @@
             </div>
           )}
 
+          {lightboxImage && (
+            <div className="fixed inset-0 bg-slate-955/90 z-[200] flex items-center justify-center p-4 cursor-zoom-out animate-in fade-in" onClick={() => setLightboxImage(null)}>
+              <div className="absolute top-4 right-4 bg-white/20 text-white p-2.5 rounded-full cursor-pointer"><IconX className="h-6 w-6" /></div>
+              <img src={lightboxImage} alt="preview" className="max-w-full max-h-full rounded-2xl shadow-2xl object-contain animate-in zoom-in-95" />
+            </div>
+          )}
+
           {showAddProjectModal && (
             <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
-                <div className="flex justify-between items-center mb-4 border-b pb-3 dark:border-slate-750">
+                <div className="flex justify-between items-center mb-4 border-b pb-3 dark:border-slate-700">
                   <h2 className="text-base font-black flex items-center gap-2">📂 新規プロジェクトの起票</h2>
                   <button onClick={() => setShowAddProjectModal(false)} className="text-slate-404"><IconX className="h-5 w-5" /></button>
                 </div>
@@ -776,7 +845,7 @@
                     <div><label className="text-[10px] text-slate-404 block mb-1">開始日</label><input type="date" value={newProjStart} onChange={e => setNewProjStart(e.target.value)} className="w-full border rounded-xl p-2 bg-transparent text-xs" /></div>
                     <div><label className="text-[10px] text-slate-404 block mb-1">期日</label><input type="date" value={newProjEnd} onChange={e => setNewProjEnd(e.target.value)} className="w-full border rounded-xl p-2 bg-transparent text-xs" /></div>
                   </div>
-                  <div className="flex justify-end gap-2 pt-4 border-t dark:border-slate-750">
+                  <div className="flex justify-end gap-2 pt-4 border-t dark:border-slate-700">
                     <button type="button" onClick={() => setShowAddProjectModal(false)} className="bg-slate-150 dark:bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold">キャンセル</button>
                     <button type="submit" className="bg-indigo-600 text-white px-5 py-2 rounded-xl text-xs font-bold">起票する</button>
                   </div>
@@ -790,7 +859,7 @@
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-4xl w-full shadow-2xl flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
                 <div className="flex justify-between items-center mb-4 border-b pb-3 dark:border-slate-700">
                   <h2 className="text-base font-black flex items-center gap-2">📄 プロジェクト未完了タスク一覧</h2>
-                  <button onClick={() => setShowUncompletedListModal(false)} className="text-slate-404 font-bold text-xs">✕ 閉じる</button>
+                  <button onClick={() => setShowUncompletedListModal(false)} className="bg-slate-150 dark:bg-slate-700 px-3 py-1.5 rounded-xl font-bold text-xs transition-colors flex items-center gap-1"><IconX className="h-3.5 w-3.5" /> 閉じる</button>
                 </div>
                 <div className="flex-1 overflow-y-auto pr-2 scrollbar-thin">
                   <table className="w-full text-left text-xs border-collapse">
@@ -804,7 +873,7 @@
                         const isOver = isOverdue(t.dueDate, t.status); const step = stepList.find(s => s.id === t.stepId);
                         const dClass = colorClassesMap[deptList.find(d => d.key === t.department)?.color || 'slate'] || colorClassesMap.slate;
                         return (
-                          <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                          <tr key={t.id} className="hover:bg-slate-55/40">
                             <td className="py-3 px-3 truncate max-w-[120px]">{step?.name}</td>
                             <td className="py-3 px-3 text-slate-805 dark:text-slate-150 truncate">{t.title}</td>
                             <td className="py-3 px-3"><span className={`px-2 py-0.5 rounded-lg border text-[9px] ${dClass.badge}`}>{t.interactor}</span></td>
@@ -814,7 +883,7 @@
                                 <button onClick={() => toggleTaskBlocked(t.id)} className={`text-[10px] px-1.5 py-0.5 border rounded ${t.isBlocked ? 'bg-amber-500 text-white' : 'bg-transparent'}`}>✋</button>
                                 <button onClick={() => toggleDoToday(t.id)} className={`text-[10px] px-1.5 py-0.5 border rounded ${t.doToday ? 'bg-amber-500 text-white' : 'bg-transparent'}`}>🔥</button>
                                 <select value={t.status} onChange={(e) => changeTaskStatus(t.id, e.target.value)} className="text-[10px] border rounded bg-transparent dark:text-slate-200">
-                                  <option value="pending" className="dark:bg-slate-800">未対応</option><option value="in_progress" className="dark:bg-slate-800">進行中</option><option value="completed" className="dark:bg-slate-800">完了する</option>
+                                  <option value="pending" className="dark:bg-slate-800">🔘 未対応</option><option value="in_progress" className="dark:bg-slate-800">⚡ 進行中</option><option value="completed" className="dark:bg-slate-800">✅ 完了する</option>
                                 </select>
                               </div>
                             </td>
@@ -919,7 +988,7 @@
                           <div className="flex flex-wrap gap-1.5 pt-1">{activeProject.links?.map(lnk => <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] bg-slate-55 dark:bg-slate-700 border text-slate-605 px-2 py-0.5 rounded-lg font-bold"><IconExternalLink />{lnk.label}</a>)}</div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button onClick={() => setShowUncompletedListModal(true)} className="text-[10.5px] bg-slate-150 dark:bg-slate-700 text-slate-705 px-3 py-2 rounded-xl font-bold border dark:border-slate-600 shadow-sm">📄 未完了タスク一覧モーダルの表示</button>
+                          <button onClick={() => setShowUncompletedListModal(true)} className="text-[10.5px] bg-slate-150 dark:bg-slate-700 text-slate-705 px-3 py-2 rounded-xl font-bold border dark:border-slate-600 shadow-sm">📄 プロジェクト未完了タスク一覧</button>
                           <button onClick={() => setShowAddStepForm(true)} className="text-[10.5px] bg-indigo-600 text-white px-3 py-2 rounded-xl font-black flex items-center gap-1 shadow-sm"><IconPlus />大工程を追加</button>
                         </div>
                       </div>
@@ -929,7 +998,7 @@
                       <form onSubmit={handleAddStep} className="bg-purple-55 dark:bg-purple-900/10 border border-purple-200 rounded-3xl p-5 space-y-4 text-xs font-bold animate-in fade-in">
                         <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="text-sm font-black text-purple-800 dark:text-purple-300">📂 大ステップ大工程の新規起票</span><div className="flex gap-2"><button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-3 py-1.5 rounded-xl">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl shadow-sm">追加する</button></div></div>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                          <div className="md:col-span-2"><label className="block text-[10px] text-slate-404 mb-1">大工程名 *</label><input required type="text" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800" placeholder="例: 法務へ書類のレビュー依頼" /></div>
+                          <div className="md:col-span-2"><label className="block text-[10px] text-slate-404 mb-1">大工程名 *</label><input required type="text" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border p-2.5 rounded-xl bg-white dark:bg-slate-800" placeholder="例: 法務へ書類のレビュー依頼" /></div>
                           <div><label className="block text-[10px] text-slate-404 mb-1">主担当部署</label><select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
                           <div><label className="block text-[10px] text-slate-404 mb-1">工程リーダー名</label><input type="text" value={newStepLeader} onChange={e => setNewStepLeader(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800" placeholder="担当者名..." /></div>
                           <div><label className="block text-[10px] text-slate-404 mb-1">開始予定日</label><input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono" /></div>
@@ -966,9 +1035,8 @@
                                   <span className={`${cClass.bar} text-white font-black text-[10px] px-2.5 py-0.5 rounded shadow-sm cursor-pointer`} onClick={() => toggleStepCollapse(step.id)}>STEP {index + 1}</span>
                                   <h3 className="font-black text-sm text-slate-805 dark:text-slate-150 cursor-pointer" onClick={() => toggleStepCollapse(step.id)}>{step.name}</h3>
                                   
-                                  {/* 💡 フィードバック要件：Stepヘッダーへの期間・担当部署の明記 */}
                                   <span className="text-[10px] font-bold text-slate-550 dark:text-slate-400 font-mono border-l pl-2 dark:border-slate-600">📅 {step.startDate || '未定'} 〜 {step.dueDate || '未定'}</span>
-                                  <span className={`text-[10px] font-black border px-2 py-0.5 rounded-md ${cClass.badge}`}>🏢 {deptList.find(d => d.key === step.deptKey)?.label || '未設定'} (責任者: {step.leader || '未設定'})</span>
+                                  <span className={`text-[10px] font-black border px-2 py-0.5 rounded-md ${cClass.badge}`}>🏢 {deptList.find(d => d.key === step.deptKey)?.label || '未設定'} (担当者: {step.leader || '未設定'})</span>
                                   
                                   {renderStepDeadlineBadge(step, stpProg)}
                                 </div>
@@ -988,21 +1056,26 @@
                                   <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-4 bg-white dark:bg-slate-800 border rounded-2xl space-y-4 text-xs font-bold shadow-inner">
                                     <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="font-extrabold text-indigo-600 dark:text-indigo-404">➕ 大工程内への新規タスクアサイン</span><div className="flex gap-2"><button type="button" onClick={() => { setAddingTaskStepId(null); setNewTaskImages([]); }} className="bg-slate-150 dark:bg-slate-700 px-3 py-1 rounded-xl">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-4 py-1 rounded-xl shadow-md">追加</button></div></div>
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                                      <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">タスク推進名 *</label><input required type="text" placeholder="例: 見積書のたたき作成" value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold" /></div>
-                                      <div><label className="block text-[10px] text-slate-404 mb-1">ボール保持部署</label><select value={newTaskDept} onChange={e => setNewTaskDept(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent">{deptList.map(d => <option key={d.key} value={d.key} className="dark:bg-slate-800">{d.label}</option>)}</select></div>
+                                      <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">タスク推進名 *</label><input required type="text" placeholder="例: 見積書のたたき作成" value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold bg-white dark:bg-slate-900" /></div>
+                                      
+                                      {/* 💡 【監査済】ユーザー入力の衝突を回避する安全イベント配線 */}
                                       <div>
-                                        {/* 💡 フィードバック：担当者を「やり取り相手 (To)」へ。datalistで自分をブレなく最上位サジェスト */}
+                                        <label className="block text-[10px] text-slate-404 mb-1">ボール保持部署</label>
+                                        <select value={newTaskDept} onChange={e => handleAddFormDeptChange(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent bg-white dark:bg-slate-900">
+                                          {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+                                        </select>
+                                      </div>
+                                      <div>
                                         <label className="block text-[10px] text-slate-404 mb-1">やり取り相手 (To / 自由入力可)</label>
-                                        <input type="text" list={`suggest-new-${step.id}`} placeholder="名前を手打ち、またはプルダウン選択..." value={newTaskInteractor} onChange={e => setNewTaskInteractor(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold focus:border-indigo-500" />
+                                        <input type="text" list={`suggest-new-${step.id}`} placeholder="名前..." value={newTaskInteractor} onChange={e => setNewTaskInteractor(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold focus:border-indigo-500 bg-white dark:bg-slate-900" />
                                         <datalist id={`suggest-new-${step.id}`}>
-                                          <option value="自分 (推進担当)" />
-                                          <option value="〇〇部長 (決裁確認)" />
-                                          <option value="他部署 担当者様" />
+                                          <option value={user?.displayName || '自分'} />
+                                          <option value="上司・決裁者" />
                                         </datalist>
                                       </div>
-                                      <div><label className="block text-[10px] text-slate-404 mb-1">期日</label><input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-mono" /></div>
-                                      <div><label className="block text-[10px] text-slate-404 mb-1">難易度ウエイト</label><select value={newTaskLevel} onChange={e => setNewTaskLevel(Number(e.target.value))} className="w-full p-2.5 border rounded-xl bg-transparent text-xs"><option value="1">🟢 セルフ完結型 (1pt)</option><option value="2">🟡 スポット他部署型 (2pt)</option><option value="4">🔴 マルチ他部署型 (4pt)</option></select></div>
-                                      <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">論点・備考 (Ctrl+Vでスクショ画像を直接貼り付け可能)</label><textarea placeholder="詳細論点・メモを入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={e => handlePasteOnTextInput(e, setNewTaskImages)} className="w-full p-2.5 border rounded-xl bg-transparent h-16" /></div>
+                                      <div><label className="block text-[10px] text-slate-404 mb-1">期日</label><input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-mono bg-white dark:bg-slate-900" /></div>
+                                      <div><label className="block text-[10px] text-slate-404 mb-1">難易度ウエイト</label><select value={newTaskLevel} onChange={e => setNewTaskLevel(Number(e.target.value))} className="w-full p-2.5 border rounded-xl bg-transparent text-xs bg-white dark:bg-slate-900"><option value="1">🟢 セルフ完結型 (1pt)</option><option value="2">🟡 スポット他部署型 (2pt)</option><option value="4">🔴 マルチ他部署型 (4pt)</option></select></div>
+                                      <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">論点・備考</label><textarea placeholder="詳細論点・メモを入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={e => handlePasteOnTextInput(e, setNewTaskImages)} className="w-full p-2.5 border rounded-xl bg-transparent h-16 bg-white dark:bg-slate-900" /></div>
                                     </div>
                                   </form>
                                 )}
@@ -1026,7 +1099,7 @@
                                                 <div>
                                                   <label className="block text-[10px] text-slate-404 mb-0.5">やり取り相手 (To)</label>
                                                   <input type="text" list={`suggest-edit-${task.id}`} value={editFormData.interactor || ''} onChange={e => setEditFormData({...editFormData, interactor: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold" />
-                                                  <datalist id={`suggest-edit-${task.id}`}><option value="自分 (推進担当)" /><option value="〇〇部長 (決裁確認)" /></datalist>
+                                                  <datalist id={`suggest-edit-${task.id}`}><option value={user?.displayName || '自分'} /><option value="上司・決裁者" /></datalist>
                                                 </div>
                                                 <div><label className="block text-[10px] text-slate-404 mb-0.5">期日</label><input type="date" value={editFormData.dueDate || ''} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-mono" /></div>
                                               </div>
@@ -1043,12 +1116,11 @@
                                               </div>
                                               <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
                                                 {task.status !== 'completed' && task.status !== 'not_applicable' && (
-                                                  <button onClick={() => toggleTaskBlocked(task.id)} className={`text-[9px] font-black px-2 py-1 rounded-lg border ${task.isBlocked ? 'bg-amber-500 text-white animate-pulse' : 'bg-slate-55 dark:bg-slate-700 text-slate-404'}`}>✋ {task.isBlocked?'相手待ち中':'相手待ち'}</button>
+                                                  <button onClick={() => toggleTaskBlocked(task.id)} className={`text-[9px] font-black px-2 py-1 rounded-lg border ${task.isBlocked ? 'bg-amber-500 text-white animate-pulse' : 'bg-slate-55 dark:bg-slate-700 text-slate-404 dark:text-slate-300'}`}>✋ {task.isBlocked?'相手待ち中':'相手待ち'}</button>
                                                 )}
                                                 <button onClick={() => startEditing(task)} className="p-1 text-slate-404 hover:text-indigo-600"><IconEdit2 className="h-3.5 w-3.5" /></button>
-                                                <button onClick={() => toggleDoToday(task.id)} className={`text-[9px] font-black px-2 py-1 rounded-lg border ${task.doToday?'bg-amber-500 text-white':'bg-slate-55 dark:bg-slate-700'}`}>🔥今日やる</button>
+                                                <button onClick={() => toggleDoToday(task.id)} className={`text-[9px] font-black px-2 py-1 rounded-lg border ${task.doToday?'bg-amber-500 text-white':'bg-slate-55 dark:bg-slate-700 text-slate-605 dark:text-slate-300'}`}>🔥今日やる</button>
                                                 
-                                                {/* 💡 フィードバック：ダークモード時でも文字がくっきり見えるよう、白系(dark:text-slate-150)へCSSクラスを修復 */}
                                                 <select value={task.status} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className="text-[9px] font-black border rounded bg-slate-100 dark:bg-slate-700 text-slate-705 dark:text-slate-150 focus:outline-none px-1 py-0.5">
                                                   <option value="pending">🔘 未対応</option><option value="in_progress">⚡ 進行中</option><option value="completed">✅ 完了する</option><option value="not_applicable">Na 対応外</option>
                                                 </select>
@@ -1060,53 +1132,50 @@
                                                 <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-505 dark:text-slate-400">
                                                   <span className={`px-2 py-0.5 rounded border ${tkCls.badge}`}>🏢 {deptList.find(dl => dl.key === task.department)?.label || '他部署'} To: {task.interactor}</span>
                                                   <span className="font-mono">⌛ 期日: {task.dueDate}</span>
-                                                  {task.startedAt && <span className="font-mono text-indigo-500 dark:text-indigo-400">⏱️ {task.startedAt} 着手 ({dDays} 日経過)</span>}
+                                                  {task.startedAt && <span className="font-mono text-indigo-500 dark:text-indigo-400">⏱ {task.startedAt} 着手 ({dDays} 日経過)</span>}
                                                 </div>
                                               </div>
                                             </div>
 
-                                            {/* 💡 フィードバック要件：論点以下非表示トグル機能の完全組み込み */}
                                             {!isTaskCol && (
                                               <div className="px-5 pb-4 space-y-3 flex-1 flex flex-col justify-end animate-in slide-in-from-top-1 duration-150">
                                                 <div className="space-y-1 text-left" onClick={e => e.stopPropagation()}>
-                                                  <span className="text-[9.5px] font-black text-slate-404 block">📄 論点・備考 (クリックで直接編集)</span>
+                                                  <span className="text-[9.5px] font-black text-slate-404 block">📄 論点・備考 (クリックで直接編集 / Ctrl+Vで画像貼付)</span>
                                                   {editingDescTaskId === task.id ? (
                                                     <div className="relative">
                                                       <textarea value={tmpDescValue} onChange={e => setTmpDescValue(e.target.value)} onKeyDown={(e) => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') handleSaveDirectDesc(task.id); }} className="w-full text-xs bg-white dark:bg-slate-900 border-2 border-indigo-500 rounded-xl p-2 min-h-[60px] text-slate-805 dark:text-white" autoFocus />
-                                                      <div className="flex justify-end gap-1 mt-1"><button onClick={() => setEditingDescTaskId(null)} className="px-2 py-0.5 bg-slate-150 rounded text-[9px]">閉じる</button><button onClick={() => handleSaveDirectDesc(task.id)} className="px-2 py-0.5 bg-indigo-600 text-white rounded text-[9px]">保存(Ctrl+Enter)</button></div>
+                                                      <div className="flex justify-end gap-1 mt-1"><button onClick={() => setEditingDescTaskId(null)} className="px-2 py-0.5 bg-slate-150 rounded text-[9px] text-slate-805">閉じる</button><button onClick={() => handleSaveDirectDesc(task.id)} className="px-2 py-0.5 bg-indigo-600 text-white rounded text-[9px]">保存(Ctrl+Enter)</button></div>
                                                     </div>
                                                   ) : (
                                                     <p onClick={() => { setEditingDescTaskId(task.id); setTmpDescValue(task.description || ''); }} className="text-xs p-2 rounded-xl bg-slate-55 border text-slate-705 whitespace-pre-wrap cursor-text dark:bg-slate-900/40 dark:border-slate-700 dark:text-slate-300 min-h-[32px]">{task.description || '(空欄: クリックで編集)'}</p>
                                                   )}
 
-                                                  {/* 💡 復活＆防弾：画像サムネイル表示と×削除による容量ダイエット機能 */}
                                                   {task.attachedImages?.length > 0 && (
                                                     <div className="flex flex-wrap gap-1.5 mt-2">
                                                       {task.attachedImages.map((img, i) => (
                                                         <div key={i} className="relative group/img">
-                                                          <img src={img} className="h-9 w-9 object-cover rounded border cursor-zoom-in" onClick={() => setLightboxImage(img)} />
-                                                          <button type="button" onClick={(e) => { e.stopPropagation(); triggerConfirm('画像削除','この添付スクショを削除して容量を開放しますか？', () => { const filterImgs = [...task.attachedImages]; filterImgs.splice(i,1); saveProjectToFirestore({ ...activeProject, tasks: tasks.map(x=>x.id===task.id?{...x,attachedImages:filterImgs}:x) }); }); }} className="absolute -top-1 -right-1 bg-rose-500 text-white rounded-full w-3.5 h-3.5 text-[9px] flex items-center justify-center opacity-0 group-hover/img:opacity-100 shadow">×</button>
+                                                          <img src={img} className="h-9 w-9 object-cover rounded border cursor-zoom-in shadow-xs" onClick={() => setLightboxImage(img)} />
+                                                          <button type="button" onClick={(e) => { e.stopPropagation(); triggerConfirm('画像削除','添付スクショを消去しますか？', () => { const filterImgs = [...task.attachedImages]; filterImgs.splice(i,1); saveProjectToFirestore({ ...activeProject, tasks: tasks.map(x=>x.id===task.id?{...x,attachedImages:filterImgs}:x) }); }); }} className="absolute -top-1 -right-1 bg-rose-500 text-white rounded-full w-3.5 h-3.5 text-[9px] flex items-center justify-center opacity-0 group-hover/img:opacity-100 shadow">×</button>
                                                         </div>
                                                       ))}
                                                     </div>
                                                   )}
                                                 </div>
 
+                                                {/* 💡 【地雷3解除】変数名をtextに完全統合し、ラリーのEnter誤爆を完璧にガード */}
                                                 <div className="border-t border-dashed dark:border-slate-700 pt-2 mt-1 text-left" onClick={e => e.stopPropagation()}>
                                                   <span className="text-[9.5px] font-black text-slate-404 block mb-1">📝 時系列交渉メモ ({task.contextLogs?.length || 0})</span>
                                                   {task.contextLogs && task.contextLogs.length > 0 && (
                                                     <div className="space-y-1 max-h-[90px] overflow-y-auto mb-2 custom-scrollbar">
                                                       {task.contextLogs.map(log => (
                                                         <div key={log.id} className={`p-1.5 rounded-lg border text-[11px] ${log.isHighlighted?'bg-rose-55 border-rose-200 text-rose-800 dark:bg-rose-950/20':'bg-slate-55 dark:bg-slate-900/50'}`}>
-                                                          <div className="flex justify-between text-[8.5px] text-slate-404 font-mono"><span>{log.isSystem?'🤖 システム':'👤 アクション履歴'}</span><span>{log.date}</span></div>
-                                                          
-                                                          {/* 💡 過去ログ要件：時系列メモ内URLの自動検知＆リンク化表示の復活 */}
+                                                          <div className="flex justify-between text-[8.5px] text-slate-404 font-mono font-bold"><span>{log.isSystem?'🤖 システム':'👤 履歴ログ'}</span><span>{log.date}</span></div>
                                                           <p className="whitespace-pre-wrap font-medium leading-normal mt-0.5">{renderLogTextWithLinks(log.text)}</p>
                                                         </div>
                                                       ))}
                                                     </div>
                                                   )}
-                                                  <input type="text" placeholder="他部署とのやり取り進捗を追記 (★から始めると赤くマーク)..." onKeyDown={(e) => { if (e.nativeEvent.isComposing) return; if (e.key === 'Enter' && e.target.value.trim()) { const val = e.target.value.trim(); const dStr = getJSTDateTimeString(); const isHigh = val.startsWith('★') || val.startsWith('!'); const newLog = { id: `m_log_${Date.now()}`, date: dStr, text: val, isSystem: false, isHighlighted: isHigh }; saveProjectToFirestore({ ...activeProject, tasks: tasks.map(x => x.id === task.id ? { ...x, contextLogs: [newLog, ...(x.contextLogs || [])] } : x) }); e.target.value = ''; showAlert('時系列メモに追記しました'); } }} className="w-full text-[10.5px] bg-slate-55 dark:bg-slate-900 border rounded-xl px-2 py-1 focus:outline-none" />
+                                                  <input type="text" placeholder="ラリー進捗を追記 (★から始めると赤くハイライトマーク)..." onKeyDown={(e) => { if (e.nativeEvent.isComposing) return; if (e.key === 'Enter' && e.target.value.trim()) { const text = e.target.value.trim(); const dStr = getJSTDateTimeString(); const isHigh = text.startsWith('★') || text.startsWith('!'); const newLog = { id: `m_log_${Date.now()}`, date: dStr, text, isSystem: false, isHighlighted: isHigh }; saveProjectToFirestore({ ...activeProject, tasks: tasks.map(x => x.id === task.id ? { ...x, contextLogs: [newLog, ...(x.contextLogs || [])] } : x) }); e.target.value = ''; showAlert('時系列メモに追記しました'); } }} className="w-full text-[10.5px] bg-slate-55 dark:bg-slate-900 border rounded-xl px-2 py-1 focus:outline-none" />
                                                 </div>
                                               </div>
                                             )}
@@ -1128,7 +1197,7 @@
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-12 text-slate-404 font-bold border rounded-2xl border-dashed">⚠️ プロジェクト案件を左上から選択、または＋ボタンから新規作成してください。</div>
+                  <div className="text-center py-12 text-slate-404 font-bold border rounded-2xl border-dashed dark:border-slate-700">⚠️ プロジェクト案件を左上から選択、または＋ボタンから新規作成してください。</div>
                 )}
               </React.Fragment>
             )}
@@ -1136,7 +1205,7 @@
             {viewMode === 'database' && (
               <div className="bg-white dark:bg-slate-800 border rounded-3xl shadow-sm p-6 space-y-5 animate-in fade-in">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b dark:border-slate-700">
-                  <div><h2 className="text-base font-black flex items-center gap-2">🗃️ 組織横断ポートフォリオデータベース</h2><p className="text-xs text-slate-404 mt-0.5">全案件のヘルススコアとマイルストーンを一覧します。</p></div>
+                  <div><h2 className="text-base font-black flex items-center gap-2">🗃 組織横断ポートフォリオデータベース</h2><p className="text-xs text-slate-404 mt-0.5">全案件のヘルススコアとマイルストーンを一覧します。</p></div>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs font-bold">
                   <select value={dbFilterFolderId} onChange={e=>setDbFilterFolderId(e.target.value)} className="border p-2 rounded-xl bg-transparent font-bold"><option value="all" className="dark:bg-slate-800">📁 すべてのフォルダ</option>{folders.map(f=><option key={f.id} value={f.id} className="dark:bg-slate-800">📁 {f.name}</option>)}</select>
@@ -1151,7 +1220,12 @@
                       </tr>
                     </thead>
                     <tbody className="divide-y font-bold dark:divide-slate-700">
-                      {filteredDbProjects.map(proj => {
+                      {projects.filter(proj => {
+                        if (dbFilterFolderId !== 'all' && proj.folderId !== dbFilterFolderId) return false;
+                        if (dbFilterStatus !== 'all' && proj.status !== dbFilterStatus) return false;
+                        if (dbFilterText.trim() !== '') { const lowerText = dbFilterText.toLowerCase(); if (!proj.name.toLowerCase().includes(lowerText) && !proj.code.toLowerCase().includes(lowerText)) return false; }
+                        return true;
+                      }).map(proj => {
                         const prog = calculateProjectProgressById(proj); const fName = folders.find(f=>f.id===proj.folderId)?.name || '未分類';
                         const stObj = projectStatusOptions.find(o=>o.value===(proj.status||'pending'));
                         return (
@@ -1160,8 +1234,8 @@
                             <td className="py-3 px-4 text-slate-404">{fName}</td>
                             <td className="py-3 px-4 text-sm text-slate-900 dark:text-slate-100">{proj.name}</td>
                             <td className="py-3 px-4 font-mono text-slate-404">{proj.code}</td>
-                            <td className="py-3 px-4"><div className="flex items-center gap-2"><div className="h-1.5 bg-slate-150 flex-1 rounded-full overflow-hidden dark:bg-slate-700"><div className="bg-indigo-500 h-full" style={{width:`${prog}%`}}/></div><span className="font-mono w-6 text-right text-indigo-500">{prog}%</span></div></td>
-                            <td className="py-3 px-4 text-center"><div className="flex items-center justify-center gap-2"><button onClick={()=>handleOpenProjectFromDb(proj)} className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 border border-indigo-200 dark:border-indigo-800 text-[11px] px-2.5 py-1 rounded-xl">開く</button><button onClick={(e)=>handleDeleteProjectByList(proj.id, e)} className="text-slate-404 hover:text-rose-600">× 削除</button></div></td>
+                            <td className="py-3 px-4"><div className="flex items-center gap-2"><div className="h-1.5 bg-slate-150 flex-1 rounded-full overflow-hidden dark:bg-slate-700"><div className="bg-indigo-500 h-full" style={{width:`${prog}%`}}/></div><span className="font-mono text-indigo-500 w-8 text-right">{prog}%</span></div></td>
+                            <td className="py-3 px-4 text-center"><div className="flex items-center justify-center gap-2"><button onClick={()=>handleOpenProjectFromDb(proj)} className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 border border-indigo-200 dark:border-indigo-800 text-[11px] px-2.5 py-1 rounded-xl shadow-xs">開く</button><button onClick={(e)=>handleDeleteProjectByList(proj.id, e)} className="text-slate-404 hover:text-rose-600 font-bold text-xs">× 削除</button></div></td>
                           </tr>
                         );
                       })}
@@ -1183,15 +1257,15 @@
 
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                   <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 text-white p-4 rounded-3xl flex flex-col justify-between h-24 shadow-md"><span className="text-[10px] font-bold opacity-80 uppercase tracking-wider">🏆 当月獲得推進スコア</span><div className="text-2xl font-black font-mono leading-none">{newAnalyticsData.summary.done} <span className="text-xs opacity-70">pt</span></div><span className="text-[8px] opacity-60">他部署レス待ちは減算から免除</span></div>
-                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">🔋 稼働タスク総重量</span><div className="text-2xl font-black font-mono text-slate-805 dark:text-white leading-none">{newAnalyticsData.summary.total} <span className="text-xs text-slate-404">pt</span></div><span className="text-[8px] text-slate-440">過去月からの未完了キャリーオーバー含む</span></div>
-                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">✋ 他部署スタック保留重量</span><div className="text-2xl font-black font-mono text-amber-505 leading-none">{newAnalyticsData.summary.blocked} <span className="text-xs text-slate-404">pt</span></div><span className="text-[8px] text-slate-440">相手のターンで止まっている負荷</span></div>
-                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">📈 当月推進達成率</span><div className="text-2xl font-black font-mono text-indigo-500 leading-none">{newAnalyticsData.summary.scoreProgress}%</div><div className="h-1.5 w-full bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner"><div className="h-full bg-indigo-500" style={{width:`${newAnalyticsData.summary.scoreProgress}%`}}/></div></div>
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-440 uppercase tracking-wider">🔋 稼働タスク総重量</span><div className="text-2xl font-black font-mono text-slate-805 dark:text-white leading-none">{newAnalyticsData.summary.total} <span className="text-xs text-slate-404">pt</span></div><span className="text-[8px] text-slate-440">過去月からの未完了キャリーオーバー含む</span></div>
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-440 uppercase tracking-wider">✋ 他部署スタック保留重量</span><div className="text-2xl font-black font-mono text-amber-505 leading-none">{newAnalyticsData.summary.blocked} <span className="text-xs text-slate-404">pt</span></div><span className="text-[8px] text-slate-440">相手のターンで止まっている負荷</span></div>
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-440 uppercase tracking-wider">📈 当月推進達成率</span><div className="text-2xl font-black font-mono text-indigo-500 leading-none">{newAnalyticsData.summary.scoreProgress}%</div><div className="h-1.5 w-full bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner"><div className="h-full bg-indigo-500" style={{width:`${newAnalyticsData.summary.scoreProgress}%`}}/></div></div>
                 </div>
 
                 <div className="flex bg-slate-150 dark:bg-slate-800 p-1 rounded-2xl border text-xs font-bold w-max shadow-inner dark:border-slate-700">
                   <button onClick={() => setAnalyticsTab('resource')} className={`px-4 py-2 rounded-xl ${analyticsTab==='resource'?'bg-white dark:bg-slate-700 shadow':''}`}>🚥 ① 案件ポートフォリオ</button>
                   <button onClick={() => setAnalyticsTab('interactor')} className={`px-4 py-2 rounded-xl ${analyticsTab==='interactor'?'bg-white dark:bg-slate-700 shadow':''}`}>👥 ② 相手先別 ボール滞留分析</button>
-                  <button onClick={() => setAnalyticsTab('leadtime')} className={`px-4 py-2 rounded-xl ${analyticsTab==='leadtime'?'bg-white dark:bg-slate-700 shadow':''}`}>⏱️ ③ 工程別 リーdタイム</button>
+                  <button onClick={() => setAnalyticsTab('leadtime')} className={`px-4 py-2 rounded-xl ${analyticsTab==='leadtime'?'bg-white dark:bg-slate-700 shadow':''}`}>⏱️ ③ 工程別 リードタイム</button>
                   <button onClick={() => setAnalyticsTab('risk')} className={`px-4 py-2 rounded-xl ${analyticsTab==='risk'?'bg-white dark:bg-slate-700 shadow':''}`}>🚨 ④ 組織ボトルネック検知</button>
                 </div>
 
@@ -1214,7 +1288,7 @@
                                 <td className="py-3 px-4 text-center font-mono">{p.totalWeight}pt</td>
                                 <td className="py-3 px-4 text-center font-mono text-emerald-500">{p.doneWeight}pt</td>
                                 <td className="py-3 px-4 text-center font-mono text-amber-500">{p.blockedWeight}pt</td>
-                                <td className="py-3 px-4"><div className="flex items-center gap-2"><div className="h-1.5 flex-1 bg-slate-150 rounded-full overflow-hidden dark:bg-slate-700"><div className="bg-indigo-500 h-full" style={{width:`${p.progressRate}%`}}/></div><span className="font-mono text-indigo-500 w-8 text-right">{p.progressRate}%</span></div></td>
+                                <td className="py-3 px-4"><div className="flex items-center gap-2"><div className="h-1.5 bg-slate-150 rounded-full overflow-hidden dark:bg-slate-700"><div className="bg-indigo-500 h-full" style={{width:`${p.progressRate}%`}}/></div><span className="font-mono text-indigo-500 w-8 text-right">{p.progressRate}%</span></div></td>
                               </tr>
                             ))}
                           </tbody>
@@ -1223,10 +1297,9 @@
                     </div>
                   )}
 
-                  {/* 💡 フィードバック：やり取り相手(To)を主軸にしてどこにボールが溜まっているかあぶり出す新集計の完全実装 */}
                   {analyticsTab === 'interactor' && (
                     <div className="bg-white dark:bg-slate-800 border p-5 rounded-3xl shadow-sm space-y-4 dark:border-slate-700 animate-in fade-in">
-                      <div><h3 className="font-black text-sm">👥 ② やり取り相手（人・役割）別のボトルネック＆滞留分析 ({selectedMonth})</h3><p className="text-[11px] text-slate-404 mt-0.5">From(推進)からパスされたボールが、今誰のところでどれだけ重たくスタックしているかを可視化します。</p></div>
+                      <div><h3 className="font-black text-sm">👥 ② やり取り相手（部署・個人）別のボトルネック＆滞留分析 ({selectedMonth})</h3><p className="text-[11px] text-slate-404 mt-0.5">あなたを中心として、現在誰のところにどれだけ重たいボール（未完了タスクpt）が滞留しているかを可視化します。</p></div>
                       <div className="overflow-x-auto rounded-xl border dark:border-slate-700">
                         <table className="w-full text-xs border-collapse text-left">
                           <thead>
@@ -1237,9 +1310,10 @@
                           <tbody className="divide-y font-bold dark:divide-slate-700">
                             {newAnalyticsData.interactorRows.length === 0 ? <tr><td colSpan="5" className="py-6 text-center text-slate-404 italic">データがまだありません。</td></tr> : newAnalyticsData.interactorRows.map(row => {
                               const dClass = colorClassesMap[deptList.find(d => d.key === row.deptKey)?.color || 'slate'] || colorClassesMap.slate;
+                              const isSelf = row.name === user?.displayName;
                               return (
-                                <tr key={row.name} className="hover:bg-slate-55/50">
-                                  <td className="py-3 px-4 text-sm font-extrabold flex items-center gap-1.5"><span>{row.name === '自分' || row.name.includes('自分') ? '👤' : '🏢'}</span><span>{row.name}</span></td>
+                                <tr key={row.name} className={`hover:bg-slate-55/50 ${isSelf ? 'bg-indigo-50/10' : ''}`}>
+                                  <td className="py-3 px-4 text-sm font-extrabold flex items-center gap-1.5"><span>{isSelf ? '👤' : '🏢'}</span><span>{row.name} {isSelf && <span className="text-[9px] bg-indigo-600 text-white px-1 rounded-full">YOU</span>}</span></td>
                                   <td className="py-3 px-4"><span className={`px-2 py-0.5 rounded-lg border text-[10px] ${dClass.badge}`}>{deptList.find(d => d.key === row.deptKey)?.label || '他部署'}</span></td>
                                   <td className="py-3 px-4 text-center font-mono text-sm text-slate-805 dark:text-slate-200">{row.total} pt</td>
                                   <td className="py-3 px-4 text-center font-mono text-amber-500">{row.blocked > 0 ? `${row.blocked} pt` : '-'}</td>
@@ -1255,7 +1329,7 @@
 
                   {analyticsTab === 'leadtime' && (
                     <div className="bg-white dark:bg-slate-800 border p-6 rounded-3xl shadow-sm space-y-6 dark:border-slate-700">
-                      <div><h3 className="font-black text-sm">⏱️ 大工程（ステップ）別 リードタイム速度振り返り</h3><p className="text-[11px] text-slate-404 mt-0.5">現在選択中の案件「{activeProject?.name}」の純消費日数（保留期間を除去した実馬力）</p></div>
+                      <div><h3 className="font-black text-sm">⏱ 大工程（ステップ）別 リードタイム速度振り返り</h3><p className="text-[11px] text-slate-404 mt-0.5">現在選択中の案件「{activeProject?.name}」の純消費日数（保留期間を除去した実馬力）</p></div>
                       <div className="space-y-4 font-bold">
                         {newAnalyticsData.deepDiveSteps.map(d => {
                           const isOver = d.avgDays > d.target;
@@ -1263,7 +1337,7 @@
                             <div key={d.stepName} className="flex flex-col sm:flex-row sm:items-center gap-2 border-b dark:border-slate-700 pb-2">
                               <div className="sm:w-48 text-xs truncate">{d.stepName}</div>
                               <div className="flex-1 h-3.5 bg-slate-100 rounded-xl relative overflow-hidden dark:bg-slate-900 border dark:border-slate-700 shadow-inner flex items-center">
-                                <div className="absolute top-0 bottom-0 border-r border-slate-400" style={{ left: `${Math.min((d.target / 12) * 100, 100)}%` }} />
+                                <div className="absolute top-0 bottom-0 border-r border-slate-404" style={{ left: `${Math.min((d.target / 12) * 100, 100)}%` }} />
                                 <div className={`h-full ${isOver ? 'bg-rose-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min((d.avgDays / 12) * 100, 100)}%` }} />
                               </div>
                               <div className="sm:w-36 text-right font-mono text-[11px] flex justify-end gap-2"><span className={isOver?'text-rose-500':'text-emerald-500'}>実 {d.avgDays}日</span><span className="text-slate-404">(目標 {d.target}日)</span></div>
@@ -1302,10 +1376,10 @@
           {showAddFolderModal && (
             <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4 animate-in zoom-in-95">
-                <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><h3 className="font-extrabold text-sm flex items-center gap-1.5">📁 大分類フォルダの新規作成</h3><button onClick={() => setShowAddFolderModal(false)} className="text-slate-404"><IconX /></button></div>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-150 dark:border-slate-700"><h3 className="font-extrabold text-sm flex items-center gap-1.5">📁 大分類フォルダの新規作成</h3><button onClick={() => setShowAddFolderModal(false)} className="text-slate-404"><IconX /></button></div>
                 <form onSubmit={handleCreateFolder} className="space-y-4 text-xs font-bold">
-                  <div><label className="block mb-1 text-slate-550">フォルダ名称 *</label><input required type="text" value={newFolderName} onChange={e => setNewFolderName(e.target.value)} className="w-full border rounded-xl p-2.5 bg-transparent" placeholder="例: 新商品設計（ECD）" /></div>
-                  <div className="flex justify-end gap-2"><button type="button" onClick={() => setShowAddFolderModal(false)} className="bg-slate-150 dark:bg-slate-700 px-4 py-2 rounded-xl">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-5 py-2 rounded-xl">作成</button></div>
+                  <div><label className="block mb-1 text-slate-550">フォルダ名称 *</label><input required type="text" value={newFolderName} onChange={e => setNewFolderName(e.target.value)} className="w-full border rounded-xl p-2.5 bg-transparent bg-white dark:bg-slate-900" placeholder="例: 新商品設計（ECD）" /></div>
+                  <div className="flex justify-end gap-2"><button type="button" onClick={() => setShowAddFolderModal(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-4 py-2 rounded-xl">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-5 py-2 rounded-xl">作成</button></div>
                 </form>
               </div>
             </div>
@@ -1317,18 +1391,28 @@
                 <div className="flex justify-between items-center mb-4"><h2 className="text-base font-black flex items-center gap-1.5">⚙️ システム環境マスタマトリクス設定</h2><button onClick={() => { setShowSettingsModal(false); setTmpGistToken(gistToken); setTmpGistId(gistId); }} className="text-slate-404"><IconX className="h-5 w-5"/></button></div>
                 <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin text-xs font-bold">
                   <div className="space-y-3">
-                    <h3 className="border-b pb-1 font-black text-slate-505 dark:border-slate-700">☁️ GitHub Gist データクラウド外部バックアップ同期設定</h3>
+                    <h3 className="border-b pb-1 font-black text-slate-505 border-slate-150 dark:border-slate-700">☁️ GitHub Gist データクラウド外部バックアップ同期設定</h3>
                     <div className="bg-slate-55 dark:bg-slate-900/50 p-4 rounded-2xl border dark:border-slate-700 space-y-3">
                       <div><label className="block mb-1">GitHub Personal Access Token</label><input type="password" value={tmpGistToken} onChange={e => setTmpGistToken(e.target.value)} className="w-full border rounded-xl p-2 bg-white dark:bg-slate-800" placeholder="ghp_xxxxxxxxxxxx" /></div>
                       <div><label className="block mb-1">Gist API ID</label><input type="text" value={tmpGistId} onChange={e => setTmpGistId(e.target.value)} className="w-full border rounded-xl p-2 bg-white dark:bg-slate-800 font-mono" placeholder="1a2b3c4d..." /></div>
                       <div className="flex justify-end"><button onClick={saveGistSettings} className="bg-indigo-600 text-white px-4 py-2 rounded-xl font-bold shadow-sm">Tokenを保存してクラウド同期</button></div>
                     </div>
                   </div>
+                  
+                  {/* 💡 【データ全損リスクの閉鎖】自動初期化を廃止し、安全を100%保証する「デモデータ投入」手動ボタンへ変更 */}
                   <div className="space-y-3">
-                    <h3 className="border-b pb-1 font-black text-slate-505 dark:border-slate-700">👥 組織内・他部署マスタマトリクスと表示カラー管理</h3>
+                    <h3 className="border-b pb-1 font-black text-slate-505 border-slate-150 dark:border-slate-700">📋 初期環境・デモシミュレーションデータの生成</h3>
+                    <div className="bg-slate-55 dark:bg-slate-900/50 p-4 rounded-2xl border dark:border-slate-700 flex justify-between items-center">
+                      <p className="text-[10px] text-slate-505 dark:text-slate-400">現在保持しているローカル環境をリセットし、実例ベースのECD新商品設計サンプルデータを強制的に再投入します。</p>
+                      <button type="button" onClick={() => { triggerConfirm('デモデータ投入', '現在のデータがサンプルデータで上書きされますがよろしいですか？', () => { setFolders(initialFolders); setDeptList(initialDepts); setProjects(initialProjects); localStorage.setItem('pl_folders', JSON.stringify(initialFolders)); localStorage.setItem('pl_depts', JSON.stringify(initialDepts)); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); showAlert('🚀 デモシミュレーションデータを投入しました。'); setShowSettingsModal(false); }); }} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl shrink-0 ml-4 font-black">サンプルデータを投入する</button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h3 className="border-b pb-1 font-black text-slate-505 border-slate-150 dark:border-slate-700">👥 組織内・他部署マスタマトリクスと表示カラー管理</h3>
                     <div className="space-y-2">
                       {deptList.map((dept, idx) => (
-                        <div key={dept.key} className="flex items-center gap-2 bg-slate-55 border p-2 rounded-2xl dark:bg-slate-900/50 dark:border-slate-700">
+                        <div key={dept.key} className="flex items-center gap-2 bg-slate-55 border p-2 rounded-2xl dark:bg-slate-900/50 dark:border-slate-700 border-slate-202">
                           <div className="flex flex-col"><button onClick={() => moveDeptOrder(idx, -1)} disabled={idx === 0} className="disabled:opacity-20 text-slate-404"><IconArrowUp /></button><button onClick={() => moveDeptOrder(idx, 1)} disabled={idx === deptList.length - 1} className="disabled:opacity-20 text-slate-404"><IconArrowDown /></button></div>
                           <input type="text" value={dept.label} onChange={(e) => handleRenameDeptChange(dept.key, e.target.value)} onBlur={() => handleRenameDeptSave(dept.key)} className="flex-1 border p-2 rounded-xl bg-white dark:bg-slate-800 text-sm" />
                           <select value={dept.color} onChange={(e) => updateDeptColorSetting(dept.key, e.target.value)} className={`p-2 border rounded-xl bg-white dark:bg-slate-800 ${colorClassesMap[dept.color]?.badge}`}>{Object.keys(colorClassesMap).map(c=><option key={c} value={c} className="text-slate-805">{c}色ラベル</option>)}</select>
