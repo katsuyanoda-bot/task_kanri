@@ -150,7 +150,7 @@
       blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-blue-400' },
       emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-400' },
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-[#f0fdf4] dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
-      amber: { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-400', accentBar: 'bg-amber-500 dark:bg-amber-400' },
+      amber: { text: 'text-amber-805 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
       rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-purple-400' },
       slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-550 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
     };
@@ -188,8 +188,8 @@
           { id: 2, name: '部門検証', desc: '並行調整', deptKey: 'legal', startDate: '2026-05-19', dueDate: '2026-06-05', links: [] }
         ],
         tasks: [
-          { id: 't1', sequenceId: 1, stepId: 1, title: '全体確認', description: '合意を得る', assignee: '山田', department: 'sales', dueDate: '2026-05-18', status: 'completed', isHighPriority: false, startedAt: '2026-05-15', completedAt: '2026-05-18', attachedImages: [], contextLogs: [], links: [{ id: 'tlnk_1', label: '確認事項一覧', url: 'https://example.com' }] },
-          { id: 't2', sequenceId: 2, stepId: 2, title: '収益認識確認', description: '計上基準', assignee: '田中', department: 'finance', dueDate: '2026-05-25', status: 'in_progress', isHighPriority: true, startedAt: '2026-05-19', attachedImages: [], contextLogs: [], links: [] }
+          { id: 't1', sequenceId: 1, stepId: 1, title: '全体確認', description: '合意を得る', assignee: '山田', department: 'sales', dueDate: '2026-05-18', status: 'completed', isHighPriority: false, doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', attachedImages: [], contextLogs: [], links: [{ id: 'tlnk_1', label: '確認事項一覧', url: 'https://example.com' }] },
+          { id: 't2', sequenceId: 2, stepId: 2, title: '収益認識確認', description: '計上基準', assignee: '田中', department: 'finance', dueDate: '2026-05-25', status: 'in_progress', isHighPriority: true, doToday: true, startedAt: '2026-05-19', attachedImages: [], contextLogs: [], links: [] }
         ]
       }
     ];
@@ -265,6 +265,7 @@
       const [lightboxImage, setLightboxImage] = useState(null);
       const [user, setUser] = useState(null);
       const [showTaskDropdown, setShowTaskDropdown] = useState(false);
+      const [showTodayDropdown, setShowTodayDropdown] = useState(false);
 
       const [tmpGistToken, setTmpGistToken] = useState(localStorage.getItem('pl_gist_token') || '');
       const [tmpGistId, setTmpGistId] = useState(localStorage.getItem('pl_gist_id') || '');
@@ -560,6 +561,22 @@
       const tasks = activeProject ? (activeProject.tasks || []) : [];
       const setTasks = (newTasks) => { if (!activeProject || !isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: typeof newTasks === 'function' ? newTasks(activeProject.tasks) : newTasks }); };
 
+      // --- 「今日やる」タスクを抽出・集計するメモ化 ---
+      // (ここで重複していた宣言を取り除き、1つにまとめました)
+      const todayTasks = useMemo(() => {
+        return tasks.filter(t => t.doToday);
+      }, [tasks]);
+
+      const activeTodayTasks = useMemo(() => {
+        return todayTasks.filter(t => t.status !== 'completed' && t.status !== 'not_applicable');
+      }, [todayTasks]);
+
+      const isOverdue = (dueDate, status) => { if (status === 'completed' || status === 'not_applicable') return false; return new Date(dueDate) < new Date(TODAY_STR); };
+
+      const overdueTodayTasks = useMemo(() => {
+        return activeTodayTasks.filter(t => isOverdue(t.dueDate, t.status));
+      }, [activeTodayTasks]);
+
       const [collapsedSteps, setCollapsedSteps] = useState({});
       const [collapsedTasks, setCollapsedTasks] = useState({});
 
@@ -598,8 +615,6 @@
       const [editTaskLinks, setEditTaskLinks] = useState([]);
       const [tmpEditTaskLinkLabel, setTmpEditTaskLinkLabel] = useState('');
       const [tmpEditTaskLinkUrl, setTmpEditTaskLinkUrl] = useState('');
-
-      const isOverdue = (dueDate, status) => { if (status === 'completed' || status === 'not_applicable') return false; return new Date(dueDate) < new Date(TODAY_STR); };
 
       const projectProgress = useMemo(() => {
         if (tasks.length === 0) return 0;
@@ -783,6 +798,21 @@
         if (!isSansanUser) return;
         saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, isHighPriority: !t.isHighPriority } : t) });
       };
+
+      // --- 「今日やる」タスクをトグルする関数 ---
+      const toggleDoToday = (taskId) => {
+        if (!isSansanUser) return;
+        const updatedTasks = tasks.map(t => {
+          if (t.id === taskId) {
+            const nextDoToday = !t.doToday;
+            return { ...t, doToday: nextDoToday };
+          }
+          return t;
+        });
+        saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
+        const t = tasks.find(x => x.id === taskId);
+        showAlert(t && !t.doToday ? '🔥 今日やるタスクに設定しました' : '💤 今日やるタスクから解除しました');
+      };
       
       const handleAddTask = (stepId, e) => { 
         e.preventDefault(); 
@@ -794,7 +824,7 @@
         const newTask = { 
           id: newId, stepId, sequenceId: nextSeq, title: newTaskTitle.trim(), description: newTaskDesc.trim(), 
           assignee: newTaskAssignee.trim(), department: newTaskDept, dueDate: newTaskDueDate || todayStr, 
-          status: 'pending', isHighPriority: false, startedAt: null, completedAt: null, 
+          status: 'pending', isHighPriority: false, doToday: false, startedAt: null, completedAt: null, 
           attachedImages: [...newTaskImages], contextLogs: [], links: [...newTaskLinks] 
         };
         saveProjectToFirestore({ ...activeProject, taskSequence: nextSeq, tasks: [...tasks, newTask] }); 
@@ -861,7 +891,7 @@
               
               <div className="space-y-2">
                 <h1 className="text-xl font-black text-slate-905 dark:text-white leading-snug">Project Loom</h1>
-                <p className="text-xs text-slate-505 dark:text-slate-400 font-bold">Sansanグループ案件推進専用ダッシュボード</p>
+                <p className="text-xs text-slate-505 dark:text-slate-404 font-bold">Sansanグループ案件推進専用ダッシュボード</p>
               </div>
 
               <hr className="border-slate-150 dark:border-slate-800" />
@@ -967,12 +997,12 @@
                     </div>
                     <div>
                       <label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">プロジェクト名称 (必須)</label>
-                      <input required type="text" value={newProjName} onChange={e => setNewProjName(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150 text-sm font-bold focus:outline-none focus:border-indigo-500" placeholder="例: 【ECD】新機能要件定義" />
+                      <input required type="text" value={newProjName} onChange={e => setNewProjName(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-805 text-slate-805 dark:text-slate-150 text-sm font-bold focus:outline-none focus:border-indigo-500" placeholder="例: 【ECD】新機能要件定義" />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div><label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">管理コード</label><input type="text" value={newProjCode} onChange={e => setNewProjCode(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150 text-xs font-bold font-mono focus:outline-none focus:border-indigo-500" placeholder="例: PRJ-2026-01" /></div>
-                      <div><label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">開始予定日</label><input type="date" value={newProjStart} onChange={e => setNewProjStart(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 font-mono bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150 text-xs font-bold focus:outline-none focus:border-indigo-500" /></div>
-                      <div><label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">目標完了日</label><input type="date" value={newProjEnd} onChange={e => setNewProjEnd(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 font-mono bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150 text-xs font-bold focus:outline-none focus:border-indigo-500" /></div>
+                      <div><label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">管理コード</label><input type="text" value={newProjCode} onChange={e => setNewProjCode(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-808 text-slate-805 dark:text-slate-150 text-xs font-bold font-mono focus:outline-none focus:border-indigo-500" placeholder="例: PRJ-2026-01" /></div>
+                      <div><label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">開始予定日</label><input type="date" value={newProjStart} onChange={e => setNewProjStart(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 font-mono bg-white dark:bg-slate-808 text-slate-805 dark:text-slate-150 text-xs font-bold focus:outline-none focus:border-indigo-500" /></div>
+                      <div><label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">目標完了日</label><input type="date" value={newProjEnd} onChange={e => setNewProjEnd(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 font-mono bg-white dark:bg-slate-808 text-slate-805 dark:text-slate-150 text-xs font-bold focus:outline-none focus:border-indigo-500" /></div>
                     </div>
                     
                     <div className="border-t border-slate-150 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
@@ -1021,6 +1051,93 @@
 
               <div className="flex items-center gap-3 shrink-0">
                 
+                {/* 🔥 今日やるタスク集約アコーディオンボタン */}
+                <div className="relative shrink-0">
+                  <button 
+                    onClick={() => setShowTodayDropdown(!showTodayDropdown)} 
+                    className={`flex items-center gap-1.5 text-[11px] font-black px-3.5 py-2 rounded-xl border transition-all shadow-xs ${activeTodayTasks.length > 0 ? 'bg-amber-500 dark:bg-amber-955 border-amber-500 dark:border-amber-700 text-white dark:text-amber-300 animate-pulse' : 'bg-slate-55 dark:bg-slate-800 border-slate-202 dark:border-slate-705 text-slate-605 dark:text-slate-300 hover:bg-slate-150'}`}
+                  >
+                    <span>🔥 今日やる</span>
+                    {activeTodayTasks.length > 0 && (
+                      <span className="bg-white text-amber-600 dark:bg-amber-900 dark:text-amber-200 text-[9px] px-1.5 py-0.5 rounded-full font-black font-mono">
+                        {activeTodayTasks.length}
+                      </span>
+                    )}
+                    {overdueTodayTasks.length > 0 && (
+                      <span className="text-[10px] animate-bounce" title="本日中に完了していない期限超過タスクがあります！">🚨</span>
+                    )}
+                  </button>
+
+                  {/* 今日やるタスク一覧ドロップダウン */}
+                  {showTodayDropdown && (
+                    <React.Fragment>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowTodayDropdown(false)}></div>
+                      <div className="absolute top-full right-0 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl shadow-xl z-50 flex flex-col max-h-[70vh]">
+                        <div className="p-3 border-b border-slate-150 dark:border-slate-700 bg-slate-55 dark:bg-slate-955 flex justify-between items-center">
+                          <span className="font-bold text-xs text-slate-705 dark:text-slate-300 flex items-center gap-1.5">🔥 今日やるタスク一覧</span>
+                          {overdueTodayTasks.length > 0 && (
+                            <span className="bg-rose-55 dark:bg-rose-900/30 text-rose-605 dark:text-rose-400 text-[9px] px-2 py-0.5 rounded-lg border border-rose-200 dark:border-rose-800 font-extrabold animate-pulse">
+                              🚨 期限超過 {overdueTodayTasks.length}件
+                            </span>
+                          )}
+                        </div>
+                        <div className="overflow-y-auto p-3 space-y-2 bg-slate-55/30 dark:bg-slate-900/30 scrollbar-thin max-h-[50vh]">
+                          {todayTasks.length === 0 ? (
+                            <p className="text-[10px] text-slate-404 dark:text-slate-505 text-center py-6 italic">「今日やる」に指定されたタスクはありません。</p>
+                          ) : (
+                            todayTasks.map(t => {
+                              const isOver = isOverdue(t.dueDate, t.status);
+                              const step = stepList.find(s => s.id === t.stepId);
+                              return (
+                                <div 
+                                  key={t.id} 
+                                  className={`p-2.5 rounded-xl border flex flex-col gap-1.5 text-left relative transition-all ${t.status === 'completed' ? 'bg-slate-150/50 dark:bg-slate-900/50 border-slate-202 opacity-60' : isOver ? 'bg-rose-55 dark:bg-rose-955/20 border-rose-300' : 'bg-white dark:bg-slate-800 border-slate-202 dark:border-slate-705'}`}
+                                >
+                                  <div className="flex items-start justify-between gap-2">
+                                    <button 
+                                      onClick={() => {
+                                        setShowTodayDropdown(false);
+                                        setViewMode('board');
+                                        if (collapsedSteps[t.stepId]) setCollapsedSteps(p => ({ ...p, [t.stepId]: false }));
+                                        setCollapsedTasks(p => ({ ...p, [t.id]: false }));
+                                        setTimeout(() => {
+                                          const el = document.getElementById(`task-anchor-${t.id}`);
+                                          if (el) {
+                                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            el.classList.add('ring-4', 'ring-amber-500', 'scale-[1.02]');
+                                            setTimeout(() => el.classList.remove('ring-4', 'ring-amber-500', 'scale-[1.02]'), 1500);
+                                          }
+                                        }, 250);
+                                      }}
+                                      className="text-[11px] font-bold text-slate-805 dark:text-slate-100 hover:underline hover:text-indigo-600 dark:hover:text-indigo-400 truncate leading-tight flex-1 text-left"
+                                    >
+                                      {t.isHighPriority && <span className="text-rose-605 mr-0.5">!</span>}
+                                      {t.title}
+                                    </button>
+                                    <input 
+                                      type="checkbox" 
+                                      checked={t.status === 'completed'} 
+                                      onChange={() => changeTaskStatus(t.id, t.status === 'completed' ? 'pending' : 'completed')}
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0 h-3.5 w-3.5 cursor-pointer"
+                                    />
+                                  </div>
+                                  <div className="flex items-center justify-between text-[9px] text-slate-404 dark:text-slate-550 font-bold leading-none">
+                                    <span>👤 {t.assignee} {step && `(${step.name})`}</span>
+                                    <span className={isOver && t.status !== 'completed' ? 'text-rose-605 dark:text-rose-400 font-extrabold animate-pulse' : ''}>
+                                      {isOver && t.status !== 'completed' ? '🚨 期限超過: ' : ''}{t.dueDate}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  )}
+                </div>
+
                 {/* ユーザープロフィールインジケータ */}
                 <div className="flex items-center gap-2 bg-slate-150 dark:bg-slate-800 pl-2 pr-3 py-1 rounded-2xl border border-slate-202 dark:border-slate-700">
                   <div className="h-6 w-6 rounded-full bg-indigo-500 text-white font-bold flex items-center justify-center text-[10px]">
@@ -1063,7 +1180,7 @@
                 <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-705 rounded-xl px-2.5 py-1 shadow-xs transition-colors">
                   <IconFolder className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
                   <select value={selectedFolderId} onChange={(e) => { const fId = e.target.value; setSelectedFolderId(fId); setCurrentProjectId(projects.filter(p => p.folderId === fId)[0]?.id || ''); setEditingProject(false); }} className="bg-transparent text-xs font-black text-purple-800 dark:text-purple-300 focus:outline-none cursor-pointer pr-1 leading-none">
-                    {folders.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+                    {folders.map(f => <option key={f.id} value={f.id} className="dark:bg-slate-800">{f.name}</option>)}
                   </select>
                   <div className="flex items-center gap-0.5 border-l border-slate-202 dark:border-slate-705 pl-1.5 ml-0.5">
                     <button onClick={() => setShowAddFolderModal(true)} className="text-[9px] text-purple-600 dark:text-purple-400 font-extrabold px-1">＋</button>
@@ -1318,15 +1435,15 @@
                               </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                              <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">工程名 *</label><input required type="text" value={editStepName} onChange={e => setEditStepName(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 shadow-inner text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
-                              <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">詳細説明</label><input type="text" value={editStepDesc} onChange={e => setEditStepDesc(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 shadow-inner text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
+                              <div><label className="block text-slate-605 dark:text-slate-455 font-bold mb-1">工程名 *</label><input required type="text" value={editStepName} onChange={e => setEditStepName(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 shadow-inner text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
+                              <div><label className="block text-slate-605 dark:text-slate-455 font-bold mb-1">詳細説明</label><input type="text" value={editStepDesc} onChange={e => setEditStepDesc(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 shadow-inner text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                              <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">開始予定日</label><input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 font-mono font-bold text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
-                              <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">完了予定日</label><input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 font-mono font-bold text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
+                              <div><label className="block text-slate-605 dark:text-slate-455 font-bold mb-1">開始予定日</label><input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 font-mono font-bold text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
+                              <div><label className="block text-slate-605 dark:text-slate-455 font-bold mb-1">完了予定日</label><input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 font-mono font-bold text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
                             </div>
                             <div className="space-y-1">
-                              <span className="block text-slate-605 dark:text-slate-450 font-bold">担当部署</span>
+                              <span className="block text-slate-605 dark:text-slate-455 font-bold">担当部署</span>
                               <select value={editStepDeptKey} onChange={e => setEditStepDeptKey(e.target.value)} className="w-full border border-purple-200 dark:border-purple-800 rounded-xl p-2 bg-white dark:bg-slate-900 focus:outline-none text-xs font-bold text-slate-705 dark:text-slate-200">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select>
                             </div>
                             <div className="border-t border-purple-100 dark:border-purple-800/50 pt-3 space-y-2">
@@ -1467,7 +1584,7 @@
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                                   <div className="space-y-3">
                                     <input required type="text" placeholder="タスク名..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 text-slate-705 dark:text-slate-150 font-bold focus:outline-none" />
-                                    <textarea placeholder="詳細説明文... (画像ペースト / D&D対応)" value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={(e) => handlePasteOnTextInput(e, setNewTaskImages)} onDrop={(e) => handleDropOnTextInput(e, setNewTaskImages)} className="w-full border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-slate-705 dark:text-slate-150 min-h-[120px] focus:outline-none" rows={4} />
+                                    <textarea placeholder="詳細説明文... (画像ペースト / D&D対応)" value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={(e) => handlePasteOnTextInput(e, setNewTaskImages)} onDrop={(e) => handleDropOnTextInput(e, setNewTaskImages)} className="w-full border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-705 dark:text-slate-150 min-h-[120px] focus:outline-none" rows={4} />
                                     {newTaskImages.length > 0 && (
                                       <div className="flex flex-wrap gap-2 p-2 bg-slate-150 dark:bg-slate-800 rounded-xl">
                                         {newTaskImages.map((src, imgIdx) => (
@@ -1541,6 +1658,9 @@
                                 const dDays = getDurationDays(task);
                                 const isDraggingThisCard = draggedTaskInfo && draggedTaskInfo.stepId === step.id && draggedTaskInfo.index === taskIndex;
 
+                                // 「今日やる」に設定されているかつ「未完了」かつ「期限超過（本日を過ぎている）」かどうかの判定
+                                const isOverdueTodayTask = task.doToday && !d && !na && lt;
+
                                 return (
                                   <div 
                                     key={task.id} 
@@ -1550,16 +1670,45 @@
                                     onDragOver={(e) => handleTaskDragOver(step.id, taskIndex, e)} 
                                     onDragEnd={handleTaskDragEnd} 
                                     onClick={() => toggleTaskCollapse(task.id)} 
-                                    className={`group/task-card relative border-4 rounded-3xl p-4 flex flex-col justify-between overflow-hidden shadow-xs cursor-pointer ${isDraggingThisCard ? 'drag-ghost' : ''} ${d || na ? 'border-slate-202 dark:border-slate-707/50 opacity-60 bg-slate-55/70 dark:bg-slate-800/40' : hw ? 'border-rose-500 dark:border-rose-600 bg-rose-55 dark:bg-rose-900/10 ring-2 ring-rose-200' : task.isHighPriority ? 'border-rose-400 bg-gradient-to-br from-rose-55/10 to-white dark:from-rose-900/10 dark:to-slate-800 ring-1 ring-rose-400/5' : `${tkCls.borderStrong} bg-white dark:bg-slate-800`}`}
+                                    className={`group/task-card relative border-4 rounded-3xl p-4 flex flex-col justify-between overflow-hidden shadow-xs cursor-pointer ${isDraggingThisCard ? 'drag-ghost' : ''} ${
+                                      d || na 
+                                        ? 'border-slate-202 dark:border-slate-707/50 opacity-60 bg-slate-55/70 dark:bg-slate-800/40' 
+                                        : isOverdueTodayTask
+                                          ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-2 ring-rose-500 animate-pulse'
+                                          : task.doToday
+                                            ? 'border-amber-400 bg-amber-50/10 dark:bg-amber-955/10 ring-1 ring-amber-300'
+                                            : hw 
+                                              ? 'border-rose-500 dark:border-rose-600 bg-rose-55 dark:bg-rose-900/10 ring-2 ring-rose-200' 
+                                              : task.isHighPriority 
+                                                ? 'border-rose-400 bg-gradient-to-br from-rose-55/10 to-white dark:from-rose-900/10 dark:to-slate-800 ring-1 ring-rose-400/5' 
+                                                : `${tkCls.borderStrong} bg-white dark:bg-slate-800`
+                                    }`}
                                   >
                                     <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
                                       {(!d && !na) && (
                                         <div className="flex items-center gap-1 mr-1 bg-white/90 dark:bg-slate-800/90 border border-slate-202 dark:border-slate-700 p-0.5 rounded-lg">
-                                          <button onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }} disabled={taskIndex === 0} className={`p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-md transition shadow-xs ${taskIndex === 0 ? 'opacity-25' : 'text-slate-404 hover:text-indigo-600'}`}><IconDragHandle /></button>
-                                          <button onClick={(e) => { e.stopPropagation(); startEditing(task); }} className="p-1 text-slate-404 hover:text-indigo-600 rounded-md"><IconEdit2 className="h-3.5 w-3.5" /></button>
-                                          <button onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }} className="p-1 text-slate-404 hover:text-rose-605 rounded-md"><IconTrash2 className="h-3.5 w-3.5" /></button>
+                                          <button onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }} disabled={taskIndex === 0} className={`p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-md transition shadow-xs ${taskIndex === 0 ? 'opacity-25' : 'text-slate-440 hover:text-indigo-600'}`}><IconDragHandle /></button>
+                                          <button onClick={(e) => { e.stopPropagation(); startEditing(task); }} className="p-1 text-slate-440 hover:text-indigo-600 rounded-md"><IconEdit2 className="h-3.5 w-3.5" /></button>
+                                          <button onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }} className="p-1 text-slate-440 hover:text-rose-605 rounded-md"><IconTrash2 className="h-3.5 w-3.5" /></button>
                                         </div>
                                       )}
+                                      
+                                      {/* 🔥 今日やるトグルボタン */}
+                                      {(!d && !na) && (
+                                        <button 
+                                          onClick={(e) => { e.stopPropagation(); toggleDoToday(task.id); }} 
+                                          className={`flex items-center gap-0.5 text-[9px] font-black px-2.5 py-1.5 rounded-xl border transition-all ${
+                                            task.doToday 
+                                              ? isOverdueTodayTask 
+                                                ? 'bg-rose-600 text-white border-rose-700 shadow-md animate-bounce' 
+                                                : 'bg-amber-500 text-white border-amber-600 shadow-md' 
+                                              : 'bg-slate-55 dark:bg-slate-800 text-slate-605 dark:text-slate-300 border-slate-202 hover:bg-slate-150'
+                                          }`}
+                                        >
+                                          <span>🔥 {task.doToday ? '今日やる中' : '今日やる'}</span>
+                                        </button>
+                                      )}
+
                                       <button onClick={(e) => { e.stopPropagation(); toggleTaskPriority(task.id); }} className={`flex items-center gap-0.5 text-[9px] font-black px-2.5 py-1.5 rounded-xl border ${task.isHighPriority ? 'bg-rose-500 text-white border-rose-600 shadow-md shadow-rose-100 dark:shadow-none' : 'bg-rose-55/70 dark:bg-rose-900/30 text-rose-605 dark:text-rose-400 border-rose-200'}`}><IconFlag className="h-2.5 w-2.5" />{task.isHighPriority ? '最優先' : '優先度'}</button>
                                       <select value={task.status} onClick={(e) => e.stopPropagation()} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className={`text-[9px] font-black px-2.5 py-1.5 rounded-xl border cursor-pointer focus:outline-none ${d ? 'bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-100' : w ? 'bg-blue-500 text-white border-blue-600 shadow-md shadow-blue-100' : na ? 'bg-slate-400 text-white border-slate-500 shadow-md shadow-slate-200' : 'bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 border-slate-202'}`}>
                                         <option value="pending" className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150">🔘 未対応</option><option value="in_progress" className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150">⚡ 進行中</option><option value="completed" className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150">✅ 完了マーク</option><option value="not_applicable" className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150">🚫 対応なし</option>
@@ -1653,8 +1802,8 @@
                                           </div>
                                           
                                           <div className="relative group/desc space-y-1.5 mt-3" onClick={(e) => e.stopPropagation()}>
-                                            <div className="text-[9.5px] font-bold text-slate-450 dark:text-slate-550 ml-1 flex items-center justify-between select-none">
-                                              <span className="flex items-center gap-1"><IconInfo className="h-3 w-3" /> 論点・備考 <span className="text-[8px] text-slate-440 dark:text-slate-550 font-normal">(クリックで直接編集)</span></span>
+                                            <div className="text-[9.5px] font-bold text-slate-450 dark:text-slate-555 ml-1 flex items-center justify-between select-none">
+                                              <span className="flex items-center gap-1"><IconInfo className="h-3 w-3" /> 論点・備考 <span className="text-[8px] text-slate-440 dark:text-slate-555 font-normal">(クリックで直接編集)</span></span>
                                               {editingDescTaskId === task.id && (
                                                 <button 
                                                   onClick={() => handleSaveDirectDesc(task.id)}
@@ -1682,7 +1831,7 @@
                                                 />
                                               ) : (
                                                 <p 
-                                                  className={`text-[11px] whitespace-pre-wrap bg-slate-55 dark:bg-slate-900/50 border border-slate-202 dark:border-slate-700 rounded-2xl p-3 cursor-pointer select-text hover:border-indigo-400 dark:hover:indigo-600 hover:bg-indigo-50/20 dark:hover:bg-indigo-950/20 transition-all ${task.description ? 'text-slate-606 dark:text-slate-300' : 'text-slate-440 dark:text-slate-550 italic'}`}
+                                                  className={`text-[11px] whitespace-pre-wrap bg-slate-55 dark:bg-slate-900/50 border border-slate-202 dark:border-slate-700 rounded-2xl p-3 cursor-pointer select-text hover:border-indigo-400 dark:hover:indigo-600 hover:bg-indigo-50/20 dark:hover:bg-indigo-950/20 transition-all ${task.description ? 'text-slate-606 dark:text-slate-300' : 'text-slate-440 dark:text-slate-555 italic'}`}
                                                   onClick={(e) => {
                                                     e.stopPropagation();
                                                     setEditingDescTaskId(task.id);
@@ -1703,7 +1852,7 @@
                                                 </div>
                                               )}
                                               {editingDescTaskId !== task.id && task.description && (
-                                                <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }} className="absolute top-2 right-2 opacity-100 p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-600 text-slate-505 dark:text-slate-455 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors" title="タスクの説明をコピー">📋 コピー</button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }} className="absolute top-2 right-2 opacity-100 p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-600 text-slate-505 dark:text-slate-450 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors" title="タスクの説明をコピー">📋 コピー</button>
                                               )}
                                             </div>
                                           </div>
@@ -1751,13 +1900,13 @@
                                                 </div>
                                               )}
                                               <div className="grid grid-cols-2 gap-2 text-[10px]">
-                                                <div><label className="block text-slate-440 dark:text-slate-550 font-bold mb-0.5">TO</label><select value={newLogTo} onChange={e=>setNewLogTo(e.target.value)} className="w-full border border-slate-202 dark:border-slate-700 rounded-lg p-1.5 bg-white dark:bg-slate-900 font-bold text-slate-555 dark:text-slate-300 focus:outline-none"><option value="">指定なし</option>{deptList.map(dl => <option key={dl.key} value={dl.label}>{dl.label}</option>)}<option value="全員">全員</option></select></div>
-                                                <div><label className="block text-slate-440 dark:text-slate-550 font-bold mb-0.5">期限日</label><input type="date" value={newLogDueDate} onChange={e=>setNewLogDueDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg p-1 font-mono font-bold text-slate-750 dark:text-slate-200 focus:outline-none" /></div>
+                                                <div><label className="block text-slate-440 dark:text-slate-555 font-bold mb-0.5">TO</label><select value={newLogTo} onChange={e=>setNewLogTo(e.target.value)} className="w-full border border-slate-202 dark:border-slate-700 rounded-lg p-1.5 bg-white dark:bg-slate-900 font-bold text-slate-555 dark:text-slate-300 focus:outline-none"><option value="">指定なし</option>{deptList.map(dl => <option key={dl.key} value={dl.label}>{dl.label}</option>)}<option value="全員">全員</option></select></div>
+                                                <div><label className="block text-slate-440 dark:text-slate-555 font-bold mb-0.5">期限日</label><input type="date" value={newLogDueDate} onChange={e=>setNewLogDueDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg p-1 font-mono font-bold text-slate-705 dark:text-slate-200 focus:outline-none" /></div>
                                               </div>
                                               <div className="border-t border-slate-150 dark:border-slate-700 pt-2 space-y-2">
-                                                <span className="text-[9px] font-bold text-slate-440 dark:text-slate-550 block uppercase">🔗 関連リンク</span>
+                                                <span className="text-[9px] font-bold text-slate-440 dark:text-slate-555 block uppercase">🔗 関連リンク</span>
                                                 <div className="flex items-center gap-1">
-                                                  <IconLink className="text-slate-440" /><input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-750 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><button onClick={handleAddLinkToNewLog} className="bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-600 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0 transition-colors">開く</button>
+                                                  <IconLink className="text-slate-440" /><input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-755 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><button onClick={handleAddLinkToNewLog} className="bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-600 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0 transition-colors">開く</button>
                                                 </div>
                                                 {newLogLinks.length > 0 && (
                                                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -1773,7 +1922,7 @@
                                             {logs.length > 0 ? logs.map(log => {
                                               const isEdLog = editingLogId === log.id;
                                               return (
-                                                <div key={log.id} className={`group/log relative border rounded-xl p-3 shadow-xs flex flex-col gap-1.5 ${log.completed ? 'opacity-50 bg-emerald-55/50 dark:bg-emerald-900/20 border-emerald-100' : log.isHighlighted ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-300 ring-1 ring-amber-300' : 'bg-white dark:bg-slate-800 border-slate-202 dark:border-slate-700'}`}>
+                                                <div key={log.id} className={`group/log relative border rounded-xl p-3 shadow-xs flex flex-col gap-1.5 ${log.completed ? 'opacity-50 bg-emerald-55/50 dark:bg-emerald-900/20 border-emerald-100' : log.isHighlighted ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-300 ring-1 ring-amber-300' : 'bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700'}`}>
                                                   {isEdLog ? (
                                                     <div className="space-y-2.5 text-xs w-full bg-slate-55 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-202 dark:border-slate-700">
                                                       <span className="font-bold text-[10px] text-indigo-600 block">✏️ インライン編集</span>
@@ -1786,7 +1935,7 @@
                                                   ) : (
                                                     <React.Fragment>
                                                       <div className="flex justify-between items-center border-b border-slate-150 dark:border-slate-707/50 pb-1">
-                                                        <span className="text-[8px] font-mono text-slate-440 font-bold flex items-center gap-0.5"><IconClock /> {log.date}{log.isHighlighted && <span className="ml-1.5 bg-amber-100 text-amber-800 text-[7.5px] px-1.5 py-0.5 rounded font-bold">📌 重要</span>}</span>
+                                                        <span className="text-[8px] font-mono text-slate-404 font-bold flex items-center gap-0.5"><IconClock /> {log.date}{log.isHighlighted && <span className="ml-1.5 bg-amber-100 text-amber-800 text-[7.5px] px-1.5 py-0.5 rounded font-bold">📌 重要</span>}</span>
                                                         <div className="flex items-center gap-1.5 bg-white/95 dark:bg-slate-800/95 border border-slate-202 dark:border-slate-700 rounded-lg p-0.5 absolute top-2 right-2">
                                                           <button onClick={() => startEditingLog(log)} className="p-1 text-slate-404 hover:text-indigo-600"><IconEdit2 className="h-3 w-3" /></button>
                                                           <button onClick={() => toggleLogHighlight(task.id, log.id)} className={`p-1 ${log.isHighlighted ? 'text-amber-500 bg-amber-50' : 'text-slate-404 hover:text-amber-500'}`}><IconPin className="h-3 w-3" /></button>
@@ -1814,7 +1963,7 @@
                                                         {log.to && (<span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-lg font-black">TO: {log.to}</span>)}
                                                         {log.dueDate && (<span className="inline-flex items-center gap-1 text-[9px] bg-rose-55 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 px-2 py-0.5 rounded-lg font-mono font-bold">期日: {log.dueDate}</span>)}
                                                         {log.links && log.links.map(lnk => (
-                                                          <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1 text-[9px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg transition">
+                                                          <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1 text-[9px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-700 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg transition">
                                                             <IconExternalLink className="h-2.5 w-2.5" /> <span className="font-bold">{lnk.label}</span>
                                                             {!log.completed && (<button onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeSingleLinkFromLog(task.id, log.id, lnk.id); }} className="text-slate-404 dark:text-slate-550 hover:text-rose-605 dark:hover:text-rose-400 font-bold text-[10px] ml-1" title="リンクのみ削除">×</button>)}
                                                           </a>
@@ -1942,14 +2091,14 @@
               <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-base font-black text-slate-805 dark:text-slate-100 flex items-center gap-2"><IconSettings className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />設定</h2>
-                  <button onClick={() => setShowSettingsModal(false)} className="text-slate-404 dark:text-slate-505 hover:bg-slate-150 dark:hover:bg-slate-700 p-1.5 rounded-lg transition-colors"><IconX className="h-5 w-5" /></button>
+                  <button onClick={() => setShowSettingsModal(false)} className="text-slate-404 dark:text-slate-505 hover:bg-slate-150 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition-colors"><IconX className="h-5 w-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin">
                   
                   <div className="space-y-4">
                     <h3 className="text-xs font-black text-slate-605 dark:text-slate-440 border-b border-slate-202 dark:border-slate-700 pb-2 flex items-center gap-1.5">☁️ クラウド同期 (GitHub Gist)</h3>
                     <div className="bg-slate-55 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 shadow-sm space-y-3">
-                      <p className="text-[10px] text-slate-505 dark:text-slate-455 font-bold">TokenとGist IDを設定すると同期・バックアップします。</p>
+                      <p className="text-[10px] text-slate-550 dark:text-slate-455 font-bold">TokenとGist IDを設定すると同期・バックアップします。</p>
                       <div className="space-y-2">
                         <div>
                           <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">GitHub Personal Access Token</label>
@@ -1985,7 +2134,7 @@
                     </div>
                     <form onSubmit={handleCreateDept} className="flex items-center gap-2 mt-4 bg-indigo-50/50 dark:bg-indigo-900/20 p-3 rounded-2xl border border-indigo-100 dark:border-indigo-800/50 shadow-inner">
                       <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 shrink-0 uppercase flex items-center gap-0.5"><IconPlus className="h-3 w-3"/>追加</span>
-                      <input type="text" placeholder="部署名..." value={newDeptLabel} onChange={e => setNewDeptLabel(e.target.value)} className="flex-1 text-xs font-bold bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 text-slate-805 dark:text-slate-200 rounded-xl p-2 focus:outline-none shadow-sm" />
+                      <input type="text" placeholder="部署名..." value={newDeptLabel} onChange={e => setNewDeptLabel(e.target.value)} className="flex-1 text-xs font-bold bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-705 text-slate-805 dark:text-slate-200 rounded-xl p-2 focus:outline-none shadow-sm" />
                       <select value={newDeptColor} onChange={e => setNewDeptColor(e.target.value)} className={`text-xs font-bold rounded-xl p-2 border border-slate-202 dark:border-slate-700 shadow-sm focus:outline-none ${colorClassesMap[newDeptColor]?.badge || 'bg-white dark:bg-slate-800'}`}>
                         {Object.keys(colorClassesMap).map(c => <option key={c} value={c} className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200">{c}色</option>)}
                       </select>
