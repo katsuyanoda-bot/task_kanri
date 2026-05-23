@@ -1526,94 +1526,94 @@
                                           </div>
                                         ) : (
                                           /* 🔘 通常のタスクカード画面 */
-                                            <React.Fragment>
-                                              <span className="absolute top-4 left-4 text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold bg-slate-150 dark:bg-slate-900 border border-slate-202 dark:border-slate-707 text-slate-805 dark:text-slate-200 select-none">
-                                                #{index+1}-{taskIndex+1}-<span className="font-black">{task.sequenceId || '?'}</span>
-                                              </span>
-                                              <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={e => e.stopPropagation()}>
-                                                <button onClick={() => startEditing(task)} className="p-1.5 text-slate-404 hover:text-indigo-600 transition-colors" title="タスクを編集">
-                                                  <IconEdit2 className="h-3.5 w-3.5" />
-                                                </button>
-                                                <button onClick={() => toggleDoToday(task.id)} className={`text-[9px] font-black px-2.5 py-1.5 rounded-xl border ${task.doToday ? 'bg-amber-500 text-white border-amber-600 shadow-md' : 'bg-slate-55 dark:bg-slate-700 text-slate-605 dark:text-slate-300 border-slate-202'}`}>🔥 {task.doToday ? '今日やる中' : '今日やる'}</button>
-                                                <select value={task.status} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className="text-[9px] font-black px-2 py-1 rounded-xl border bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300">
-                                                  <option value="pending">🔘 未対応</option><option value="in_progress">⚡ 進行中</option><option value="completed">✅ 完了マーク</option><option value="not_applicable">🚫 対応なし</option>
-                                                </select>
-                                                <button onClick={() => deleteTask(task.id)} className="text-slate-404 hover:text-rose-605 font-bold text-sm ml-1">×</button>
+                                          <React.Fragment>
+                                            <span className="absolute top-4 left-4 text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold bg-slate-150 dark:bg-slate-900 border border-slate-202 dark:border-slate-707 text-slate-805 dark:text-slate-200 select-none">
+                                              #{index+1}-{taskIndex+1}-<span className="font-black">{task.sequenceId || '?'}</span>
+                                            </span>
+                                            <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={e => e.stopPropagation()}>
+                                              <button onClick={() => startEditing(task)} className="p-1.5 text-slate-404 hover:text-indigo-600 transition-colors" title="タスクを編集">
+                                                <IconEdit2 className="h-3.5 w-3.5" />
+                                              </button>
+                                              <button onClick={() => toggleDoToday(task.id)} className={`text-[9px] font-black px-2.5 py-1.5 rounded-xl border ${task.doToday ? 'bg-amber-500 text-white border-amber-600 shadow-md' : 'bg-slate-55 dark:bg-slate-700 text-slate-605 dark:text-slate-300 border-slate-202'}`}>🔥 {task.doToday ? '今日やる中' : '今日やる'}</button>
+                                              <select value={task.status} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className="text-[9px] font-black px-2 py-1 rounded-xl border bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300">
+                                                <option value="pending">🔘 未対応</option><option value="in_progress">⚡ 進行中</option><option value="completed">✅ 完了マーク</option><option value="not_applicable">🚫 対応なし</option>
+                                              </select>
+                                              <button onClick={() => deleteTask(task.id)} className="text-slate-404 hover:text-rose-605 font-bold text-sm ml-1">×</button>
+                                            </div>
+                                            
+                                            <div className="mt-10 space-y-3 flex-1 flex flex-col justify-between">
+                                              <div className="space-y-2">
+                                                <h4 className="font-extrabold text-sm text-slate-805 dark:text-slate-150 select-text cursor-text leading-snug">{task.title}</h4>
+                                                <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-550 dark:text-slate-444">
+                                                  <span className={`px-2 py-0.5 rounded border ${tkCls.badge}`}>{deptList.find(dl => dl.key === task.department)?.label || '未設定'} : {task.assignee}</span>
+                                                  <span className="font-mono">⌛ 期日: {task.dueDate}</span>
+                                                  {task.startedAt && <span className="font-mono text-indigo-600 dark:text-indigo-404 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-900/40">⏱️ {d ? `${task.startedAt} 〜 ${task.completedAt} (${dDays} 日)` : `${task.startedAt} 着手 (${dDays} 日)`}</span>}
+                                                </div>
                                               </div>
-                                              
-                                              <div className="mt-10 space-y-3 flex-1 flex flex-col justify-between">
-                                                <div className="space-y-2">
-                                                  <h4 className="font-extrabold text-sm text-slate-805 dark:text-slate-150 select-text cursor-text leading-snug">{task.title}</h4>
-                                                  <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-550 dark:text-slate-444">
-                                                    <span className={`px-2 py-0.5 rounded border ${tkCls.badge}`}>{deptList.find(dl => dl.key === task.department)?.label || '未設定'} : {task.assignee}</span>
-                                                    <span className="font-mono">⌛ 期日: {task.dueDate}</span>
-                                                    {task.startedAt && <span className="font-mono text-indigo-600 dark:text-indigo-404 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-900/40">⏱️ {d ? `${task.startedAt} 〜 ${task.completedAt} (${dDays} 日)` : `${task.startedAt} 着手 (${dDays} 日)`}</span>}
-                                                  </div>
-                                                </div>
 
-                                                {/* 📝 論点・備考エリア */}
-                                                <div className="relative group/desc space-y-1" onClick={e => e.stopPropagation()}>
-                                                  <div className="text-[9.5px] font-bold text-slate-440 flex items-center justify-between"><span><IconInfo className="inline h-3 w-3 mr-0.5" />論点・備考</span></div>
-                                                  {editingDescTaskId === task.id ? (
-                                                    <textarea value={tmpDescValue} onChange={e => setTmpDescValue(e.target.value)} onBlur={() => handleSaveDirectDesc(task.id)} className="w-full text-xs bg-white dark:bg-slate-900 border-2 border-indigo-500 rounded-xl p-2 text-slate-805 dark:text-slate-100 min-h-[50px]" autoFocus />
-                                                  ) : (
-                                                    <p onClick={() => { setEditingDescTaskId(task.id); setTmpDescValue(task.description || ''); }} className={`text-xs p-2.5 border rounded-2xl bg-slate-55 dark:bg-slate-900/40 border-slate-202 dark:border-slate-707 whitespace-pre-wrap cursor-pointer hover:border-indigo-400 ${task.description ? 'text-slate-606 dark:text-slate-300' : 'text-slate-440 italic'}`}>{task.description || '入力なし'}</p>
-                                                  )}
-                                                </div>
+                                              {/* 📝 論点・備考エリア */}
+                                              <div className="relative group/desc space-y-1" onClick={e => e.stopPropagation()}>
+                                                <div className="text-[9.5px] font-bold text-slate-440 flex items-center justify-between"><span><IconInfo className="inline h-3 w-3 mr-0.5" />論点・備考</span></div>
+                                                {editingDescTaskId === task.id ? (
+                                                  <textarea value={tmpDescValue} onChange={e => setTmpDescValue(e.target.value)} onBlur={() => handleSaveDirectDesc(task.id)} className="w-full text-xs bg-white dark:bg-slate-900 border-2 border-indigo-500 rounded-xl p-2 text-slate-805 dark:text-slate-100 min-h-[50px]" autoFocus />
+                                                ) : (
+                                                  <p onClick={() => { setEditingDescTaskId(task.id); setTmpDescValue(task.description || ''); }} className={`text-xs p-2.5 border rounded-2xl bg-slate-55 dark:bg-slate-900/40 border-slate-202 dark:border-slate-707 whitespace-pre-wrap cursor-pointer hover:border-indigo-400 ${task.description ? 'text-slate-606 dark:text-slate-300' : 'text-slate-440 italic'}`}>{task.description || '入力なし'}</p>
+                                                )}
+                                              </div>
 
-                                                {/* ⏳ ✨ 【大復活】時系列交渉タイムライン・メモエリア */}
-                                                <div className="border-t border-dashed dark:border-slate-700 pt-3 mt-2" onClick={e => e.stopPropagation()}>
-                                                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-440 mb-1.5">
-                                                    <span className="flex items-center gap-1">📋 時系列交渉メモ ({task.contextLogs?.length || 0})</span>
-                                                  </div>
-                                                  
-                                                  {/* ログの履歴リスト（最大3件表示してスクロール可能に） */}
-                                                  {task.contextLogs && task.contextLogs.length > 0 ? (
-                                                    <div className="space-y-1.5 max-h-[100px] overflow-y-auto mb-2 pr-1 custom-scrollbar">
-                                                      {task.contextLogs.map((log) => (
-                                                        <div key={log.id} className={`p-2 rounded-xl text-[11px] leading-relaxed border ${log.isSystem ? 'bg-slate-55/60 dark:bg-slate-900/20 border-slate-150 text-slate-550' : 'bg-indigo-50/20 dark:bg-indigo-950/20 border-indigo-100/40 dark:border-indigo-900/30 text-slate-705 dark:text-slate-300'}`}>
-                                                          <div className="flex justify-between text-[9px] font-mono opacity-60 mb-0.5 font-bold">
-                                                            <span>{log.isSystem ? '🤖 システム記録' : '👤 交渉ログ'}</span>
-                                                            <span>{log.date}</span>
-                                                          </div>
-                                                          <p className="whitespace-pre-wrap font-medium">{log.text}</p>
+                                              {/* ⏳ 時系列交渉タイムライン・メモエリア */}
+                                              <div className="border-t border-dashed dark:border-slate-700 pt-3 mt-2" onClick={e => e.stopPropagation()}>
+                                                <div className="flex items-center justify-between text-[10px] font-bold text-slate-440 mb-1.5">
+                                                  <span className="flex items-center gap-1">📋 時系列交渉メモ ({task.contextLogs?.length || 0})</span>
+                                                </div>
+                                                
+                                                {task.contextLogs && task.contextLogs.length > 0 ? (
+                                                  <div className="space-y-1.5 max-h-[100px] overflow-y-auto mb-2 pr-1 custom-scrollbar">
+                                                    {task.contextLogs.map((log) => (
+                                                      <div key={log.id} className={`p-2 rounded-xl text-[11px] leading-relaxed border ${log.isSystem ? 'bg-slate-55/60 dark:bg-slate-900/20 border-slate-150 text-slate-550' : 'bg-indigo-50/20 dark:bg-indigo-950/20 border-indigo-100/40 dark:border-indigo-900/30 text-slate-705 dark:text-slate-300'}`}>
+                                                        <div className="flex justify-between text-[9px] font-mono opacity-60 mb-0.5 font-bold">
+                                                          <span>{log.isSystem ? '🤖 システム記録' : '👤 交渉ログ'}</span>
+                                                          <span>{log.date}</span>
                                                         </div>
-                                                      ))}
-                                                    </div>
-                                                  ) : (
-                                                    <p className="text-[10px] text-slate-440 italic mb-2">交渉・スタックの履歴はまだありません</p>
-                                                  )}
-
-                                                  {/* クイックメモ入力欄（その場でログを打ち込んで即追加できる） */}
-                                                  <div className="flex gap-1.5 items-center">
-                                                    <input 
-                                                      type="text" 
-                                                      placeholder="他部署とのラリーやメモをその場で追記..." 
-                                                      id={`quick-log-input-${task.id}`}
-                                                      onKeyDown={(e) => {
-                                                        if (e.key === 'Enter' && e.target.value.trim()) {
-                                                          // インライン用の簡易追加処理（親の既存のログ追加関数を叩くか、状態を直接更新）
-                                                          const text = e.target.value.trim();
-                                                          const now = new Date();
-                                                          const dStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-                                                          const newLog = { id: `manual_log_${Date.now()}`, date: dStr, text, isSystem: false };
-                                                          
-                                                          const updatedTasks = tasks.map(t => t.id === task.id ? { ...t, contextLogs: [newLog, ...(t.contextLogs || [])] } : t);
-                                                          saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
-                                                          e.target.value = '';
-                                                          showAlert('📝 交渉メモを時系列に追記しました');
-                                                        }
-                                                      }}
-                                                      className="flex-1 text-[11px] bg-slate-55 dark:bg-slate-900 border border-slate-202 dark:border-slate-707 rounded-xl px-2.5 py-1.5 font-medium text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-500 placeholder-slate-404"
-                                                    />
-                                                    <span className="text-[9px] text-slate-404 font-bold bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded-lg border">Enterで追加</span>
+                                                        <p className="whitespace-pre-wrap font-medium">{log.text}</p>
+                                                      </div>
+                                                    ))}
                                                   </div>
+                                                ) : (
+                                                  <p className="text-[10px] text-slate-440 italic mb-2">交渉・スタックの履歴はまだありません</p>
+                                                )}
+
+                                                <div className="flex gap-1.5 items-center">
+                                                  <input 
+                                                    type="text" 
+                                                    placeholder="他部署とのラリーやメモをその場で追記..." 
+                                                    id={`quick-log-input-${task.id}`}
+                                                    onKeyDown={(e) => {
+                                                      if (e.key === 'Enter' && e.target.value.trim()) {
+                                                        const text = e.target.value.trim();
+                                                        const now = new Date();
+                                                        const dStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                                                        const newLog = { id: `manual_log_${Date.now()}`, date: dStr, text, isSystem: false };
+                                                        
+                                                        const updatedTasks = tasks.map(t => t.id === task.id ? { ...t, contextLogs: [newLog, ...(t.contextLogs || [])] } : t);
+                                                        saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
+                                                        e.target.value = '';
+                                                        showAlert('📝 交渉メモを時系列に追記しました');
+                                                      }
+                                                    }}
+                                                    className="flex-1 text-[11px] bg-slate-55 dark:bg-slate-900 border border-slate-202 dark:border-slate-707 rounded-xl px-2.5 py-1.5 font-medium text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-500 placeholder-slate-404"
+                                                  />
+                                                  <span className="text-[9px] text-slate-404 font-bold bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded-lg border">Enterで追加</span>
                                                 </div>
-
                                               </div>
-                                            </React.Fragment>
-            )}
 
+                                            </div>
+                                          </React.Fragment>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
             {/* ============================== */}
             {/* 2. 🗃️ データベースビュー       */}
             {/* ============================== */}
