@@ -880,96 +880,47 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
       const handleOpenProjectFromDb = (proj) => { setSelectedFolderId(proj.folderId); setCurrentProjectId(proj.id); setViewMode('board'); };
 
 
-      // =========================================================================
+     // =========================================================================
       // --- アナリティクス（アルファ）用のデータ集計ロジック ---
       // =========================================================================
 
+      // 【ステップ1】個人別の「合計」「完了」「未完了」だけの安全なシンプル集計
       const analyticsResourceData = useMemo(() => {
         const allTasks = projects.flatMap(p => p.tasks || []);
-        return deptList.map(dept => {
-          const deptTasks = allTasks.filter(t => t.department === dept.key && t.status !== 'completed' && t.status !== 'not_applicable');
-          const urgentCount = deptTasks.filter(t => t.isHighPriority).length;
+        const memberStats = {};
+        
+        allTasks.forEach(t => {
+          if (t.status === 'not_applicable') return;
+          const name = t.assignee || '未設定';
           
-          const memberCounts = {};
-          deptTasks.forEach(t => {
-            const assignee = t.assignee || '未設定';
-            memberCounts[assignee] = (memberCounts[assignee] || 0) + 1;
-          });
-          const members = Object.keys(memberCounts).map(name => ({ name, tasks: memberCounts[name] })).sort((a, b) => b.tasks - a.tasks);
+          if (!memberStats[name]) {
+            memberStats[name] = { name, total: 0, completed: 0, uncompleted: 0 };
+          }
+          
+          memberStats[name].total++;
+          if (t.status === 'completed') {
+            memberStats[name].completed++;
+          } else {
+            memberStats[name].uncompleted++;
+          }
+        });
 
+        // 部署別の簡易状況（上部パネル用）
+        const deptStats = deptList.map(dept => {
+          const deptTasks = allTasks.filter(t => t.department === dept.key && t.status !== 'completed' && t.status !== 'not_applicable');
           return {
-            deptKey: dept.key,
             deptLabel: dept.label,
             colorClass: colorClassesMap[dept.color]?.bar || 'bg-slate-500',
-            active: deptTasks.length,
-            urgent: urgentCount,
-            members
+            active: deptTasks.length
           };
-        }).filter(d => d.active > 0); 
+        }).filter(d => d.active > 0);
+
+        return { deptStats, memberStats: Object.values(memberStats) };
       }, [projects, deptList]);
 
-      const analyticsLeadTimeData = useMemo(() => {
-        const stepStats = {};
-        projects.forEach(p => {
-          (p.stepList || []).forEach(step => {
-            const tks = (p.tasks || []).filter(t => t.stepId === step.id && t.status === 'completed' && t.startedAt && t.completedAt);
-            if (tks.length > 0) {
-              const name = step.name;
-              if (!stepStats[name]) stepStats[name] = { totalDays: 0, count: 0 };
-              tks.forEach(t => {
-                const start = new Date(t.startedAt);
-                const end = new Date(t.completedAt);
-                const days = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
-                stepStats[name].totalDays += days;
-                stepStats[name].count += 1;
-              });
-            }
-          });
-        });
-
-        return Object.keys(stepStats).map(name => {
-          const stat = stepStats[name];
-          return {
-            step: name,
-            avg: Math.round((stat.totalDays / stat.count) * 10) / 10,
-            target: 5 // 仮のターゲット日数（要件定義次第で動的に変更可能）
-          };
-        });
-      }, [projects]);
-
-      const analyticsRiskTasks = useMemo(() => {
-        const risks = [];
-        projects.forEach(p => {
-          (p.tasks || []).forEach(t => {
-            if (t.status === 'completed' || t.status === 'not_applicable') return;
-            
-            // 期限超過
-            if (isOverdue(t.dueDate, t.status)) {
-              risks.push({ id: t.id, title: t.title, proj: p.name, type: '期限超過', desc: `期限: ${t.dueDate}`, badge: 'bg-amber-900/50 text-amber-400 border border-amber-500' });
-              return;
-            }
-            // 炎上予兆
-            const logs = t.contextLogs || [];
-            const hasHighlight = logs.some(l => l.isHighlighted);
-            if (logs.length >= 5 || hasHighlight) {
-              risks.push({ id: t.id, title: t.title, proj: p.name, type: '炎上予兆', desc: `メモ ${logs.length}件${hasHighlight ? ' (重要あり)' : ''}`, badge: 'bg-rose-900/50 text-rose-400 border border-rose-500' });
-              return;
-            }
-            // 放置リスク (7日間メモの更新がない)
-            if (t.status === 'in_progress' && logs.length > 0) {
-              const lastLogDate = new Date(logs[0].date.split(' ')[0].replace(/\//g, '-'));
-              const today = new Date(TODAY_STR);
-              const diffDays = Math.round((today - lastLogDate) / (1000 * 60 * 60 * 24));
-              if (diffDays > 7) {
-                 risks.push({ id: t.id, title: t.title, proj: p.name, type: '放置', desc: `${diffDays}日間更新なし`, badge: 'bg-slate-700 text-slate-300 border border-slate-500' });
-              }
-            }
-          });
-        });
-        return risks;
-      }, [projects]);
-
-
+      // 💡 エラー（真っ白画面）防止用の安全なダミー。ステップ2と3で本実装に書き換えます。
+      const analyticsLeadTimeData = useMemo(() => [], []);
+      const analyticsRiskTasks = useMemo(() => [], []);
       // ==========================================
       // 未ログイン（Sansanメンバー認証前）画面
       // ==========================================
