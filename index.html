@@ -129,11 +129,11 @@
     const IconDatabase = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>;
     const IconEye = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
     const IconWarning = ({ className = "h-6 w-6 text-rose-605" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
-    const IconList = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>;
+    const IconList = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" py-2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>;
     const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
     const IconMoon = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>;
     
-    // ① ヘッダーアイコンバグ（サイズ指定className漏れ）を完全修正
+    // ① ヘッダーアイコン表示の不具合（className受取）を完全に修正
     const IconChart = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>;
 
     // Google カラーロゴ
@@ -149,13 +149,13 @@
     // --- カラー定義マップ ---
     const colorClassesMap = {
       purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#25183a]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-55 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-400' },
-      indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-[#f0f2ff] dark:bg-[#1e223b]', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-150 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-400' },
-      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-blue-400' },
-      emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-400' },
+      indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-[#f0f2ff] dark:bg-[#1e223b]', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-150 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-404' },
+      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-blue-404' },
+      emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-404' },
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-[#f0fdf4] dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
-      amber: { text: 'text-amber-804 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
+      amber: { text: 'text-amber-805 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
       rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-purple-404' },
-      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-555' }
+      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-550 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-555' }
     };
 
     // 初期マスタデータ
@@ -197,7 +197,7 @@
       }
     ];
 
-    // ④ 土日を除外した「実稼働営業日」を正確にカウントするアルゴリズム関数
+    // ④ 土日を除外した実「営業日」を正確にカウントするカレンダー関数
     const getWorkingDaysDiff = (startStr, endStr) => {
       if (!startStr || !endStr) return 0;
       const start = new Date(startStr);
@@ -307,11 +307,11 @@
         not_applicable: false
       });
 
-      // --- ⑥ 設定画面からポチポチ変えられる動的しきい値環境用State群 ---
+      // --- ⑥ 設定画面から動的に変えられる可変しきい値変数 (State) ---
       const [riskThresholdDays, setRiskThresholdDays] = useState(() => Number(localStorage.getItem('pl_cfg_risk_days')) || 5);
       const [targetLeadTimeDays, setTargetLeadTimeDays] = useState(() => Number(localStorage.getItem('pl_cfg_target_lt')) || 7);
 
-      // --- ② 分析スコープ（ミクロ案件/全体マクロ横断）切り替え用のState群 ---
+      // --- ② 個別案件 ✕ 全体切替用のスコープState群 ---
       const [analyticsProjectId, setAnalyticsProjectId] = useState('all');
       const [analyticsTab, setAnalyticsTab] = useState('resource');
 
@@ -666,7 +666,7 @@
 
 
       // =========================================================================
-      // --- ② ✕ ③ ✕ ④ ✕ ⑤ アナリティクス用の高度な動的集計ロジック (マクロ/ミクロ対応) ---
+      // --- ② ✕ ③ ✕ ④ ✕ ⑤ アナリティクス用の高度な動的集計ロジック (useMemo) ---
       // =========================================================================
 
       // ② セレクトボックスで選択されたターゲット案件群の算出
@@ -675,7 +675,7 @@
         return projects.filter(p => p.id === analyticsProjectId);
       }, [projects, analyticsProjectId]);
 
-      // ③ リソース・個人負荷の詳細多重分析（未完了遅延、進行中遅延、完了率の全自動算出）
+      // ③ リソース・個人負荷の詳細多重分析（未対応遅延、進行中遅延、完了率の全自動算出）
       const analyticsResourceData = useMemo(() => {
         const allTasks = analyticsTargetProjects.flatMap(p => p.tasks || []);
         
@@ -784,7 +784,7 @@
             
             // A. 期限超過アラート
             if (isOverdue(t.dueDate, t.status)) {
-              risks.push({ id: t.id, title: t.title, proj: p.name, type: '期限超過', desc: `期限: ${t.dueDate}`, badge: 'bg-amber-900/50 text-amber-400 border border-amber-500' });
+              risks.push({ id: t.id, title: t.title, proj: p.name, type: '期限超過', desc: `期限: ${t.dueDate}`, badge: 'bg-amber-900/50 text-amber-404 border border-amber-500' });
               return;
             }
             // B. 炎上予兆 (コミュニケーションコスト過多)
@@ -807,71 +807,189 @@
         return risks;
       }, [analyticsTargetProjects, riskThresholdDays]);
 
-// 前半で漏れていた関数の定義を追加（ReferenceErrorの完全解消）
-      const handleDeleteProject = (e) => { 
-        e.stopPropagation(); 
-        if (activeProject) {
-          handleDeleteProjectByList(activeProject.id, e); 
-        }
+      // 各イベント・CRUDアクション関数のバインド
+      const handleScrollToStep = (id) => { if (collapsedSteps[id]) setCollapsedSteps(p => ({ ...p, [id]: false })); setTimeout(() => document.getElementById(`step-anchor-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); };
+      const toggleStepCollapse = (id) => setCollapsedSteps(p => ({ ...p, [id]: !p[id] }));
+      const toggleTaskCollapse = (taskId) => setCollapsedTasks(p => ({ ...p, [taskId]: !p[taskId] }));
+      
+      const handleDragStart = (index, e) => { setDraggedStepIndex(index); e.dataTransfer.effectAllowed = 'move'; };
+      const handleDragOver = (index, e) => { e.preventDefault(); if (draggedStepIndex === null || draggedStepIndex === index) return; const s = [...stepList]; s.splice(index, 0, s.splice(draggedStepIndex, 1)[0]); setDraggedStepIndex(index); setStepList(s); };
+      const handleDragEnd = () => setDraggedStepIndex(null);
+      const moveStepOrder = (index, dir, e) => { e.stopPropagation(); const target = index + dir; if (target < 0 || target >= stepList.length) return; const s = [...stepList]; [s[index], s[target]] = [s[target], s[index]]; setStepList(s); };
+
+      const handleTaskDragStart = (stepId, index, e) => { e.stopPropagation(); setDraggedTaskInfo({ stepId, index }); e.dataTransfer.effectAllowed = 'move'; };
+      const handleTaskDragOver = (stepId, index, e) => { e.preventDefault(); e.stopPropagation(); if (!draggedTaskInfo || draggedTaskInfo.stepId !== stepId || draggedTaskInfo.index === index) return; const stepTks = tasks.filter(t => t.stepId === stepId); const taskToMove = stepTks[draggedTaskInfo.index]; stepTks.splice(draggedTaskInfo.index, 1); stepTks.splice(index, 0, taskToMove); setTasks([...tasks.filter(t => t.stepId !== stepId), ...stepTks]); setDraggedTaskInfo({ stepId, index }); };
+      const handleTaskDragEnd = (e) => { e.stopPropagation(); draggedTaskInfo && setDraggedTaskInfo(null); };
+
+      const moveTaskOrder = (stepId, index, dir, e) => { e.stopPropagation(); const stepTks = tasks.filter(t => t.stepId === stepId); const target = index + dir; if (target < 0 || target >= stepTks.length) return; [stepTks[index], stepTks[target]] = [stepTks[target], stepTks[index]]; setTasks([...tasks.filter(t => t.stepId !== stepId), ...stepTks]); };
+
+const handleCreateFolder = async (e) => {
+        e.preventDefault(); if (!newFolderName.trim()) return;
+        const newId = `f_${Date.now()}`; const newFolder = { id: newId, name: newFolderName.trim() };
+        if (!useFirebase || (gistToken && gistId)) { updateData('folders', [...folders, newFolder]); setSelectedFolderId(newId); setNewFolderName(''); setShowAddFolderModal(false); showAlert('フォルダ作成'); return; }
+        try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'folders', newId), newFolder); setSelectedFolderId(newId); setNewFolderName(''); setShowAddFolderModal(false); showAlert('フォルダ作成'); } catch (err) { showAlert('エラー'); }
       };
 
-      // ==========================================
-      // 未ログイン（Sansanメンバー認証前）画面
-      // ==========================================
-      if (!user) {
-        return (
-          <div className="min-h-screen bg-slate-100 dark:bg-slate-955 flex flex-col items-center justify-center p-6 transition-colors duration-200">
-            <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-202 dark:border-slate-800 p-8 shadow-2xl text-center space-y-6 relative overflow-hidden">
-              <div className="mx-auto bg-indigo-600 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center shadow-lg">
-                PL
-              </div>
-              <div className="space-y-2">
-                <h1 className="text-xl font-black text-slate-905 dark:text-white leading-snug">Project Loom</h1>
-                <p className="text-xs text-slate-505 dark:text-slate-404 font-bold">Sansanグループ案件推進専用ダッシュボード</p>
-              </div>
-              <hr className="border-slate-150 dark:border-slate-800" />
-              <div className="bg-slate-55 dark:bg-slate-955/50 border border-slate-150 dark:border-slate-800 p-4 rounded-2xl text-left">
-                <p className="text-xs text-slate-605 dark:text-slate-300 font-bold leading-relaxed">
-                  本システムはSansan株式会社のセキュリティ統制下にある専用プロトタイプです。アクセスおよび閲覧には、認証情報が必要です。
-                </p>
-              </div>
-              <div className="pt-2">
-                <button 
-                  onClick={() => handleMockLogin('member@sansan.com')}
-                  className="w-full py-4 px-4 bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-700 rounded-2xl font-black text-xs flex items-center justify-center shadow-md hover:shadow-lg transition-all"
-                >
-                  <span className="mr-2">🔑</span>
-                  <span>Sansan社員アカウントでサインイン</span>
-                </button>
-                <span className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mt-2 text-center">
-                  (認証制限およびドメインエラー回避用)
-                </span>
-              </div>
-            </div>
-          </div>
-        );
-      }
+      const handleDeleteFolder = (folderId, e) => {
+        e.stopPropagation(); if (folders.length <= 1) { showAlert('1つは必要です'); return; }
+        triggerConfirm('削除', `削除しますか？`, async () => {
+          if (!useFirebase || (gistToken && gistId)) { updateData('folders', folders.filter(f => f.id !== folderId)); updateData('projects', projects.filter(p => p.folderId !== folderId)); setSelectedFolderId(folders.filter(f => f.id !== folderId)[0].id); showAlert('削除完了'); return; }
+          try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'folders', folderId)); for (const p of projects.filter(p => p.folderId === folderId)) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', p.id)); setSelectedFolderId(folders.filter(f => f.id !== folderId)[0].id); showAlert('削除完了'); } catch (err) { showAlert('エラー'); }
+        });
+      };
 
-      if (!isSansanUser) {
-        return (
-          <div className="min-h-screen bg-slate-100 dark:bg-slate-955 flex flex-col items-center justify-center p-6 transition-colors duration-200">
-            <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-rose-200 p-8 shadow-2xl text-center space-y-6">
-              <div className="mx-auto p-4 bg-rose-55 border border-rose-150 rounded-full w-20 h-20 flex items-center justify-center text-rose-605">
-                <IconWarning className="h-10 w-10" />
-              </div>
-              <h1 className="text-lg font-black text-rose-605">アクセス権限エラー</h1>
-              <p className="text-xs text-slate-505">@sansan.com 以外のドメインです。</p>
-              <button onClick={handleLogout} className="w-full py-2.5 bg-slate-150 rounded-xl font-bold text-xs">トップに戻る</button>
-            </div>
-          </div>
-        );
-      }
+      const handleAddLinkToNewProj = (e) => { e.preventDefault(); if(tmpProjLinkUrl.trim()) { setNewProjLinks(p=>[...p,{id:`plnk_${Date.now()}`,label:tmpProjLinkLabel.trim()||'リンク',url:tmpProjLinkUrl.trim()}]); setTmpProjLinkLabel(''); setTmpProjLinkUrl(''); }};
+      const handleRemoveLinkFromNewProj = (id,e) => { e.preventDefault(); setNewProjLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddLinkToEditProj = (e) => { e.preventDefault(); if(tmpEditProjLinkUrl.trim()) { setEditProjLinks(p=>[...p,{id:`plnk_${Date.now()}`,label:tmpEditProjLinkLabel.trim()||'リンク',url:tmpEditProjLinkUrl.trim()}]); setTmpEditProjLinkLabel(''); setTmpEditProjLinkUrl(''); }};
+      const handleRemoveLinkFromEditProj = (id,e) => { e.preventDefault(); setEditProjLinks(p=>p.filter(l=>l.id!==id)); };
 
+      const handleCreateProject = async (e) => {
+        e.preventDefault(); if (!newProjName.trim()) return;
+        const newId = `p_${Date.now()}`;
+        const newProj = { id: newId, folderId: newProjFolderId, name: newProjName.trim(), code: newProjCode.trim(), status: newProjStatus, startDate: newProjStart, endDate: newProjEnd, taskSequence: 0, links: [...newProjLinks], stepList: [{ id: 1, name: '初期ステップ', desc: '', deptKey: 'sales', startDate: newProjStart, dueDate: newProjEnd, links: [] }], tasks: [] };
+        if (!useFirebase || (gistToken && gistId)) { updateData('projects', [...projects, newProj]); setSelectedFolderId(newProjFolderId); setCurrentProjectId(newId); setShowAddProjectModal(false); showAlert('起票完了'); return; }
+        try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', newId), newProj); setSelectedFolderId(newProjFolderId); setCurrentProjectId(newId); setShowAddProjectModal(false); showAlert('起票完了'); } catch (err) { showAlert('エラー'); }
+      };
+
+      const handleDeleteProjectByList = (projId, e) => {
+        e.stopPropagation(); if (projects.length <= 1) { showAlert('1つは必要です'); return; }
+        triggerConfirm('削除', `削除しますか？`, async () => {
+          if (!useFirebase || (gistToken && gistId)) { updateData('projects', projects.filter(p => p.id !== projId)); if (currentProjectId === projId) setCurrentProjectId(projects.filter(p => p.id !== projId)[0].id); showAlert('削除完了'); return; }
+          try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projId)); if (currentProjectId === projId) setCurrentProjectId(projects.filter(p => p.id !== projId)[0].id); showAlert('削除完了'); } catch (err) { showAlert('エラー'); }
+        });
+      };
+      
+      const handleDeleteProject = (e) => { e.stopPropagation(); if (activeProject) handleDeleteProjectByList(activeProject.id, e); };
+
+      const startEditingStep = (step, e) => { e.stopPropagation(); setEditingStepId(step.id); setEditStepName(step.name); setEditStepDesc(step.desc); setEditStepDeptKey(step.deptKey || 'backoffice'); setEditStepStartDate(step.startDate || ''); setEditStepDueDate(step.dueDate || ''); setEditStepLinks(step.links ? [...step.links] : []); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); };
+      const saveStepEdit = (stepId, e) => { e.preventDefault(); e.stopPropagation(); saveProjectToFirestore({ ...activeProject, stepList: stepList.map(s => s.id === stepId ? { ...s, name: editStepName.trim(), desc: editStepDesc.trim(), deptKey: editStepDeptKey, startDate: editStepStartDate, dueDate: editStepDueDate, links: [...editStepLinks] } : s) }); setEditingStepId(null); showAlert('更新しました'); };
+      const handleAddStep = (e) => { e.preventDefault(); if (!newStepName.trim()) return; saveProjectToFirestore({ ...activeProject, stepList: [...stepList, { id: stepList.length > 0 ? Math.max(...stepList.map(s => s.id)) + 1 : 1, name: newStepName.trim(), desc: newStepDesc.trim(), deptKey: newStepDeptKey, startDate: newStepStartDate, dueDate: newStepDueDate, links: [...newStepLinks] }] }); setShowAddStepForm(false); showAlert('追加しました'); };
+      const handleDeleteStep = (stepId, stepName, e) => { e.stopPropagation(); triggerConfirm('削除', `削除しますか？`, () => { saveProjectToFirestore({ ...activeProject, stepList: stepList.filter(s => s.id !== stepId), tasks: tasks.filter(t => t.stepId !== stepId) }); showAlert('削除完了'); }); };
+
+      const handleAddLinkToNewStep = (e) => { e.preventDefault(); if(tmpStepLinkUrl.trim()) { setNewStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpStepLinkLabel.trim()||'リンク',url:tmpStepLinkUrl.trim()}]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); }};
+      const handleRemoveLinkFromNewStep = (id,e) => { e.preventDefault(); setNewStepLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddLinkToEditStep = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
+      const handleRemoveLinkFromEditStep = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
+      
+      const handleAddLinkToNewTask = (e) => { e.preventDefault(); if(tmpTaskLinkUrl.trim()) { setNewTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpTaskLinkLabel.trim()||'リンク',url:tmpTaskLinkUrl.trim()}]); setTmpTaskLinkLabel(''); setTmpTaskLinkUrl(''); }};
+      const handleRemoveLinkFromNewTask = (id,e) => { e.preventDefault(); setNewTaskLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddLinkToEditTask = (e) => { e.preventDefault(); if(tmpEditTaskLinkUrl.trim()) { setEditTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpEditTaskLinkLabel.trim()||'リンク',url:tmpEditTaskLinkUrl.trim()}]); setTmpEditTaskLinkLabel(''); setTmpEditTaskLinkUrl(''); }};
+      const handleRemoveLinkFromEditTask = (id,e) => { e.preventDefault(); setEditTaskLinks(p=>p.filter(l=>l.id!==id)); };
+
+      const handleAddLinkToNewLog = (e) => { e.preventDefault(); if(tmpLinkUrl.trim()){ setNewLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpLinkLabel.trim()||'リンク',url:tmpLinkUrl.trim()}]); setTmpLinkLabel(''); setTmpLinkUrl(''); }};
+      const handleRemoveLinkFromNewLog = (id,e) => { e.preventDefault(); setNewLogLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddLinkToEditLog = (e) => { e.preventDefault(); if(tmpEditLinkUrl.trim()){ setEditLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpEditLinkLabel.trim()||'リンク',url:tmpEditLinkUrl.trim()}]); setTmpEditLinkLabel(''); setTmpEditLinkUrl(''); }};
+      const handleRemoveLinkFromEditLog = (id,e) => { e.preventDefault(); setEditLogLinks(p=>p.filter(l=>l.id!==id)); };
+
+      const addLog = (taskId) => {
+        if (!newLogText.trim() && newLogImages.length === 0) return;
+        const now = new Date(); const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const newLog = { id: `l_${Date.now()}`, date: dateStr, text: newLogText.trim() || "📸 画像添付", links: [...newLogLinks], attachedImages: [...newLogImages], to: newLogTo.trim() || null, dueDate: newLogDueDate || null, completed: false, isHighlighted: false };
+        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, contextLogs: [newLog, ...(t.contextLogs || [])] } : t) });
+        setAddingLogTaskId(null); setNewLogText(''); setNewLogTo(''); setNewLogDueDate(''); setNewLogLinks([]); setNewLogImages([]); setTmpLinkLabel(''); setTmpLinkUrl(''); showAlert('記録しました');
+      };
+      const toggleLogComplete = (tId, lId) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, completed: !l.completed } : l) } : t) });
+      const deleteLog = (tId, lId) => triggerConfirm('削除','削除しますか？',() => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).filter(l => l.id !== lId) } : t) }));
+      const clearLogField = (tId, lId, f) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, [f]: null } : l) } : t) });
+      const removeSingleLinkFromLog = (tId, lId, lnkId) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, links: (l.links || []).filter(lk => lk.id !== lnkId) } : l) } : t) });
+      const toggleLogHighlight = (tId, lId) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, isHighlighted: !l.isHighlighted } : l) } : t) });
+      const startEditingLog = (log) => { setEditingLogId(log.id); setEditLogText(log.text); setEditLogTo(log.to || ''); setEditLogDueDate(log.dueDate || ''); setEditLogLinks(log.links ? [...log.links] : []); setEditLogImages(log.attachedImages ? [...log.attachedImages] : []); };
+      const saveLogEdit = (tId, lId) => { saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, text: editLogText.trim()||"📸", to: editLogTo.trim()||null, dueDate: editLogDueDate||null, links: [...editLogLinks], attachedImages: [...editLogImages] } : l) } : t) }); setEditingLogId(null); showAlert('更新しました'); };
+
+      const changeTaskStatus = (taskId, newStatus) => {
+        if (!isSansanUser) return;
+        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => {
+          if (t.id !== taskId) return t;
+          const now = new Date(); const dStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          const dOnly = dStr.split(' ')[0];
+          let upd = { ...t, status: newStatus };
+          if (newStatus === 'in_progress') { if (!t.startedAt) upd.startedAt = dOnly; upd.completedAt = null; upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: '⚡ 進行中に変更', links: [], completed: false, isSystem: true, attachedImages: [] }, ...(t.contextLogs || [])]; }
+          else if (newStatus === 'completed' || newStatus === 'not_applicable') { upd.completedAt = dOnly; if (!t.startedAt) upd.startedAt = dOnly; upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: newStatus==='completed'?'✅ 完了':'🚫 対応なし', links: [], completed: true, isSystem: true, attachedImages: [] }, ...(t.contextLogs || [])]; }
+          else { upd.startedAt = null; upd.completedAt = null; }
+          return upd;
+        })});
+      };
+      
+      const toggleTaskPriority = (taskId) => {
+        if (!isSansanUser) return;
+        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, isHighPriority: !t.isHighPriority } : t) });
+      };
+
+      const toggleDoToday = (taskId) => {
+        if (!isSansanUser) return;
+        const updatedTasks = tasks.map(t => {
+          if (t.id === taskId) {
+            const nextDoToday = !t.doToday;
+            return { ...t, doToday: nextDoToday };
+          }
+          return t;
+        });
+        saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
+        const t = tasks.find(x => x.id === taskId);
+        showAlert(t && !t.doToday ? '🔥 今日やるタスクに設定しました' : '💤 今日やるタスクから解除しました');
+      };
+      
+      const handleAddTask = (stepId, e) => { 
+        e.preventDefault(); 
+        if (!newTaskTitle.trim() || !isSansanUser) return; 
+        const todayStr = new Date().toISOString().split('T')[0];
+        const currentSeq = activeProject.taskSequence || tasks.length;
+        const nextSeq = currentSeq + 1;
+        const newId = `t_${Date.now()}`;
+        const newTask = { 
+          id: newId, stepId, sequenceId: nextSeq, title: newTaskTitle.trim(), description: newTaskDesc.trim(), 
+          assignee: newTaskAssignee.trim(), department: newTaskDept, dueDate: newTaskDueDate || todayStr, 
+          status: 'pending', isHighPriority: false, doToday: false, startedAt: null, completedAt: null, 
+          attachedImages: [...newTaskImages], contextLogs: [], links: [...newTaskLinks] 
+        };
+        saveProjectToFirestore({ ...activeProject, taskSequence: nextSeq, tasks: [...tasks, newTask] }); 
+        setAddingTaskStepId(null); 
+        showAlert('タスクを追加しました'); 
+
+        setCollapsedTasks(prev => ({ ...prev, [newId]: false }));
+        setTimeout(() => {
+          const el = document.getElementById(`task-anchor-${newId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('ring-4', 'ring-indigo-600', 'dark:ring-indigo-400', 'scale-[1.02]');
+            setTimeout(() => { el.classList.remove('ring-4', 'ring-indigo-600', 'dark:ring-indigo-400', 'scale-[1.02]'); }, 2000);
+          }
+        }, 300);
+      };
+      
+      const startEditing = (task) => { setEditingTaskId(task.id); setEditTaskImages(task.attachedImages ? [...task.attachedImages] : []); setEditTaskLinks(task.links ? [...task.links] : []); setEditFormData({ title: task.title, description: task.description || '', assignee: task.assignee, department: task.department, dueDate: task.dueDate }); };
+      const saveEdit = (taskId) => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, attachedImages: [...editTaskImages], links: [...editTaskLinks] } : t) }); setEditingTaskId(null); showAlert('保存しました'); };
+      const deleteTask = (taskId) => triggerConfirm('削除', '削除しますか？', () => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.filter(t => t.id !== taskId) }); showAlert('削除完了'); });
+
+      const handleCreateDept = async (e) => {
+        e.preventDefault(); if (!newDeptLabel.trim() || !isSansanUser) return;
+        const newKey = `dept_${Date.now()}`, newDept = { key: newKey, label: newDeptLabel.trim(), color: newDeptColor, order: deptList.length };
+        if (!useFirebase || (gistToken && gistId)) { updateData('depts', [...deptList, newDept]); setNewDeptLabel(''); showAlert('追加完了'); return; }
+        try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'departments', newKey), newDept); setNewDeptLabel(''); showAlert('追加完了'); } catch (err) { showAlert('エラー'); }
+      };
+      const handleDeleteDept = (key) => {
+        if(deptList.length<=1) return showAlert('1つは必要');
+        if(!isSansanUser) return;
+        triggerConfirm('削除','削除しますか？', async () => {
+          const rem = deptList.filter(d=>d.key!==key), fb = rem[0].key;
+          if(!useFirebase || (gistToken && gistId)){ updateData('depts',rem); updateData('projects',projects.map(p=>({...p, tasks:(p.tasks||[]).map(t=>t.department===key?{...t,department:fb}:t), stepList:(p.stepList||[]).map(s=>s.deptKey===key?{...s,deptKey:fb}:s)}))); showAlert('削除完了'); return; }
+          try{ await deleteDoc(doc(db,'artifacts',appId,'public','data','departments',key)); for(const p of projects){ let mod=false; const ts=p.tasks.map(t=>{if(t.department===key){mod=true;return{...t,department:fb}}return t;}); const ss=p.stepList.map(s=>{if(s.deptKey===key){mod=true;return{...s,deptKey:fb}}return s;}); if(mod) await setDoc(doc(db,'artifacts',appId,'public','data','projects',p.id),{...p,tasks:ts,stepList:ss}); } showAlert('削除完了'); }catch(e){showAlert('エラー');}
+        });
+      };
+      const updateDeptColorSetting = async (k, c) => { if (!isSansanUser) return; const f=deptList.find(d=>d.key===k); if(!f)return; if(!useFirebase||(gistToken&&gistId)){ updateData('depts',deptList.map(d=>d.key===k?{...d,color:c}:d)); return; } try{await setDoc(doc(db,'artifacts',appId,'public','data','departments',k),{...f,color:c});}catch(e){} };
+      const handleRenameDeptChange = (k, n) => { if (!isSansanUser) return; setDeptList(p=>p.map(d=>d.key===k?{...d,label:n}:d)); };
+      const handleRenameDeptSave = async (k) => { if (!isSansanUser) return; const f=deptList.find(d=>d.key===k); if(!f)return; if(!useFirebase||(gistToken&&gistId)){ updateData('depts',deptList); return; } try{await setDoc(doc(db,'artifacts',appId,'public','data','departments',k),f);}catch(e){} };
+      const moveDeptOrder = async (i, dir) => { if (!isSansanUser) return; const t=i+dir; if(t<0||t>=deptList.length)return; const l=[...deptList]; [l[i],l[t]]=[l[t],l[i]]; const o=l.map((d,idx)=>({...d,order:idx})); if(!useFirebase||(gistToken&&gistId)){updateData('depts',o);return;} setDeptList(o); try{await Promise.all(o.map(d=>setDoc(doc(db,'artifacts',appId,'public','data','departments',d.key),d)));}catch(e){} };
+      const handleOpenProjectFromDb = (proj) => { setSelectedFolderId(proj.folderId); setCurrentProjectId(proj.id); setViewMode('board'); };
+      const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverdue(t.dueDate, t.status)).length;
+      const countTaskStatus = (proj) => { const pTasks = proj.tasks || []; return { completed: pTasks.filter(t => t.status === 'completed').length, inProgress: pTasks.filter(t => t.status === 'in_progress').length, notStarted: pTasks.filter(t => t.status === 'pending' || t.status === 'blocked').length, notApplicable: pTasks.filter(t => t.status === 'not_applicable').length, total: pTasks.length }; };
+
+      // 3. メインUI表示
       return (
         <div className="min-h-screen bg-slate-55 dark:bg-slate-955 text-slate-805 dark:text-slate-150 font-sans antialiased pb-16 transition-colors duration-200">
           
           {alertMessage && (
-            <div className="fixed bottom-6 right-6 bg-slate-955/95 dark:bg-slate-805 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] whitespace-pre-wrap max-w-sm flex items-center gap-2 border border-slate-705 dark:border-slate-600 backdrop-blur-md animate-bounce">
+            <div className="fixed bottom-6 right-6 bg-slate-955/95 dark:bg-slate-805 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] whitespace-pre-wrap max-w-sm flex items-center gap-2 border border-slate-705 dark:border-slate-605 backdrop-blur-md animate-bounce">
               <IconInfo className="h-5 w-5 text-indigo-400 shrink-0" />
               <span className="font-bold leading-relaxed">{alertMessage}</span>
             </div>
@@ -1012,7 +1130,7 @@
                         </div>
                         <div className="overflow-y-auto p-3 space-y-2 bg-slate-55/30 dark:bg-slate-900/30 scrollbar-thin max-h-[50vh]">
                           {todayTasks.length === 0 ? (
-                            <p className="text-[10px] text-slate-440 dark:text-slate-505 text-center py-6 italic">「今日やる」に指定されたタスクはありません。</p>
+                            <p className="text-[10px] text-slate-404 dark:text-slate-505 text-center py-6 italic">「今日やる」に指定されたタスクはありません。</p>
                           ) : (
                             todayTasks.map(t => {
                               const isOver = isOverdue(t.dueDate, t.status);
@@ -1257,7 +1375,7 @@
                     {!editingProject && (
                       <div className="flex flex-col items-end gap-2 shrink-0 self-start">
                         <div className="flex gap-2">
-                          <button onClick={() => { setEditingProject(true); setProjectForm(activeProject); setEditProjLinks(activeProject.links ? [...activeProject.links] : []); }} className="text-[10px] text-indigo-600 dark:text-indigo-404 font-black flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 px-3 py-2 rounded-xl"><IconEdit2 className="h-3 w-3" /> 案件編集</button>
+                          <button onClick={() => { setEditingProject(true); setProjectForm(activeProject); setEditProjLinks(activeProject.links ? [...activeProject.links] : []); }} className="text-[10px] text-indigo-600 dark:text-indigo-400 font-black flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 px-3 py-2 rounded-xl"><IconEdit2 className="h-3 w-3" /> 案件編集</button>
                           <button onClick={(e) => handleCopyProjectUrl(activeProject.id, e)} className="text-[10px] text-slate-605 dark:text-slate-300 font-black flex items-center gap-1 bg-white dark:bg-slate-800 border border-slate-350 dark:border-slate-600 px-3 py-2 rounded-xl"><IconLink className="h-3 w-3 text-slate-404" /> 共有</button>
                           <button onClick={() => { setShowAddStepForm(true); setNewStepName(''); setNewStepDesc(''); setNewStepStartDate(activeProject.startDate); setNewStepDueDate(activeProject.endDate); setNewStepLinks([]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); setTimeout(() => document.getElementById('add-step-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white font-black flex items-center gap-1 px-3 py-2 rounded-xl"><IconPlus className="h-3 w-3" /> STEP追加</button>
                         </div>
@@ -1420,7 +1538,7 @@
                               </div>
                               <div className="flex flex-col gap-2 pl-8">
                                 <p 
-                                  className={`font-bold text-xs cursor-text select-text ${step.desc ? 'text-slate-606 dark:text-slate-3xl' : 'text-slate-404 dark:text-slate-505 italic'}`}
+                                  className={`font-bold text-xs cursor-text select-text ${step.desc ? 'text-slate-606 dark:text-slate-350' : 'text-slate-404 dark:text-slate-505 italic'}`}
                                   onPointerDown={(e) => e.stopPropagation()} 
                                   onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
                                 >
@@ -1534,9 +1652,8 @@
                                     <div className="col-span-2"><label className="block text-slate-440 font-bold mb-1">完了期日</label><input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-slate-705 dark:text-slate-150 font-mono font-bold focus:outline-none" /></div>
                                   </div>
                                   
-                                  {/* タスク追加時の関連リンク (インデントと縮小・デザインブラッシュアップ) */}
                                   <div className="col-span-1 md:col-span-2 border-t border-slate-202 dark:border-slate-700/50 pt-3 mt-1 space-y-2 pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-1">
-                                    <span className="text-[10px] font-black text-slate-505 dark:text-slate-440 flex items-center gap-1.5 uppercase tracking-wider">
+                                    <span className="text-[10px] font-black text-slate-505 dark:text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
                                       <IconLink className="h-3.5 w-3.5 text-indigo-500" />
                                       <span>タスク関連リンク (任意)</span>
                                     </span>
@@ -1590,8 +1707,6 @@
                                 const tCol = collapsedTasks[task.id] !== undefined ? collapsedTasks[task.id] : (d || na);
                                 const dDays = getDurationDays(task);
                                 const isDraggingThisCard = draggedTaskInfo && draggedTaskInfo.stepId === step.id && draggedTaskInfo.index === taskIndex;
-
-                                // 「今日やる」に設定されているかつ「未完了」かつ「期限超過（本日を過ぎている）」かどうかの判定
                                 const isOverdueTodayTask = task.doToday && !d && !na && lt;
 
                                 return (
@@ -1626,7 +1741,6 @@
                                         </div>
                                       )}
                                       
-                                      {/* 🔥 今日やるトグルボタン */}
                                       {(!d && !na) && (
                                         <button 
                                           onClick={(e) => { e.stopPropagation(); toggleDoToday(task.id); }} 
@@ -1675,7 +1789,6 @@
                                           <div><label className="text-[10px] text-slate-440 font-bold block mb-0.5">完了期日</label><input type="date" value={editFormData.dueDate} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-mono text-slate-705 dark:text-slate-200 focus:outline-none" /></div>
                                         </div>
 
-                                        {/* タスク編集時の関連リンク (インデントと縮小・デザインブラッシュアップ) */}
                                         <div className="col-span-1 md:col-span-3 border-t border-slate-202 dark:border-slate-700/50 pt-3 mt-1 space-y-2 pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-1">
                                           <span className="text-[10px] font-black text-slate-606 dark:text-slate-455 flex items-center gap-1.5 uppercase tracking-wider">
                                             <IconLink className="h-3.5 w-3.5 text-indigo-500" />
@@ -1744,7 +1857,7 @@
                                           </div>
                                           
                                           <div className="relative group/desc space-y-1.5 mt-3" onClick={(e) => e.stopPropagation()}>
-                                            <div className="text-[9.5px] font-bold text-slate-450 dark:text-slate-555 ml-1 flex items-center justify-between select-none">
+                                            <div className="text-[9.5px] font-bold text-slate-455 dark:text-slate-555 ml-1 flex items-center justify-between select-none">
                                               <span className="flex items-center gap-1"><IconInfo className="h-3 w-3" /> 論点・備考 <span className="text-[8px] text-slate-440 dark:text-slate-555 font-normal">(クリックで直接編集)</span></span>
                                               {editingDescTaskId === task.id && (
                                                 <button 
@@ -1820,7 +1933,7 @@
                                             <span className="text-[9.5px] font-black text-slate-440 dark:text-slate-555 flex items-center gap-1 select-none"><IconClock /> 時系列メモ</span>
                                             {addingLogTaskId !== task.id && !d && !na && (
                                               <div className="flex justify-center w-full pb-1">
-                                                <button onClick={(e) => { e.stopPropagation(); setAddingLogTaskId(task.id); setNewLogText(''); setNewLogTo(''); setNewLogDueDate(''); setNewLogLinks([]); setNewLogImages([]); setTmpLinkLabel(''); setTmpLinkUrl(''); }} className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-800/50 px-4 py-1.5 rounded-full transition-colors shadow-xs"><IconPlus className="h-3 w-3"/> メモを追記する</button>
+                                                <button onClick={(e) => { e.stopPropagation(); setAddingLogTaskId(task.id); setNewLogText(''); setNewLogTo(''); setNewLogDueDate(''); setNewLogLinks([]); setNewLogImages([]); setTmpLinkLabel(''); setTmpLinkUrl(''); }} className="text-[10px] font-black text-indigo-600 dark:text-indigo-404 flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-800/50 px-4 py-1.5 rounded-full transition-colors shadow-xs"><IconPlus className="h-3 w-3"/> メモを追記する</button>
                                               </div>
                                             )}
                                           </div>
@@ -1829,7 +1942,7 @@
                                               <div className="flex justify-between items-center pb-2 border-b border-slate-150 dark:border-slate-700">
                                                 <span className="font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5"><IconPlus className="h-3.5 w-3.5"/> メモの新規追記</span>
                                                 <div className="flex items-center gap-2">
-                                                  <button onClick={() => setAddingLogTaskId(null)} className="text-[9px] text-slate-440 dark:text-slate-550 hover:bg-slate-55 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-lg font-bold transition-colors">キャンセル</button>
+                                                  <button onClick={() => setAddingLogTaskId(null)} className="text-[9px] text-slate-440 dark:text-slate-555 hover:bg-slate-55 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-lg font-bold transition-colors">キャンセル</button>
                                                   <button onClick={() => addLog(task.id)} disabled={!newLogText.trim() && newLogImages.length === 0} className="text-[9px] bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-lg font-black disabled:bg-slate-150 dark:disabled:bg-slate-700 disabled:text-slate-404 dark:disabled:text-slate-555 disabled:cursor-not-allowed transition-colors">保存する</button>
                                                 </div>
                                               </div>
@@ -1905,7 +2018,7 @@
                                                         {log.to && (<span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-lg font-black">TO: {log.to}</span>)}
                                                         {log.dueDate && (<span className="inline-flex items-center gap-1 text-[9px] bg-rose-55 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 px-2 py-0.5 rounded-lg font-mono font-bold">期日: {log.dueDate}</span>)}
                                                         {log.links && log.links.map(lnk => (
-                                                          <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[9px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-700 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg transition">
+                                                          <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1 text-[9px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-700 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg transition">
                                                             <IconExternalLink className="h-2.5 w-2.5" /> <span className="font-bold">{lnk.label}</span>
                                                             {!log.completed && (<button onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeSingleLinkFromLog(task.id, log.id, lnk.id); }} className="text-slate-404 dark:text-slate-550 hover:text-rose-605 dark:hover:text-rose-400 font-bold text-[10px] ml-1" title="リンクのみ削除">×</button>)}
                                                           </a>
@@ -2005,7 +2118,7 @@
             )}
 
             {/* ========================================================== */}
-            {/* 3. 📊 アナリティクス（独立分析ダッシュボード）ビュー実装終了 */}
+            {/* 3. 📊 アナリティクス（独立分析ダッシュボード）ビュー実装       */}
             {/* ========================================================== */}
             {viewMode === 'analytics' && (
               <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in transition-colors">
@@ -2014,11 +2127,11 @@
                 <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-1">
                     <h2 className="text-base font-black text-slate-805 dark:text-white flex items-center gap-2"><IconChart className="text-indigo-600 dark:text-indigo-400" />組織・案件推進状況アナリティクス</h2>
-                    <p className="text-xs text-slate-505 dark:text-slate-400">実データに基づき、ボトルネックやリソース負荷状況をリアルタイム評価します。</p>
+                    <p className="text-xs text-slate-505 dark:text-slate-404">実データに基づき、ボトルネックやリソース負荷状況をリアルタイム評価します。</p>
                   </div>
                   
                   <div className="flex items-center gap-2 bg-slate-55 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 rounded-xl px-3 py-2 shadow-xs shrink-0">
-                    <span className="text-xs font-bold text-slate-505 dark:text-slate-400">分析スコープ:</span>
+                    <span className="text-xs font-bold text-slate-505 dark:text-slate-404">分析スコープ:</span>
                     <select 
                       value={analyticsProjectId} 
                       onChange={(e) => setAnalyticsProjectId(e.target.value)} 
@@ -2059,9 +2172,9 @@
                             <div className={`absolute top-0 left-0 w-full h-1 ${d.colorClass}`}></div>
                             <div className="flex justify-between items-center">
                               <h3 className="font-black text-slate-805 dark:text-white text-sm">{d.deptLabel}</h3>
-                              <span className="text-xl font-black text-slate-805 dark:text-white font-mono">{d.active}<span className="text-[10px] text-slate-404 font-normal ml-0.5">件</span></span>
+                              <span className="text-xl font-black text-slate-805 dark:text-white font-mono">{d.active}<span className="text-[10px] text-slate-440 font-normal ml-0.5">件</span></span>
                             </div>
-                            <div className="bg-rose-55 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/50 rounded-lg p-2 flex justify-between items-center text-[11px]">
+                            <div className="bg-rose-55 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/50 rounded-lg p-2 flex justify-between items-center text-xs">
                               <span className="text-rose-605 dark:text-rose-400 font-bold">最優先タスク</span>
                               <span className="text-rose-605 dark:text-rose-400 font-black font-mono">{d.urgent} 件</span>
                             </div>
@@ -2108,7 +2221,7 @@
                                 );
                               })}
                               {analyticsResourceData.memberStats.length === 0 && (
-                                <tr><td colSpan="8" className="py-8 text-center text-slate-404 dark:text-slate-500">稼働中のリソース情報がありません。</td></tr>
+                                <tr><td colSpan="8" className="py-8 text-center text-slate-404 dark:text-slate-500">分析可能な稼働データが存在しません。</td></tr>
                               )}
                             </tbody>
                           </table>
@@ -2125,7 +2238,7 @@
                           <h3 className="font-black text-slate-805 dark:text-white">大ステップ別 平均実処理営業日分析</h3>
                           <p className="text-xs text-slate-404 mt-1">※土曜日・日曜日を除去した純粋な営業稼働日数。縦点線は設定目標値です。</p>
                         </div>
-                        <span className="text-xs bg-slate-150 dark:bg-slate-700 text-slate-605 dark:text-slate-300 px-3 py-1 rounded-lg font-bold">対象範囲: {analyticsTargetProjects.length} プロジェクト</span>
+                        <span className="text-xs bg-slate-150 dark:bg-slate-700 text-slate-605 dark:text-slate-300 px-3 py-1 rounded-lg font-bold">対象範囲: {analyticsTargetProjects.length} 案件</span>
                       </div>
                       <div className="space-y-4">
                         {analyticsLeadTimeData.length > 0 ? analyticsLeadTimeData.map(d => {
@@ -2133,7 +2246,7 @@
                           return (
                             <div key={d.step} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b border-slate-55 dark:border-slate-750 pb-3">
                               <div className="sm:w-44 text-xs font-black text-slate-705 dark:text-slate-200 truncate" title={d.step}>{d.step}</div>
-                              <div className="flex-1 h-5 bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden relative border border-slate-202 dark:border-slate-700 shadow-inner flex items-center">
+                              <div className="flex-1 h-4 bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden relative border border-slate-202 dark:border-slate-700 shadow-inner flex items-center">
                                 <div className="absolute top-0 bottom-0 border-r-2 border-dashed border-slate-404 dark:border-slate-500 z-10" style={{ left: `${Math.min((d.target / 20) * 100, 100)}%` }}></div>
                                 <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500" style={{ width: `${Math.min((d.avg / 20) * 100, 100)}%` }}></div>
                               </div>
@@ -2145,7 +2258,7 @@
                             </div>
                           );
                         }) : (
-                          <div className="py-12 text-center text-slate-404 dark:text-slate-500 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl">集計可能な完了データがまだありません。</div>
+                          <div className="py-12 text-center text-slate-404 dark:text-slate-505 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl">集計可能な完了データがまだありません。</div>
                         )}
                       </div>
                     </div>
@@ -2174,7 +2287,7 @@
                             </div>
                           </div>
                         )) : (
-                          <div className="py-12 text-center text-slate-404 dark:text-slate-500 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl font-bold">リスク条件に合致する要介入タスクはありません。順調です！🚀</div>
+                          <div className="py-12 text-center text-slate-404 dark:text-slate-505 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl font-bold">リスク条件に合致する要介入タスクはありません。順調です！🚀</div>
                         )}
                       </div>
                       
@@ -2239,14 +2352,14 @@
                     <h3 className="text-xs font-black text-slate-605 dark:text-slate-440 border-b border-slate-202 dark:border-slate-700 pb-2 flex items-center gap-1.5">📊 アナリティクス基準値（変数しきい値）の変更</h3>
                     <div className="bg-slate-55 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 shadow-sm grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">放置リスク判定日数 (営業日)</label>
+                        <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">放置タスク判定日数 (営業日)</label>
                         <input 
                           type="number" 
                           value={riskThresholdDays} 
                           onChange={e => { const val = Math.max(1, Number(e.target.value)); setRiskThresholdDays(val); localStorage.setItem('pl_cfg_risk_days', val); }} 
                           className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200 font-bold font-mono focus:outline-none focus:border-indigo-400" 
                         />
-                        <span className="text-[9px] text-slate-404 mt-1 block">進行中で指定営業日以上、更新がないタスクを自動検知します。</span>
+                        <span className="text-[9px] text-slate-440 mt-1 block">進行中で指定営業日以上、更新がないタスクを自動検知します。</span>
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">ステップ目標完了日数 (営業日基準)</label>
@@ -2256,7 +2369,7 @@
                           onChange={e => { const val = Math.max(1, Number(e.target.value)); setTargetLeadTimeDays(val); localStorage.setItem('pl_cfg_target_lt', val); }} 
                           className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200 font-bold font-mono focus:outline-none focus:border-indigo-400" 
                         />
-                        <span className="text-[9px] text-slate-404 mt-1 block">リードタイムグラフ上に目安目標としてプロットされる日数。</span>
+                        <span className="text-[9px] text-slate-440 mt-1 block">リードタイムグラフ上に目安目標としてプロットされる日数。</span>
                       </div>
                     </div>
                   </div>
