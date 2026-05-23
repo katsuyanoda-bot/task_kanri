@@ -1308,9 +1308,16 @@
                       </div>
                     </div>
 
-                    {showAddStepForm && (
-                      <form onSubmit={handleAddStep} className="bg-purple-55 dark:bg-purple-900/20 border border-purple-300 rounded-3xl p-5 space-y-4 text-xs">
-                        <div className="flex justify-between items-center"><span className="font-extrabold text-purple-850 dark:text-purple-300">大ステップの新規作成</span><button type="submit" className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl font-bold">作成する</button></div>
+                    
+{showAddStepForm && (
+                      <form onSubmit={handleAddStep} className="bg-purple-55 dark:bg-purple-900/20 border border-purple-300 rounded-3xl p-5 space-y-4 text-xs animate-in fade-in">
+                        <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700">
+                          <span className="font-extrabold text-purple-850 dark:text-purple-300">📂 大ステップの新規作成</span>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
+                            <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">作成する</button>
+                          </div>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-[10px] text-slate-404 font-bold mb-1">工程名 *</label>
@@ -1355,7 +1362,6 @@
                         </div>
                       </form>
                     )}
-
                     <div className="space-y-8">
                       {activeProject && stepList.map((step, index) => {
                         const stepTksAll = tasks.filter(t => t.stepId === step.id);
