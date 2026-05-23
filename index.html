@@ -715,11 +715,10 @@
       const handleAddStep = (e) => { e.preventDefault(); if (!newStepName.trim()) return; saveProjectToFirestore({ ...activeProject, stepList: [...stepList, { id: stepList.length > 0 ? Math.max(...stepList.map(s => s.id)) + 1 : 1, name: newStepName.trim(), desc: newStepDesc.trim(), deptKey: newStepDeptKey, startDate: newStepStartDate, dueDate: newStepDueDate, links: [...newStepLinks] }] }); setShowAddStepForm(false); showAlert('追加しました'); };
       const handleDeleteStep = (stepId, stepName, e) => { e.stopPropagation(); triggerConfirm('削除', `削除しますか？`, () => { saveProjectToFirestore({ ...activeProject, stepList: stepList.filter(s => s.id !== stepId), tasks: tasks.filter(t => t.stepId !== stepId) }); showAlert('削除完了'); }); };
 
-      const handleAddLinkToNewStep = (e) => { e.preventDefault(); if(tmpStepLinkUrl.trim()) { setNewStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpStepLinkLabel.trim()||'リンク',url:tmpStepLinkUrl.trim()}]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); }};
-      const handleRemoveLinkFromNewStep = (id,e) => { e.preventDefault(); setNewStepLinks(p=>p.filter(l=>l.id!==id)); };
-      const handleAddLinkToEditStep = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
-      const handleRemoveLinkFromEditStep = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
-      
+    const handleAddStepLink = (e) => { e.preventDefault(); if(tmpStepLinkUrl.trim()) { setNewStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpStepLinkLabel.trim()||'リンク',url:tmpStepLinkUrl.trim()}]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); }};
+      const handleRemoveStepLink = (id,e) => { e.preventDefault(); setNewStepLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddEditStepLink = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
+      const handleRemoveEditStepLink = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
       const handleAddTaskLink = (e) => { e.preventDefault(); if(tmpTaskLinkUrl.trim()) { setNewTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpTaskLinkLabel.trim()||'リンク',url:tmpTaskLinkUrl.trim()}]); setTmpTaskLinkLabel(''); setTmpTaskLinkUrl(''); }};
       const handleRemoveTaskLink = (id,e) => { e.preventDefault(); setNewTaskLinks(p=>p.filter(l=>l.id!==id)); };
       const handleAddEditTaskLink = (e) => { e.preventDefault(); if(tmpEditTaskLinkUrl.trim()) { setEditTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpEditTaskLinkLabel.trim()||'リンク',url:tmpEditTaskLinkUrl.trim()}]); setTmpEditTaskLinkLabel(''); setTmpEditTaskLinkUrl(''); } };
@@ -1433,13 +1432,42 @@
                             {/* 下半分のタスク一覧表示エリア */}
                             {!isCol && (
                               <div className="bg-slate-55/20 dark:bg-slate-900/20 p-4 space-y-4">
-                                {addingTaskStepId === step.id && (
-                                  <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-4 bg-slate-55 dark:bg-slate-900 border rounded-2xl space-y-3 text-xs">
-                                    <input required type="text" placeholder="タスク名を入力..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800" />
-                                    <textarea placeholder="詳細・備考を入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800" />
-                                    <div className="flex justify-end gap-2"><button type="button" onClick={() => setAddingTaskStepId(null)} className="px-3 py-1 bg-slate-202 rounded-lg">キャンセル</button><button type="submit" className="px-4 py-1 bg-indigo-600 text-white rounded-lg">追加</button></div>
-                                  </form>
-                                )}
+                            {addingTaskStepId === step.id && (
+                              <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-4 bg-slate-55 dark:bg-slate-900 border rounded-2xl space-y-4 text-xs animate-in fade-in">
+                                <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700">
+                                  <span className="font-extrabold text-indigo-600 dark:text-indigo-400">➕ 新規タスクの追加</span>
+                                  <div className="flex justify-end gap-2">
+                                    <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
+                                    <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">追加する</button>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                  <div className="md:col-span-3">
+                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">タスク名 *</label>
+                                    <input required type="text" placeholder="タスク名を入力..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-bold" />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">担当部署</label>
+                                    <select value={newTaskDept} onChange={e => setNewTaskDept(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-bold">
+                                      {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">担当者名</label>
+                                    <input type="text" placeholder="例: 山田" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-bold" />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">期日</label>
+                                    <input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-mono font-bold" />
+                                  </div>
+                                  <div className="md:col-span-3">
+                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">詳細・備考</label>
+                                    <textarea placeholder="詳細・備考を入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white h-16" />
+                                  </div>
+                                </div>
+                              </form>
+                            )}
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   {stepTksAll.map((task, taskIndex) => {
