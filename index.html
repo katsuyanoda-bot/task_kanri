@@ -114,7 +114,7 @@
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-[#f0fdf4] dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
       amber: { text: 'text-amber-805 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
       rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-purple-404' },
-      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-650', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
+      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
     };
 
     // 初期マスタデータ
@@ -195,7 +195,7 @@
           };
           img.onerror = (err) => reject(err);
         };
-        reader.onerror = (err) => reject(err);
+        reader.onload = (err) => reject(err);
       });
     };
 
@@ -343,7 +343,7 @@
           showAlert('☁️ Gistから最新データを読み込みました。');
         } catch (err) {
           console.error(err);
-          showAlert('⚠️ Gistの読み込みに失敗しました。');
+          showAlert('⚠️ Gistの挖掘み込みに失敗しました。');
         }
       };
 
@@ -468,6 +468,10 @@
 
       // --- アナリティクス用のステート ---
       const [analyticsTab, setAnalyticsTab] = useState('resource');
+
+      // しきい値設定用のState追加
+      const [riskStaleDays, setRiskStaleDays] = useState(7);
+      const [targetLeadTime, setTargetLeadTime] = useState(5);
 
       useEffect(() => {
         if (editingProject && activeProject) {
@@ -600,7 +604,6 @@
         return validTasks.length === 0 ? 100 : Math.round((validTasks.filter(t => t.status === 'completed').length / validTasks.length) * 100);
       };
 
-      const fontMono = 'font-mono';
       const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverdue(t.dueDate, t.status)).length;
       const countTaskStatus = (proj) => {
         const pTasks = proj.tasks || [];
@@ -715,32 +718,18 @@
       const handleAddStep = (e) => { e.preventDefault(); if (!newStepName.trim()) return; saveProjectToFirestore({ ...activeProject, stepList: [...stepList, { id: stepList.length > 0 ? Math.max(...stepList.map(s => s.id)) + 1 : 1, name: newStepName.trim(), desc: newStepDesc.trim(), deptKey: newStepDeptKey, startDate: newStepStartDate, dueDate: newStepDueDate, links: [...newStepLinks] }] }); setShowAddStepForm(false); showAlert('追加しました'); };
       const handleDeleteStep = (stepId, stepName, e) => { e.stopPropagation(); triggerConfirm('削除', `削除しますか？`, () => { saveProjectToFirestore({ ...activeProject, stepList: stepList.filter(s => s.id !== stepId), tasks: tasks.filter(t => t.stepId !== stepId) }); showAlert('削除完了'); }); };
 
-    const handleAddStepLink = (e) => { e.preventDefault(); if(tmpStepLinkUrl.trim()) { setNewStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpStepLinkLabel.trim()||'リンク',url:tmpStepLinkUrl.trim()}]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); }};
+      const handleAddStepLink = (e) => { e.preventDefault(); if(tmpStepLinkUrl.trim()) { setNewStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpStepLinkLabel.trim()||'リンク',url:tmpStepLinkUrl.trim()}]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); }};
       const handleRemoveStepLink = (id,e) => { e.preventDefault(); setNewStepLinks(p=>p.filter(l=>l.id!==id)); };
       const handleAddEditStepLink = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
       const handleRemoveEditStepLink = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
+      
       const handleAddTaskLink = (e) => { e.preventDefault(); if(tmpTaskLinkUrl.trim()) { setNewTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpTaskLinkLabel.trim()||'リンク',url:tmpTaskLinkUrl.trim()}]); setTmpTaskLinkLabel(''); setTmpTaskLinkUrl(''); }};
       const handleRemoveTaskLink = (id,e) => { e.preventDefault(); setNewTaskLinks(p=>p.filter(l=>l.id!==id)); };
       const handleAddEditTaskLink = (e) => { e.preventDefault(); if(tmpEditTaskLinkUrl.trim()) { setEditTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpEditTaskLinkLabel.trim()||'リンク',url:tmpEditTaskLinkUrl.trim()}]); setTmpEditTaskLinkLabel(''); setTmpEditTaskLinkUrl(''); } };
       const handleRemoveEditTaskLink = (id,e) => { e.preventDefault(); setEditTaskLinks(p=>p.filter(l=>l.id!==id)); };
 
       const handleAddLogLink = (e) => { e.preventDefault(); if(tmpLinkUrl.trim()){ setNewLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpLinkLabel.trim()||'リンク',url:tmpLinkUrl.trim()}]); setTmpLinkLabel(''); setTmpLinkUrl(''); }};
-      const handleRemoveLogLink = (id,e) => { e.preventDefault(); setNewLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpLinkLabel.trim()||'リンク',url:tmpLinkUrl.trim()}]); setTmpLinkLabel(''); setTmpLinkUrl(''); };
-
-      const addLog = (taskId) => {
-        if (!newLogText.trim() && newLogImages.length === 0) return;
-        const now = new Date(); const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        const newLog = { id: `l_${Date.now()}`, date: dateStr, text: newLogText.trim() || "📸 画像添付", links: [...newLogLinks], attachedImages: [...newLogImages], to: newLogTo.trim() || null, dueDate: newLogDueDate || null, completed: false, isHighlighted: false };
-        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, contextLogs: [newLog, ...(t.contextLogs || [])] } : t) });
-        setAddingLogTaskId(null); setNewLogText(''); setNewLogTo(''); setNewLogDueDate(''); setNewLogLinks([]); setNewLogImages([]); setTmpLinkLabel(''); setTmpLinkUrl(''); showAlert('記録しました');
-      };
-      const toggleLogComplete = (tId, lId) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, completed: !l.completed } : l) } : t) });
-      const deleteLog = (tId, lId) => triggerConfirm('削除','削除しますか？',() => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).filter(l => l.id !== lId) } : t) }));
-      const clearLogField = (tId, lId, f) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, [f]: null } : l) } : t) });
-      const removeSingleLinkFromLog = (tId, lId, lnkId) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, links: (l.links || []).filter(lk => lk.id !== lnkId) } : l) } : t) });
-      const toggleLogHighlight = (tId, lId) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, isHighlighted: !l.isHighlighted } : l) } : t) });
-      const startEditingLog = (log) => { setEditingLogId(log.id); setEditLogText(log.text); setEditLogTo(log.to || ''); setEditLogDueDate(log.dueDate || ''); setEditLogLinks(log.links ? [...log.links] : []); setEditLogImages(log.attachedImages ? [...log.attachedImages] : []); };
-      const saveLogEdit = (tId, lId) => { saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, text: editLogText.trim()||"📸", to: editLogTo.trim()||null, dueDate: editLogDueDate||null, links: [...editLogLinks], attachedImages: [...editLogImages] } : l) } : t) }); setEditingLogId(null); showAlert('更新しました'); };
+      const handleRemoveLogLink = (id,e) => { e.preventDefault(); setNewLogLinks(p=>p.filter(l=>l.id!==id)); };
 
       const changeTaskStatus = (taskId, newStatus) => {
         if (!isSansanUser) return;
@@ -761,7 +750,6 @@
         saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, isHighPriority: !t.isHighPriority } : t) });
       };
 
-      // --- 「今日やる」タスクをトグルする関数 ---
       const toggleDoToday = (taskId) => {
         if (!isSansanUser) return;
         const updatedTasks = tasks.map(t => {
@@ -793,7 +781,6 @@
         setAddingTaskStepId(null); 
         showAlert('タスクを追加しました'); 
 
-        // 該当タスクをクローズアップするUX
         setCollapsedTasks(prev => ({ ...prev, [newId]: false }));
         setTimeout(() => {
           const el = document.getElementById(`task-anchor-${newId}`);
@@ -907,13 +894,45 @@
           return {
             step: name,
             avg: stat.count > 0 ? Math.round((stat.totalDays / stat.count) * 10) / 10 : 0,
-            target: 5 // 目報日数の基準線
+            target: targetLeadTime
           };
         });
-      }, [projects]);
+      }, [projects, targetLeadTime]);
 
-      // 💡 リスク検知はステップ3で実装するため、まだ安全なダミーのままにしておきます
-      const analyticsRiskTasks = useMemo(() => [], []);
+      // リアルタイム難航・放置リスク検知ロジックの実装
+      const analyticsRiskTasks = useMemo(() => {
+        const risks = [];
+        projects.forEach(p => {
+          (p.tasks || []).forEach(t => {
+            if (t.status === 'completed' || t.status === 'not_applicable') return;
+            
+            // ① 期限超過アラート
+            if (isOverdue(t.dueDate, t.status)) {
+              risks.push({ id: t.id, title: t.title, proj: p.name, type: '期限超過', desc: `期日: ${t.dueDate}`, badge: 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800' });
+              return;
+            }
+            
+            // ② 炎上予兆アラート（履歴が5件以上、またはスター付きの重要メモがある）
+            const logs = t.contextLogs || [];
+            const hasHighlight = logs.some(l => l.isHighlighted);
+            if (logs.length >= 5 || hasHighlight) {
+              risks.push({ id: t.id, title: t.title, proj: p.name, type: '炎上予兆', desc: `履歴 ${logs.length}件${hasHighlight ? ' (重要シグナルあり)' : ''}`, badge: 'bg-amber-100 dark:bg-amber-955 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800' });
+              return;
+            }
+            
+            // ③ 放置アラート（進行中で、最後の更新から riskStaleDays 以上経過）
+            if (t.status === 'in_progress' && logs.length > 0) {
+              const lastLogDate = new Date(logs[0].date.split(' ')[0]);
+              const today = new Date(TODAY_STR);
+              const diffDays = Math.round((today - lastLogDate) / (1000 * 60 * 60 * 24));
+              if (diffDays > riskStaleDays) {
+                 risks.push({ id: t.id, title: t.title, proj: p.name, type: '放置リスク', desc: `${diffDays}日間 アクションなし`, badge: 'bg-slate-150 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-202 dark:border-slate-600' });
+              }
+            }
+          });
+        });
+        return risks;
+      }, [projects, riskStaleDays]);
 
       // ==========================================
       // 未ログイン（Sansanメンバー認証前）画面
@@ -981,7 +1000,7 @@
         <div className="min-h-screen bg-slate-55 dark:bg-slate-955 text-slate-805 dark:text-slate-150 font-sans antialiased pb-16 transition-colors duration-200">
           
           {alertMessage && (
-            <div className="fixed bottom-6 right-6 bg-slate-955/95 dark:bg-slate-805 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] whitespace-pre-wrap max-w-sm flex items-center gap-2 border border-slate-705 dark:border-slate-605 backdrop-blur-md animate-bounce">
+            <div className="fixed bottom-6 right-6 bg-slate-955/95 dark:bg-slate-800 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] whitespace-pre-wrap max-w-sm flex items-center gap-2 border border-slate-705 dark:border-slate-605 backdrop-blur-md animate-bounce">
               <IconInfo className="h-5 w-5 text-indigo-400 shrink-0" />
               <span className="font-bold leading-relaxed">{alertMessage}</span>
             </div>
@@ -996,7 +1015,7 @@
                 </div>
                 <p className="text-xs text-slate-505 dark:text-slate-455 whitespace-pre-line leading-relaxed">{confirmModal.message}</p>
                 <div className="flex justify-end gap-2 px-1 pt-3 border-t border-slate-150 dark:border-slate-700 text-xs">
-                  <button type="button" onClick={closeConfirm} className="bg-slate-150 dark:bg-slate-700 hover:bg-slate-220 dark:hover:bg-slate-600 text-slate-605 dark:text-slate-300 px-4 py-2.5 rounded-2xl font-bold transition-all">キャンセル</button>
+                  <button type="button" onClick={closeConfirm} className="bg-slate-150 dark:bg-slate-700 hover:bg-slate-202 dark:hover:bg-slate-600 text-slate-605 dark:text-slate-300 px-4 py-2.5 rounded-2xl font-bold transition-all">キャンセル</button>
                   <button type="button" onClick={confirmModal.onConfirm} className="bg-rose-605 hover:bg-rose-700 text-white px-5 py-2.5 rounded-2xl font-extrabold shadow-md transition-all">実行</button>
                 </div>
               </div>
@@ -1023,13 +1042,13 @@
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">所属フォルダ</label>
-                        <select value={newProjFolderId} onChange={e => setNewProjFolderId(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-xs font-bold text-slate-805 dark:text-slate-150 focus:outline-none focus:border-indigo-500">
+                        <select value={newProjFolderId} onChange={e => setNewProjFolderId(e.target.value)} className="w-full border border-slate-350 dark:border-slate-800 text-xs font-bold text-slate-805 dark:text-slate-150 focus:outline-none focus:border-indigo-500">
                           {folders.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                         </select>
                       </div>
                       <div>
                         <label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">初期ステータス</label>
-                        <select value={newProjStatus} onChange={e => setNewProjStatus(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-xs font-bold text-slate-805 dark:text-slate-150 focus:outline-none focus:border-indigo-500">
+                        <select value={newProjStatus} onChange={e => setNewProjStatus(e.target.value)} className="w-full border border-slate-350 dark:border-slate-800 text-xs font-bold text-slate-805 dark:text-slate-150 focus:outline-none focus:border-indigo-500">
                           <option value="pending">未着手</option><option value="in_progress">進行中</option><option value="completed">完了</option>
                         </select>
                       </div>
@@ -1252,7 +1271,7 @@
                           <div className="text-[9px] font-black text-slate-700 dark:text-slate-300 truncate max-w-[90px] leading-tight">{idx + 1}. {step.name}</div>
                           <span className="text-[8px] text-slate-440 dark:text-slate-505 font-mono font-bold leading-none">{c}/{t.length}</span>
                         </div>
-                        <div className="flex items-center gap-1 shrink-0 leading-none">
+                        <div className="flex items-center gap-1 shrink-0 font-black leading-none">
                           {l > 0 ? <span className="bg-rose-55 dark:bg-rose-900/30 text-rose-605 dark:text-rose-400 text-[8px] px-1 rounded border border-rose-200 dark:border-rose-800 font-extrabold shrink-0 animate-pulse">🚨遅延 {l}</span> : <div className="h-1 w-8 bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner"><div className={`h-full ${dClass.bar}`} style={{ width: `${p}%` }} /></div>}
                           <span className={`text-[9.5px] font-black ${dClass.text} font-mono leading-none`}>{p}%</span>
                         </div>
@@ -1273,8 +1292,6 @@
               <React.Fragment>
                 {activeProject ? (
                   <div className="space-y-6">
-                    
-                    {/* 案件ヘッダーカード */}
                     <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-4 flex flex-col md:flex-row justify-between gap-4 shadow-sm animate-in fade-in transition-colors">
                       <div className="space-y-2 flex-1">
                         <div className="flex items-center gap-2 text-xs text-slate-404 font-extrabold"><span>期間: {activeProject.startDate} 〜 {activeProject.endDate}</span></div>
@@ -1286,21 +1303,14 @@
                           {['pending','in_progress','completed','not_applicable'].map(st => <label key={st} className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer border ${taskFilter[st] ? 'bg-indigo-600 text-white' : 'text-slate-404 border-slate-202'}`}><input type="checkbox" className="sr-only" checked={taskFilter[st]} onChange={() => setTaskFilter({...taskFilter, [st]: !taskFilter[st]})} />{st === 'pending' ? '🔘 未対応' : st === 'in_progress' ? '⚡ 進行中' : st === 'completed' ? '✅ 完了' : '🚫 対応なし'}</label>)}
                         </div>
                       </div>
-                      <div className="flex flex-col md:items-end gap-2 shrink-0 self-start">
+                      <div className="flex flex-col items-end gap-2 shrink-0 self-start">
                         <button onClick={() => setShowAddStepForm(true)} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white font-black px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs"><IconPlus /> STEP追加</button>
                       </div>
                     </div>
 
-                    {/* 新規ステップ追加フォーム（フル版） */}
                     {showAddStepForm && (
                       <form onSubmit={handleAddStep} className="bg-purple-55 dark:bg-purple-900/20 border border-purple-300 rounded-3xl p-5 space-y-4 text-xs">
-                        <div className="flex justify-between items-center">
-                          <span className="font-extrabold text-purple-850 dark:text-purple-300">大ステップの新規作成</span>
-                          <div className="flex gap-2">
-                            <button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold">キャンセル</button>
-                            <button type="submit" className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl font-bold">作成する</button>
-                          </div>
-                        </div>
+                        <div className="flex justify-between items-center"><span className="font-extrabold text-purple-850 dark:text-purple-300">大ステップの新規作成</span><button type="submit" className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl font-bold">作成する</button></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-[10px] text-slate-404 font-bold mb-1">工程名 *</label>
@@ -1329,14 +1339,14 @@
                             <div className="flex gap-2">
                               <input type="text" placeholder="リンク名" value={tmpStepLinkLabel} onChange={e => setTmpStepLinkLabel(e.target.value)} className="w-1/3 border p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white" />
                               <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpLinkUrl(e.target.value)} className="flex-1 border p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white" />
-                              <button type="button" onClick={handleAddLinkToNewStep} className="bg-slate-600 text-white px-4 py-2 rounded-xl font-bold">追加</button>
+                              <button type="button" onClick={handleAddStepLink} className="bg-slate-600 text-white px-4 py-2 rounded-xl font-bold">追加</button>
                             </div>
                             {newStepLinks.length > 0 && (
                               <div className="flex flex-wrap gap-1.5 pt-1">
                                 {newStepLinks.map(lnk => (
                                   <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-150 dark:bg-slate-800 border dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold">
                                     <span>{lnk.label}</span>
-                                    <button type="button" onClick={(e) => handleRemoveLinkFromNewStep(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold ml-1">×</button>
+                                    <button type="button" onClick={(e) => handleRemoveStepLink(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold ml-1">×</button>
                                   </span>
                                 ))}
                               </div>
@@ -1346,13 +1356,12 @@
                       </form>
                     )}
 
-                    {/* 大ステップのタイムラインループ */}
                     <div className="space-y-8">
                       {activeProject && stepList.map((step, index) => {
                         const stepTksAll = tasks.filter(t => t.stepId === step.id);
                         const stpProg = getStepProgress(step.id);
                         const isCol = !!collapsedSteps[step.id];
-                        const isEd = editingStepId === step.id;
+                        const isEd = editingStepId === step.id; // 💡編集モードの判定
                         const cClass = colorClassesMap[deptList.find(d => d.key === step.deptKey)?.color || 'slate'] || colorClassesMap.purple;
 
                         return (
@@ -1396,14 +1405,14 @@
                                     <div className="flex gap-2">
                                       <input type="text" placeholder="リンク名" value={tmpEditStepLinkLabel} onChange={e => setTmpEditStepLinkLabel(e.target.value)} className="w-1/3 border p-2 rounded-xl bg-white dark:bg-slate-900 text-slate-805 dark:text-white" />
                                       <input type="text" placeholder="URL" value={tmpEditStepLinkUrl} onChange={e => setTmpEditStepLinkUrl(e.target.value)} className="flex-1 border p-2 rounded-xl bg-white dark:bg-slate-900 text-slate-805 dark:text-white" />
-                                      <button type="button" onClick={handleAddLinkToEditStep} className="bg-slate-600 text-white px-3 py-2 rounded-xl font-bold">追加</button>
+                                      <button type="button" onClick={handleAddEditStepLink} className="bg-slate-600 text-white px-3 py-2 rounded-xl font-bold">追加</button>
                                     </div>
                                     {editStepLinks.length > 0 && (
                                       <div className="flex flex-wrap gap-1.5 pt-1">
                                         {editStepLinks.map(lnk => (
                                           <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-150 dark:bg-slate-800 border dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold">
                                             <span>{lnk.label}</span>
-                                            <button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold ml-1">×</button>
+                                            <button type="button" onClick={(e) => handleRemoveEditStepLink(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold ml-1">×</button>
                                           </span>
                                         ))}
                                       </div>
@@ -1421,8 +1430,10 @@
                                 </div>
                                 <div className="flex items-center gap-4 shrink-0" onClick={e => e.stopPropagation()}>
                                   <div className="text-right mr-1"><div className="text-xs font-black text-slate-705 dark:text-slate-300">{stpProg}%</div></div>
+                                  
                                   <button onClick={(e) => startEditingStep(step, e)} className="p-1.5 text-slate-404 hover:text-indigo-600" title="STEPを編集"><IconEdit2 className="h-4 w-4" /></button>
                                   <button onClick={(e) => handleDeleteStep(step.id, step.name, e)} className="p-1.5 text-slate-404 hover:text-rose-605" title="STEPを削除"><IconTrash2 className="h-4 w-4" /></button>
+                                  
                                   <button onClick={() => { setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); }} className="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-xl font-black"><IconPlus /> タスク追加</button>
                                   <button onClick={() => toggleStepCollapse(step.id)} className="text-slate-404 ml-1">{isCol ? '▼' : '▲'}</button>
                                 </div>
@@ -1432,42 +1443,42 @@
                             {/* 下半分のタスク一覧表示エリア */}
                             {!isCol && (
                               <div className="bg-slate-55/20 dark:bg-slate-900/20 p-4 space-y-4">
-                            {addingTaskStepId === step.id && (
-                              <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-4 bg-slate-55 dark:bg-slate-900 border rounded-2xl space-y-4 text-xs animate-in fade-in">
-                                <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700">
-                                  <span className="font-extrabold text-indigo-600 dark:text-indigo-400">➕ 新規タスクの追加</span>
-                                  <div className="flex justify-end gap-2">
-                                    <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
-                                    <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">追加する</button>
-                                  </div>
-                                </div>
+                                {addingTaskStepId === step.id && (
+                                  <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-4 bg-slate-55 dark:bg-slate-900 border rounded-2xl space-y-4 text-xs animate-in fade-in">
+                                    <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700">
+                                      <span className="font-extrabold text-indigo-600 dark:text-indigo-400">➕ 新規タスクの追加</span>
+                                      <div className="flex justify-end gap-2">
+                                        <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
+                                        <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">追加する</button>
+                                      </div>
+                                    </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                  <div className="md:col-span-3">
-                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">タスク名 *</label>
-                                    <input required type="text" placeholder="タスク名を入力..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-bold" />
-                                  </div>
-                                  <div>
-                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">担当部署</label>
-                                    <select value={newTaskDept} onChange={e => setNewTaskDept(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-bold">
-                                      {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
-                                    </select>
-                                  </div>
-                                  <div>
-                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">担当者名</label>
-                                    <input type="text" placeholder="例: 山田" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-bold" />
-                                  </div>
-                                  <div>
-                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">期日</label>
-                                    <input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-mono font-bold" />
-                                  </div>
-                                  <div className="md:col-span-3">
-                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">詳細・備考</label>
-                                    <textarea placeholder="詳細・備考を入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white h-16" />
-                                  </div>
-                                </div>
-                              </form>
-                            )}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                      <div className="md:col-span-3">
+                                        <label className="block text-[10px] text-slate-404 font-bold mb-1">タスク名 *</label>
+                                        <input required type="text" placeholder="タスク名を入力..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-bold" />
+                                      </div>
+                                      <div>
+                                        <label className="block text-[10px] text-slate-404 font-bold mb-1">担当部署</label>
+                                        <select value={newTaskDept} onChange={e => setNewTaskDept(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-bold">
+                                          {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+                                        </select>
+                                      </div>
+                                      <div>
+                                        <label className="block text-[10px] text-slate-404 font-bold mb-1">担当者名</label>
+                                        <input type="text" placeholder="例: 山田" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-bold" />
+                                      </div>
+                                      <div>
+                                        <label className="block text-[10px] text-slate-404 font-bold mb-1">期日</label>
+                                        <input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white font-mono font-bold" />
+                                      </div>
+                                      <div className="md:col-span-3">
+                                        <label className="block text-[10px] text-slate-404 font-bold mb-1">詳細・備考</label>
+                                        <textarea placeholder="詳細・備考を入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white h-16" />
+                                      </div>
+                                    </div>
+                                  </form>
+                                )}
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   {stepTksAll.map((task, taskIndex) => {
@@ -1490,7 +1501,7 @@
                                         <div className="mt-10 space-y-3 flex-1 flex flex-col justify-between">
                                           <div className="space-y-2">
                                             <h4 className="font-extrabold text-sm text-slate-805 dark:text-slate-150 select-text cursor-text leading-snug">{task.title}</h4>
-                                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-550 dark:text-slate-404">
+                                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-550 dark:text-slate-444">
                                               <span className={`px-2 py-0.5 rounded border ${tkCls.badge}`}>{deptList.find(dl => dl.key === task.department)?.label || '未設定'} : {task.assignee}</span>
                                               <span className="font-mono">⌛ 期日: {task.dueDate}</span>
                                               {task.startedAt && <span className="font-mono text-indigo-600 dark:text-indigo-404 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-900/40">⏱️ {d ? `${task.startedAt} 〜 ${task.completedAt} (${dDays} 日)` : `${task.startedAt} 着手 (${dDays} 日)`}</span>}
@@ -1645,7 +1656,7 @@
                         <div className="overflow-x-auto rounded-xl border dark:border-slate-700">
                           <table className="w-full text-xs text-left border-collapse">
                             <thead>
-                              <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 text-slate-550 dark:text-slate-404 font-black text-[10px] uppercase tracking-wide">
+                              <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 text-slate-550 dark:text-slate-440 font-black text-[10px] uppercase tracking-wide">
                                 <th className="py-2.5 px-4">担当者</th>
                                 <th className="py-2.5 px-4 text-center">対応合計</th>
                                 <th className="py-2.5 px-4 text-center text-emerald-600 dark:text-emerald-404">完了済</th>
@@ -1689,7 +1700,7 @@
                               
                               <div className="sm:w-40 text-xs font-bold flex justify-between sm:justify-end gap-4 shrink-0 font-mono">
                                 <span className={isOver ? 'text-rose-605 dark:text-rose-400 font-black' : 'text-emerald-600 dark:text-emerald-400 font-black'}>平均 {d.avg} 日</span>
-                                <span className="text-slate-404">(目標: {d.target}日)</span>
+                                <span className="text-slate-440">(目標: {d.target}日)</span>
                               </div>
                             </div>
                           );
@@ -1704,8 +1715,36 @@
 
                   {/* 3. リスク・放置タスク */}
                   {analyticsTab === 'risk' && (
-                    <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm text-center text-xs text-slate-440">
-                      リスク検知機能はステップ3で実装します。
+                    <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm space-y-4 animate-in fade-in">
+                      <h3 className="font-black text-slate-805 dark:text-white text-sm">🚨 リアルタイム難航・放置リスク検知</h3>
+                      {analyticsRiskTasks.length === 0 ? (
+                        <div className="py-12 text-center text-emerald-600 dark:text-emerald-404 font-bold border border-dashed rounded-2xl bg-emerald-55/10">
+                          🎉 現在、検知された組織推進リスクはありません。順調です。
+                        </div>
+                      ) : (
+                        <div className="overflow-x-auto rounded-xl border dark:border-slate-700">
+                          <table className="w-full text-xs text-left border-collapse">
+                            <thead>
+                              <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 text-slate-550 dark:text-slate-404 font-black text-[10px] uppercase tracking-wide">
+                                <th className="py-2.5 px-4 w-32 text-center">リスク種別</th>
+                                <th className="py-2.5 px-4">対象タスク</th>
+                                <th className="py-2.5 px-4">所属案件</th>
+                                <th className="py-2.5 px-4">検出理由</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y dark:divide-slate-700 font-bold">
+                              {analyticsRiskTasks.map(r => (
+                                <tr key={r.id} className="hover:bg-slate-55/60 dark:hover:bg-slate-750 transition-colors">
+                                  <td className="py-3 px-4 text-center"><span className={`px-2 py-0.5 rounded text-[10px] font-black ${r.badge}`}>{r.type}</span></td>
+                                  <td className="py-3 px-4 text-slate-805 dark:text-slate-200">{r.title}</td>
+                                  <td className="py-3 px-4 text-slate-550 dark:text-slate-404">{r.proj}</td>
+                                  <td className="py-3 px-4 font-mono text-rose-605 dark:text-rose-400">{r.desc}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1741,7 +1780,7 @@
               <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-base font-black text-slate-805 dark:text-slate-100 flex items-center gap-2"><IconSettings className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />設定</h2>
-                  <button onClick={() => setShowSettingsModal(false)} className="text-slate-404 dark:text-slate-505 hover:bg-slate-150 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition-colors"><IconX className="h-5 w-5" /></button>
+                  <button onClick={() => { setShowSettingsModal(false); setTmpGistToken(gistToken); setTmpGistId(gistId); }} className="text-slate-404 dark:text-slate-505 hover:bg-slate-150 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition-colors"><IconX className="h-5 w-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin">
                   
@@ -1761,6 +1800,21 @@
                       </div>
                       <div className="flex justify-end pt-1">
                         <button onClick={saveGistSettings} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md">保存して接続</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 📊 アナリティクス監視設定パネルの追加 */}
+                  <div className="space-y-4">
+                    <h3 className="text-xs font-black text-slate-605 dark:text-slate-440 border-b border-slate-202 dark:border-slate-700 pb-2">📊 アナリティクス監視設定</h3>
+                    <div className="grid grid-cols-2 gap-4 bg-slate-55 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 shadow-sm">
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">放置判定アラート（日数）</label>
+                        <input type="number" value={riskStaleDays} onChange={e => setRiskStaleDays(Number(e.target.value))} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2 text-xs bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200 focus:outline-none font-bold" min="1" />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">大ステップ目標消費（日数）</label>
+                        <input type="number" value={targetLeadTime} onChange={e => setTargetLeadTime(Number(e.target.value))} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2 text-xs bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200 focus:outline-none font-bold" min="1" />
                       </div>
                     </div>
                   </div>
