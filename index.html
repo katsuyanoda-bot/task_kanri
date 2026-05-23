@@ -15,7 +15,7 @@
       theme: {
         extend: {
           colors: {
-            slate: { 55: '#f8fafc', 150: '#e2e8f0', 202: '#e2e8f0', 205: '#e2e8f0', 250: '#e2e8f0', 350: '#cbd5e1', 404: '#94a3b8', 405: '#94a3b8', 450: '#94a3b8', 455: '#94a3b8', 505: '#64748b', 550: '#64748b', 555: '#64748b', 605: '#475569', 606: '#475569', 650: '#475569', 655: '#475569', 705: '#334155', 750: '#334155', 755: '#334155', 805: '#1e293b', 850: '#1e293b', 855: '#1e293b', 955: '#0f172a', 850: '#1e293b', 855: '#1e293b', 900: '#0f172a', 850: '#1e293b', 855: '#1e293b', 850: '#1e293b', 855: '#1e293b', 850: '#1e293b', 855: '#1e293b' },
+            slate: { 55: '#f8fafc', 150: '#e2e8f0', 202: '#e2e8f0', 205: '#e2e8f0', 250: '#e2e8f0', 350: '#cbd5e1', 404: '#94a3b8', 405: '#94a3b8', 450: '#94a3b8', 455: '#94a3b8', 505: '#64748b', 550: '#64748b', 555: '#64748b', 605: '#475569', 606: '#475569', 650: '#475569', 655: '#475569', 705: '#334155', 750: '#334155', 755: '#334155', 805: '#1e293b', 850: '#1e293b', 855: '#1e293b', 955: '#0f172a' },
             purple: { 55: '#faf5ff' },
             indigo: { 150: '#e0e7ff', 450: '#818cf8', 455: '#818cf8', 505: '#6366f1', 550: '#6366f1', 605: '#4f46e5', 606: '#4f46e5', 650: '#4f46e5', 655: '#4f46e5', 750: '#3730a3', 755: '#3730a3' },
             emerald: { 55: '#ecfdf5', 555: '#10b981' },
@@ -50,7 +50,7 @@
 <body class="bg-slate-50/50 dark:bg-slate-900 transition-colors duration-200 text-slate-800 dark:text-slate-200">
   <div id="root"></div>
 
-  <!-- React JSXコード -->
+  <!-- React JSXコード (Firebase ESM動的インポート対応) -->
   <script type="text/babel" data-type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -87,7 +87,7 @@
     const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
     const IconMoon = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>;
 
-    // --- カラー定義マップ (ダークモード対応 - 透過を一切なくし不透明なソリッドカラーに変更) ---
+    // --- カラー定義マップ (ダークモード対応 - 透過を排除した不透明ソリッド) ---
     const colorClassesMap = {
       purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-purple-100 dark:bg-[#25183a]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-200 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-400' },
       indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-indigo-100 dark:bg-[#1e223b]', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-200 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-400' },
@@ -120,7 +120,7 @@
       { value: 'not_applicable', label: '対応なし', className: 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-600' }
     ];
 
-    // モックデータ
+    // 初期プロジェクト
     const initialProjects = [
       {
         id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2',
@@ -739,7 +739,7 @@
             </div>
           )}
 
-          {/* 新規プロジェクト起票モーダル (復元) */}
+          {/* 新規プロジェクト起票モーダル */}
           {showAddProjectModal && (
             <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in p-4">
               <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
@@ -776,7 +776,7 @@
                     <div className="border-t border-slate-200 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
                       <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1"><IconLink className="h-3 w-3"/> プロジェクト関連リンク</span>
                       <div className="flex items-center gap-2">
-                        <input type="text" placeholder="リンク名 (例: 要件定義書)" value={tmpProjLinkLabel} onChange={e => setTmpProjLinkLabel(e.target.value)} className="w-32 border border-slate-300 dark:border-slate-600 rounded-xl p-2.5 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
+                        <input type="text" placeholder="リンク名 (例: 要件定義書)" value={tmpProjLinkLabel} onChange={e => setTmpProjLinkLabel(e.target.value)} className="w-32 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
                         <input type="text" placeholder="URL (https://...)" value={tmpProjLinkUrl} onChange={e => setTmpProjLinkUrl(e.target.value)} className="flex-1 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
                         <button type="button" onClick={handleAddLinkToNewProj} className="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors">追加</button>
                       </div>
@@ -894,8 +894,14 @@
                     <div className="space-y-2 flex-1">
                       {editingProject ? (
                         <div className="space-y-3.5 bg-slate-50/60 dark:bg-slate-900/60 p-4 rounded-3xl border border-slate-200 dark:border-slate-700 text-xs shadow-inner animate-in fade-in">
-                          <span className="font-extrabold text-indigo-600 dark:text-indigo-400 block mb-1">✏️ 案件変更</span>
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
+                            <span className="font-extrabold text-indigo-600 dark:text-indigo-400 block mb-1">✏️ 案件変更</span>
+                            <div className="flex items-center gap-2">
+                              <button type="button" onClick={() => setEditingProject(false)} className="text-[10px] text-slate-500 dark:text-slate-400 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-xl font-bold">戻る</button>
+                              <button type="button" onClick={saveProjectEdit} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold">適用</button>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3 mt-3">
                             <div>
                               <label className="text-[10px] text-slate-400 dark:text-slate-500 font-bold block mb-0.5">フォルダ</label>
                               <select value={projectForm.folderId} onChange={e => setProjectForm({...projectForm, folderId: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-200 focus:outline-none">
@@ -923,7 +929,7 @@
                             <div className="flex items-center gap-2">
                               <input type="text" placeholder="リンク名" value={tmpEditProjLinkLabel} onChange={e => setTmpEditProjLinkLabel(e.target.value)} className="w-28 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
                               <input type="text" placeholder="URL (https://...)" value={tmpEditProjLinkUrl} onChange={e => setTmpEditProjLinkUrl(e.target.value)} className="flex-1 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
-                              <button type="button" onClick={handleAddLinkToEditProj} className="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
+                              <button type="button" onClick={handleAddLinkToEditProj} className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                             </div>
                             {editProjLinks.length > 0 && (
                               <div className="flex flex-wrap gap-1.5 pt-1">
@@ -932,11 +938,6 @@
                                 ))}
                               </div>
                             )}
-                          </div>
-
-                          <div className="flex justify-end gap-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-700">
-                            <button type="button" onClick={() => setEditingProject(false)} className="text-[10px] text-slate-500 dark:text-slate-400 px-3 py-1.5 rounded-xl font-bold">戻る</button>
-                            <button type="button" onClick={saveProjectEdit} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold">適用</button>
                           </div>
                         </div>
                       ) : (
@@ -987,7 +988,7 @@
                         <div className="flex gap-2">
                           <button onClick={() => { setEditingProject(true); setProjectForm(activeProject); setEditProjLinks(activeProject.links ? [...activeProject.links] : []); }} className="text-[10px] text-indigo-600 dark:text-indigo-400 font-black flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 px-3 py-2 rounded-xl"><IconEdit2 className="h-3 w-3" /> 案件編集</button>
                           <button onClick={(e) => handleCopyProjectUrl(activeProject.id, e)} className="text-[10px] text-slate-600 dark:text-slate-300 font-black flex items-center gap-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 px-3 py-2 rounded-xl"><IconLink className="h-3 w-3 text-slate-400" /> 共有</button>
-                          <button onClick={() => { setShowAddStepForm(true); setNewStepName(''); setNewStepDesc(''); setNewStepStartDate(activeProject.startDate); setNewStepDueDate(activeProject.endDate); setNewStepLinks([]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); setTimeout(() => document.getElementById('add-step-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} className="text-[10px] bg-purple-600 hover:bg-purple-700 text-white font-black flex items-center gap-1 px-3 py-2 rounded-xl"><IconPlus className="h-3 w-3" /> STEP追加</button>
+                          <button onClick={() => { setShowAddStepForm(true); setNewStepName(''); setNewStepDesc(''); setNewStepStartDate(activeProject.startDate); setNewStepDueDate(activeProject.endDate); setNewStepLinks([]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); setTimeout(() => document.getElementById('add-step-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white font-black flex items-center gap-1 px-3 py-2 rounded-xl"><IconPlus className="h-3 w-3" /> STEP追加</button>
                         </div>
                         <div className="relative w-full text-right">
                           <button onClick={() => setShowTaskDropdown(!showTaskDropdown)} className="text-[10px] text-slate-700 dark:text-slate-300 font-black flex items-center justify-between w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-xl">
@@ -1038,28 +1039,32 @@
                 {activeProject && showAddStepForm && (
                   <div id="add-step-form" className="flex justify-end">
                     <form onSubmit={handleAddStep} className="w-full bg-purple-50 dark:bg-purple-900/20 border border-purple-300 dark:border-purple-800 rounded-3xl p-5 space-y-4 text-xs animate-in fade-in">
-                      <div className="flex justify-between items-center pb-1.5 border-b border-purple-100 dark:border-purple-800">
-                        <span className="font-extrabold text-purple-800 dark:text-purple-300">➕ 新規STEP作成</span>
-                        <button type="button" onClick={() => setShowAddStepForm(false)} className="text-slate-400"><IconX /></button>
+                      {/* 追加確定ボタンを上部ヘッダー右側へ移動し、不透明インディゴに */}
+                      <div className="flex justify-between items-center pb-3 border-b border-purple-100 dark:border-purple-800">
+                        <span className="font-extrabold text-purple-850 dark:text-purple-300 flex items-center gap-1.5"><IconPlus className="h-3.5 w-3.5" />大ステップの新規作成</span>
+                        <div className="flex items-center gap-2">
+                          <button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
+                          <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">作成する</button>
+                        </div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">工程名 *</label><input required type="text" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-purple-400" /></div>
-                        <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">詳細説明</label><input type="text" value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-purple-400" /></div>
+                        <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">工程名 *</label><input required type="text" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-500" /></div>
+                        <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">詳細説明</label><input type="text" value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-500" /></div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
-                        <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">開始予定日</label><input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono font-bold focus:outline-none focus:border-purple-400" /></div>
-                        <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">完了予定日</label><input type="date" value={newStepDueDate} onChange={e => setNewStepDueDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono font-bold focus:outline-none focus:border-purple-400" /></div>
+                        <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">開始予定日</label><input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono font-bold focus:outline-none focus:border-indigo-500" /></div>
+                        <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">完了予定日</label><input type="date" value={newStepDueDate} onChange={e => setNewStepDueDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono font-bold focus:outline-none focus:border-indigo-500" /></div>
                       </div>
                       <div className="space-y-1">
                         <span className="block text-slate-600 dark:text-slate-400 font-bold">担当部署</span>
-                        <select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="w-full border border-slate-300 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold focus:outline-none focus:border-purple-400">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select>
+                        <select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="w-full border border-slate-300 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold focus:outline-none focus:border-indigo-500">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select>
                       </div>
                       <div className="border-t border-purple-100 dark:border-purple-800/50 pt-3 space-y-2">
                         <span className="block text-purple-900 dark:text-purple-400 font-extrabold text-xs">🔗 関連リンク</span>
-                        <div className="flex items-center gap-1">
-                          <input type="text" placeholder="リンク名" value={tmpStepLinkLabel} onChange={e => setTmpStepLinkLabel(e.target.value)} className="w-40 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-purple-400 text-slate-700 dark:text-slate-200" />
-                          <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpStepLinkUrl(e.target.value)} className="flex-1 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-purple-400 text-slate-700 dark:text-slate-200" />
-                          <button type="button" onClick={handleAddLinkToNewStep} className="bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-800 text-purple-700 dark:text-purple-300 font-black px-4 py-2 rounded-xl shadow-xs transition-colors">追加</button>
+                        <div className="flex items-center gap-2">
+                          <input type="text" placeholder="リンク名" value={tmpStepLinkLabel} onChange={e => setTmpStepLinkLabel(e.target.value)} className="w-40 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-700 dark:text-slate-200" />
+                          <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpStepLinkUrl(e.target.value)} className="flex-1 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-700 dark:text-slate-200" />
+                          <button type="button" onClick={handleAddLinkToNewStep} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                         </div>
                         {newStepLinks.length > 0 && (
                           <div className="flex flex-wrap gap-2 pt-1">
@@ -1068,10 +1073,6 @@
                             ))}
                           </div>
                         )}
-                      </div>
-                      <div className="flex flex-wrap justify-end gap-2 pt-2 border-t border-purple-100 dark:border-purple-800/50">
-                        <button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-4 py-2.5 rounded-2xl font-bold transition-colors">キャンセル</button>
-                        <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-2xl font-bold shadow-md shadow-purple-100 dark:shadow-none transition-colors">作成</button>
                       </div>
                     </form>
                   </div>
@@ -1089,47 +1090,44 @@
                       <div key={step.id} id={`step-anchor-${step.id}`} draggable={!isEd} onDragStart={(e) => handleDragStart(index, e)} onDragOver={(e) => handleDragOver(index, e)} onDragEnd={handleDragEnd} className={`bg-white dark:bg-slate-800 rounded-3xl shadow-xs border-4 transition-all ${isCol ? 'border-slate-200 dark:border-slate-700' : cClass.borderStrong} ${draggedStepIndex === index ? 'drag-ghost' : ''}`}>
                         {isEd ? (
                           <div onClick={(e) => e.stopPropagation()} className="w-full bg-purple-50 dark:bg-purple-900/20 border-b border-purple-100 dark:border-purple-800 rounded-t-2xl p-5 space-y-4 text-xs animate-in fade-in">
-                            <div className="flex justify-between items-center pb-1.5 border-b border-purple-100 dark:border-purple-800">
+                            <div className="flex justify-between items-center pb-3 border-b border-purple-100 dark:border-purple-800">
                               <span className="font-extrabold text-purple-800 dark:text-purple-300">✏️ STEP {index + 1} 編集</span>
-                              <button type="button" onClick={() => setEditingStepId(null)} className="text-slate-400"><IconX /></button>
+                              <div className="flex items-center gap-2">
+                                <button type="button" onClick={() => setEditingStepId(null)} className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
+                                <button type="button" onClick={(e) => saveStepEdit(step.id, e)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">保存する</button>
+                              </div>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">工程名 *</label><input required type="text" value={editStepName} onChange={e => setEditStepName(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 shadow-inner text-slate-700 dark:text-slate-200 focus:outline-none focus:border-purple-400" /></div>
-                              <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">詳細説明</label><input type="text" value={editStepDesc} onChange={e => setEditStepDesc(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 shadow-inner text-slate-700 dark:text-slate-200 focus:outline-none focus:border-purple-400" /></div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                              <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">工程名 *</label><input required type="text" value={editStepName} onChange={e => setEditStepName(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
+                              <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">詳細説明</label><input type="text" value={editStepDesc} onChange={e => setEditStepDesc(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                              <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">開始予定日</label><input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 font-mono font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-purple-400" /></div>
-                              <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">完了予定日</label><input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 font-mono font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-purple-400" /></div>
+                              <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">開始予定日</label><input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono font-bold focus:outline-none focus:border-indigo-400" /></div>
+                              <div><label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">完了予定日</label><input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono font-bold focus:outline-none focus:border-indigo-400" /></div>
                             </div>
                             <div className="space-y-1">
                               <span className="block text-slate-600 dark:text-slate-400 font-bold">担当部署</span>
                               <select value={editStepDeptKey} onChange={e => setEditStepDeptKey(e.target.value)} className="w-full border border-purple-200 dark:border-purple-800 rounded-xl p-2 bg-white dark:bg-slate-900 focus:outline-none text-xs font-bold text-slate-700 dark:text-slate-200">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select>
                             </div>
                             <div className="border-t border-purple-100 dark:border-purple-800/50 pt-3 space-y-2">
-                              <span className="block text-purple-900 dark:text-purple-400 font-extrabold text-xs">🔗 関連リンクの編集</span>
+                              <span className="block text-purple-900 dark:text-purple-400 font-extrabold text-xs">🔗 関連リンク</span>
                               <div className="flex items-center gap-2">
-                                <input type="text" placeholder="リンク名" value={tmpEditStepLinkLabel} onChange={e => setTmpEditStepLinkLabel(e.target.value)} className="w-32 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-bold focus:outline-none focus:border-purple-500 text-slate-700 dark:text-slate-200" />
-                                <input type="text" placeholder="URL" value={tmpEditStepLinkUrl} onChange={e => setTmpEditStepLinkUrl(e.target.value)} className="flex-1 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs focus:outline-none focus:border-purple-500 text-slate-700 dark:text-slate-200" />
-                                <button type="button" onClick={handleAddLinkToEditStep} className="bg-purple-100 dark:bg-purple-900/40 hover:bg-purple-200 dark:hover:bg-purple-800 text-purple-700 dark:text-purple-300 font-black px-3 py-2 rounded-xl text-xs transition-colors">追加</button>
+                                <input type="text" placeholder="リンク名" value={tmpEditStepLinkLabel} onChange={e => setTmpEditStepLinkLabel(e.target.value)} className="w-40 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-bold focus:outline-none focus:border-indigo-400 text-slate-700 dark:text-slate-200" />
+                                <input type="text" placeholder="URL" value={tmpEditStepLinkUrl} onChange={e => setTmpEditStepLinkUrl(e.target.value)} className="flex-1 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs focus:outline-none focus:border-indigo-400 text-slate-700 dark:text-slate-200" />
+                                <button type="button" onClick={handleAddLinkToEditStep} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                               </div>
                               {editStepLinks.length > 0 && (
                                 <div className="flex flex-wrap gap-2 pt-1">
                                   {editStepLinks.map(lnk => (
-                                    <span key={lnk.id} className="inline-flex items-center gap-1.5 text-[11px] bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-2.5 py-1 rounded-full font-bold shadow-xs"><IconLink className="h-3 w-3" /><span className="truncate max-w-[120px]">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-purple-400 hover:text-rose-600 dark:hover:text-rose-400 font-extrabold text-xs ml-1">×</button></span>
+                                    <span key={lnk.id} className="inline-flex items-center gap-1.5 text-xs bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-3 py-1 rounded-full font-bold shadow-xs"><IconLink className="h-3 w-3" /><span>{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-purple-400 hover:text-rose-600 dark:hover:text-rose-400 font-extrabold text-xs ml-1">×</button></span>
                                   ))}
                                 </div>
                               )}
                             </div>
-                            <div className="flex flex-wrap justify-end gap-2 pt-1.5 border-t border-purple-100 dark:border-purple-800/50">
-                              <button type="button" onClick={() => setEditingStepId(null)} className="text-xs text-slate-600 dark:text-slate-300 px-4 py-2.5 rounded-2xl font-bold transition hover:bg-slate-50 dark:hover:bg-slate-700">キャンセル</button>
-                              <button type="button" onClick={(e) => saveStepEdit(step.id, e)} className="text-xs bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-2xl font-bold shadow-md dark:shadow-none transition">確定</button>
-                            </div>
                           </div>
                         ) : (
-                          /* 各STEPのコンテナ用ヘッダー。
-                             sticky位置を top-[114px] に設定。
-                             bg-opacityやbackdrop-blurを完全に削除し、不透明な bg-white またはダークモード時は cClass.bg(不透明版)をしっかりと適用 */
-                          <div onClick={() => toggleStepCollapse(step.id)} className={`sticky top-[114px] z-20 p-4 border-b flex flex-col lg:flex-row justify-between gap-4 cursor-pointer border-slate-200 dark:border-slate-700 rounded-t-[20px] transition-all ${isCol ? 'bg-white dark:bg-slate-800' : cClass.bg}`}>
+                          /* 各STEPのコンテナ用ヘッダー。 */
+                          <div onClick={() => toggleStepCollapse(step.id)} className={`sticky top-[114px] z-20 p-4 border-b flex flex-col lg:flex-row justify-between gap-4 cursor-pointer border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-t-[20px] transition-all bg-opacity-95 dark:bg-opacity-95 backdrop-blur-sm ${isCol ? 'bg-white dark:bg-slate-800' : cClass.bg}`}>
                             <div className="space-y-2 flex-1 min-w-0">
                               <div className="flex items-center gap-3 flex-wrap">
                                 <div className="p-1 hover:bg-white/80 dark:hover:bg-slate-700/80 rounded-lg cursor-grab active:cursor-grabbing"><IconDragHandle /></div>
@@ -1182,7 +1180,7 @@
                                   const d = t.status === 'completed', w = t.status === 'in_progress', p = t.status === 'pending', na = t.status === 'not_applicable';
                                   const hw = (w || p) && t.isHighPriority;
                                   return (
-                                    <button key={t.id} onClick={() => { if(isCol) setCollapsedSteps(pr=>({...pr,[step.id]:false})); setCollapsedTasks(pr=>({...pr,[t.id]:false})); setTimeout(() => document.getElementById(`task-anchor-${t.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} className={`px-2 py-0.5 rounded-lg text-[10px] font-extrabold border flex items-center gap-1.5 shrink-0 ${d ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 text-emerald-700' : hw ? 'bg-rose-100 border-rose-400 text-rose-700 animate-pulse' : w ? 'bg-blue-50 border-blue-200 text-blue-700 animate-pulse' : na ? 'bg-slate-200 text-slate-500' : 'bg-white dark:bg-slate-800 border-slate-200 text-slate-600 dark:text-slate-300'}`}>
+                                    <button key={t.id} onClick={() => { if(isCol) setCollapsedSteps(pr=>({...pr,[step.id]:false})); setCollapsedTasks(pr=>({...pr,[t.id]:false})); setTimeout(() => document.getElementById(`task-anchor-${t.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} className={`px-2 py-0.5 rounded-lg text-[10px] font-extrabold border flex items-center gap-1.5 shrink-0 ${d ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 text-emerald-700' : hw ? 'bg-rose-100 dark:bg-rose-900/40 border-rose-400 dark:border-rose-600 text-rose-700 animate-pulse' : w ? 'bg-blue-50 border-blue-200 text-blue-700 animate-pulse' : na ? 'bg-slate-200 text-slate-500' : 'bg-white dark:bg-slate-800 border-slate-200 text-slate-600 dark:text-slate-300'}`}>
                                       <span>{d ? '✓' : w ? '⚡' : na ? '🚫' : '🔘'} #{index+1}-{tIdx+1}-<span className="font-black text-[11px]">{t.sequenceId || '?'}</span></span><span className="truncate max-w-[80px]">{t.title}</span>
                                     </button>
                                   );
@@ -1213,14 +1211,18 @@
                         {!isCol && (
                           <div className="bg-slate-50/20 dark:bg-slate-900/20">
                             {addingTaskStepId === step.id && (
-                              <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-5 bg-purple-50/10 dark:bg-purple-900/10 border-b border-slate-200 dark:border-slate-700/50 space-y-4 text-xs">
-                                <div className="flex justify-between items-center pb-2 border-b border-slate-200 dark:border-slate-700/50">
-                                  <span className="font-black text-purple-800 dark:text-purple-300">➕ STEP {index + 1} タスク新規作成</span><button type="button" onClick={() => setAddingTaskStepId(null)} className="text-slate-400"><IconX /></button>
+                              <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-5 bg-purple-50/10 dark:bg-purple-900/10 border-b border-slate-200 dark:border-slate-700/50 space-y-4 text-xs animate-in slide-in-from-top-2 duration-200">
+                                <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700/50">
+                                  <span className="font-black text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5"><IconPlus className="h-4 w-4" />STEP {index + 1} タスク新規作成</span>
+                                  <div className="flex items-center gap-2">
+                                    <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
+                                    <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">作成する</button>
+                                  </div>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                                   <div className="space-y-3">
-                                    <input required type="text" placeholder="タスク名..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-slate-700 dark:text-slate-200 font-bold" />
-                                    <textarea placeholder="詳細説明文... (画像ペースト / D&D対応)" value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={(e) => handlePasteOnTextInput(e, setNewTaskImages)} onDrop={(e) => handleDropOnTextInput(e, setNewTaskImages)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-slate-700 dark:text-slate-200 min-h-[120px]" rows={4} />
+                                    <input required type="text" placeholder="タスク名..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-slate-700 dark:text-slate-200 font-bold focus:outline-none" />
+                                    <textarea placeholder="詳細説明文... (画像ペースト / D&D対応)" value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={(e) => handlePasteOnTextInput(e, setNewTaskImages)} onDrop={(e) => handleDropOnTextInput(e, setNewTaskImages)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-slate-700 dark:text-slate-200 min-h-[120px] focus:outline-none" rows={4} />
                                     {newTaskImages.length > 0 && (
                                       <div className="flex flex-wrap gap-2 p-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
                                         {newTaskImages.map((src, imgIdx) => (
@@ -1232,9 +1234,9 @@
                                     )}
                                   </div>
                                   <div className="grid grid-cols-2 gap-3 self-start">
-                                    <div><label className="block text-slate-400 font-bold mb-1">担当部署</label><select value={newTaskDept} onChange={e => { const dept = e.target.value; const found = deptList.find(d => d.key === dept); setNewTaskDept(dept); setNewTaskAssignee(dept === 'backoffice' ? '自分 (事務)' : (found ? `${found.label}担当` : '担当者')); }} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-                                    <div><label className="block text-slate-400 font-bold mb-1">担当個人名</label><input type="text" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-slate-700 dark:text-slate-200 font-bold" /></div>
-                                    <div className="col-span-2"><label className="block text-slate-400 font-bold mb-1">完了期日</label><input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-slate-700 dark:text-slate-200 font-mono font-bold" /></div>
+                                    <div><label className="block text-slate-400 font-bold mb-1">担当部署</label><select value={newTaskDept} onChange={e => { const dept = e.target.value; const found = deptList.find(d => d.key === dept); setNewTaskDept(dept); setNewTaskAssignee(dept === 'backoffice' ? '自分 (事務)' : (found ? `${found.label}担当` : '担当者')); }} className="w-full border border-slate-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold focus:outline-none">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
+                                    <div><label className="block text-slate-400 font-bold mb-1">担当個人名</label><input type="text" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-slate-700 dark:text-slate-200 font-bold focus:outline-none" /></div>
+                                    <div className="col-span-2"><label className="block text-slate-400 font-bold mb-1">完了期日</label><input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-slate-700 dark:text-slate-200 font-mono font-bold focus:outline-none" /></div>
                                   </div>
                                   
                                   <div className="col-span-1 md:col-span-2 border-t border-slate-200 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
@@ -1242,7 +1244,7 @@
                                     <div className="flex items-center gap-2">
                                       <input type="text" placeholder="リンク名 (例: 仕様書)" value={tmpTaskLinkLabel} onChange={e => setTmpTaskLinkLabel(e.target.value)} className="w-32 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
                                       <input type="text" placeholder="URL (https://...)" value={tmpTaskLinkUrl} onChange={e => setTmpTaskLinkUrl(e.target.value)} className="flex-1 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
-                                      <button type="button" onClick={handleAddLinkToNewTask} className="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
+                                      <button type="button" onClick={handleAddLinkToNewTask} className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                                     </div>
                                     {newTaskLinks.length > 0 && (
                                       <div className="flex flex-wrap gap-1.5 pt-1">
@@ -1252,10 +1254,6 @@
                                       </div>
                                     )}
                                   </div>
-                                </div>
-                                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                                  <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-white dark:bg-slate-800 border text-slate-500 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
-                                  <button type="submit" className="bg-purple-600 text-white px-5 py-2 rounded-2xl font-bold">作成</button>
                                 </div>
                               </form>
                             )}
@@ -1276,13 +1274,13 @@
                                     <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
                                       {(!d && !na) && (
                                         <div className="flex items-center gap-1 mr-1 bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 p-0.5 rounded-lg">
-                                          <button onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }} disabled={taskIndex === 0} className={`p-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md transition shadow-xs ${taskIndex === 0 ? 'opacity-25' : 'text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400'}`}><IconDragHandle /></button>
+                                          <button onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }} disabled={taskIndex === 0} className={`p-1 rounded-md ${taskIndex === 0 ? 'opacity-25' : 'text-slate-400 hover:text-indigo-600'}`}><IconDragHandle /></button>
                                           <button onClick={(e) => { e.stopPropagation(); startEditing(task); }} className="p-1 text-slate-400 hover:text-indigo-600 rounded-md"><IconEdit2 className="h-3.5 w-3.5" /></button>
                                           <button onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }} className="p-1 text-slate-400 hover:text-rose-600 rounded-md"><IconTrash2 className="h-3.5 w-3.5" /></button>
                                         </div>
                                       )}
-                                      <button onClick={(e) => { e.stopPropagation(); toggleTaskPriority(task.id); }} className={`flex items-center gap-0.5 text-[9px] font-black px-2.5 py-1.5 rounded-xl border ${task.isHighPriority ? 'bg-rose-500 text-white border-rose-600 shadow-md shadow-rose-100 dark:shadow-none' : 'bg-rose-50/70 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 border-rose-200'}`}><IconFlag className="h-2.5 w-2.5" />{task.isHighPriority ? '最優先' : '優先度'}</button>
-                                      <select value={task.status} onClick={(e) => e.stopPropagation()} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className={`text-[9px] font-black px-2.5 py-1.5 rounded-xl border cursor-pointer focus:outline-none ${d ? 'bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-100' : w ? 'bg-blue-500 text-white border-blue-600 shadow-md shadow-blue-100' : na ? 'bg-slate-400 text-white border-slate-500 shadow-md shadow-slate-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200'}`}>
+                                      <button onClick={(e) => { e.stopPropagation(); toggleTaskPriority(task.id); }} className={`flex items-center gap-0.5 text-[9px] font-black px-2.5 py-1.5 rounded-xl border ${task.isHighPriority ? 'bg-rose-500 text-white border-rose-600' : 'bg-rose-50/70 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 border-rose-200'}`}><IconFlag className="h-2.5 w-2.5" />{task.isHighPriority ? '最優先' : '優先度'}</button>
+                                      <select value={task.status} onClick={(e) => e.stopPropagation()} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className={`text-[9px] font-black px-2.5 py-1.5 rounded-xl border cursor-pointer focus:outline-none ${d ? 'bg-emerald-500 text-white border-emerald-600 shadow-md' : w ? 'bg-blue-500 text-white border-blue-600 shadow-md' : na ? 'bg-slate-400 text-white border-slate-500 shadow-md' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-202'}`}>
                                         <option value="pending" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">🔘 未対応</option><option value="in_progress" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">⚡ 進行中</option><option value="completed" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">✅ 完了マーク</option><option value="not_applicable" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">🚫 対応なし</option>
                                       </select>
                                       {editingTaskId !== task.id && <button onClick={(e) => { e.stopPropagation(); toggleTaskCollapse(task.id); }} className="p-1 text-slate-400 ml-0.5">{tCol ? <IconChevronRight className="h-4 w-4" /> : <IconChevronDown className="h-4 w-4" />}</button>}
@@ -1290,9 +1288,15 @@
 
                                     {editingTaskId === task.id ? (
                                       <div className="space-y-3.5 text-xs w-full pl-1 pr-4 mt-6 animate-in fade-in" onClick={(e) => e.stopPropagation()}>
-                                        <span className="font-extrabold text-indigo-600 dark:text-indigo-400 block mb-1">✏️ タスク編集 (# {index + 1}-{taskIndex + 1}-{task.sequenceId || '?'})</span>
-                                        <input type="text" value={editFormData.title} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full font-bold border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-slate-700 dark:text-slate-200" placeholder="タスク名" />
-                                        <textarea value={editFormData.description} onChange={e => setEditFormData({...editFormData, description: e.target.value})} onPaste={(e) => handlePasteOnTextInput(e, setEditTaskImages)} onDrop={(e) => handleDropOnTextInput(e, setEditTaskImages)} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 min-h-[100px] text-slate-700 dark:text-slate-200" rows={3} placeholder="詳細や論点... (画像ペースト対応)" />
+                                        <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
+                                          <span className="font-extrabold text-indigo-600 dark:text-indigo-400 block">✏️ タスク編集 (# {index + 1}-{taskIndex + 1}-{task.sequenceId || '?'})</span>
+                                          <div className="flex items-center gap-2">
+                                            <button onClick={() => setEditingTaskId(null)} className="bg-slate-100 dark:bg-slate-800 text-slate-500 px-3 py-1.5 rounded-xl font-bold">戻る</button>
+                                            <button onClick={() => saveEdit(task.id)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">保存</button>
+                                          </div>
+                                        </div>
+                                        <input type="text" value={editFormData.title} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full font-bold border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-slate-700 dark:text-slate-200 focus:outline-none" placeholder="タスク名" />
+                                        <textarea value={editFormData.description} onChange={e => setEditFormData({...editFormData, description: e.target.value})} onPaste={(e) => handlePasteOnTextInput(e, setEditTaskImages)} onDrop={(e) => handleDropOnTextInput(e, setEditTaskImages)} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 min-h-[100px] text-slate-700 dark:text-slate-200 focus:outline-none" rows={3} placeholder="詳細や論点... (画像ペースト対応)" />
                                         {editTaskImages.length > 0 && (
                                           <div className="flex flex-wrap gap-2 p-2 bg-slate-50 dark:bg-slate-800 rounded-xl border">
                                             {editTaskImages.map((src, imgIdx) => (
@@ -1304,8 +1308,8 @@
                                         )}
                                         <div className="grid grid-cols-3 gap-2">
                                           <div><label className="text-[10px] text-slate-400 font-bold block mb-0.5">担当部署</label><select value={editFormData.department} onChange={e => { const dk = e.target.value; const fnd = deptList.find(d => d.key === dk); setEditFormData({ ...editFormData, department: dk, assignee: dk === 'backoffice' ? '自分 (事務)' : (fnd ? `${fnd.label}担当` : '担当者') }); }} className="w-full border border-slate-300 dark:border-slate-600 rounded-xl p-2 text-xs bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-                                          <div><label className="text-[10px] text-slate-400 font-bold block mb-0.5">担当者名</label><input type="text" value={editFormData.assignee} onChange={e => setEditFormData({...editFormData, assignee: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200" /></div>
-                                          <div><label className="text-[10px] text-slate-400 font-bold block mb-0.5">完了期日</label><input type="date" value={editFormData.dueDate} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-mono text-slate-700 dark:text-slate-200" /></div>
+                                          <div><label className="text-[10px] text-slate-400 font-bold block mb-0.5">担当者名</label><input type="text" value={editFormData.assignee} onChange={e => setEditFormData({...editFormData, assignee: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" /></div>
+                                          <div><label className="text-[10px] text-slate-400 font-bold block mb-0.5">完了期日</label><input type="date" value={editFormData.dueDate} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-mono text-slate-700 dark:text-slate-200 focus:outline-none" /></div>
                                         </div>
 
                                         <div className="col-span-1 md:col-span-3 border-t border-slate-200 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
@@ -1313,7 +1317,7 @@
                                           <div className="flex items-center gap-2">
                                             <input type="text" placeholder="リンク名" value={tmpEditTaskLinkLabel} onChange={e => setTmpEditTaskLinkLabel(e.target.value)} className="w-28 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
                                             <input type="text" placeholder="URL (https://...)" value={tmpEditTaskLinkUrl} onChange={e => setTmpEditTaskLinkUrl(e.target.value)} className="flex-1 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none" />
-                                            <button type="button" onClick={handleAddLinkToEditTask} className="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
+                                            <button type="button" onClick={handleAddLinkToEditTask} className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                                           </div>
                                           {editTaskLinks.length > 0 && (
                                             <div className="flex flex-wrap gap-1.5 pt-1">
@@ -1322,11 +1326,6 @@
                                               ))}
                                             </div>
                                           )}
-                                        </div>
-
-                                        <div className="flex justify-end gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-700">
-                                          <button onClick={() => setEditingTaskId(null)} className="bg-slate-100 dark:bg-slate-800 text-slate-500 px-3 py-1.5 rounded-xl font-bold">戻る</button>
-                                          <button onClick={() => saveEdit(task.id)} className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl font-bold">保存</button>
                                         </div>
                                       </div>
                                     ) : (
@@ -1396,7 +1395,7 @@
                                                 </div>
                                               )}
                                               {editingDescTaskId !== task.id && task.description && (
-                                                <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }} className="absolute top-2 right-2 opacity-100 p-1 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors" title="タスクの説明をコピー">📋 コピー</button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'コピーしました！'); }} className="absolute top-2 right-2 opacity-100 p-1 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors" title="コピーする">📋 コピー</button>
                                               )}
                                             </div>
                                           </div>
@@ -1411,13 +1410,12 @@
                                               ))}
                                             </div>
                                           )}
-
                                         </div>
 
                                         {!tCol && (
                                           <div className="space-y-3 pt-2" onClick={(e) => e.stopPropagation()}>
                                             <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 space-y-2.5 shadow-inner">
-                                              <div className="pb-1.5 border-b border-slate-200 dark:border-slate-700/50 space-y-2">
+                                              <div className="pb-1.5 border-b border-slate-200 dark:border-slate-700/50 flex flex-col gap-2">
                                                 <span className="text-[9.5px] font-black text-slate-400 dark:text-slate-500 flex items-center gap-1 select-none"><IconClock /> 時系列メモ</span>
                                                 {addingLogTaskId !== task.id && !d && !na && (
                                                   <div className="flex justify-center w-full pb-1">
@@ -1427,6 +1425,14 @@
                                               </div>
                                               {addingLogTaskId === task.id && (
                                                 <div className="bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-800/50 rounded-2xl p-3 space-y-3 text-xs shadow-md animate-in zoom-in-95">
+                                                  {/* 追記完了・キャンセルを上部に移動 */}
+                                                  <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-700">
+                                                    <span className="font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5"><IconPlus className="h-3.5 w-3.5"/> メモの新規追記</span>
+                                                    <div className="flex items-center gap-2">
+                                                      <button onClick={() => setAddingLogTaskId(null)} className="text-[9px] text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-lg font-bold transition-colors">キャンセル</button>
+                                                      <button onClick={() => addLog(task.id)} disabled={!newLogText.trim() && newLogImages.length === 0} className="text-[9px] bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-lg font-black disabled:bg-slate-200 dark:disabled:bg-slate-700 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:cursor-not-allowed transition-colors">保存する</button>
+                                                    </div>
+                                                  </div>
                                                   <textarea value={newLogText} onChange={e => setNewLogText(e.target.value)} onPaste={(e) => handlePasteOnTextInput(e, setNewLogImages)} onDrop={(e) => handleDropOnTextInput(e, setNewLogImages)} placeholder="状況メモ... (画像対応)" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-700 dark:text-slate-200 font-bold focus:outline-none focus:border-indigo-400 min-h-[80px]" rows={2.5} />
                                                   {newLogImages.length > 0 && (
                                                     <div className="flex flex-wrap gap-1.5 p-2 bg-slate-100 dark:bg-slate-900/50 rounded-xl border">
@@ -1442,7 +1448,7 @@
                                                   <div className="border-t border-slate-100 dark:border-slate-700 pt-2 space-y-2">
                                                     <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 block uppercase">🔗 関連リンク</span>
                                                     <div className="flex items-center gap-1">
-                                                      <IconLink className="text-slate-400" /><input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><button onClick={handleAddLinkToNewLog} className="bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0 transition-colors">追加</button>
+                                                      <IconLink className="text-slate-400" /><input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><button onClick={handleAddLinkToNewLog} className="bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-600 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0 transition-colors">追加</button>
                                                     </div>
                                                     {newLogLinks.length > 0 && (
                                                       <div className="flex flex-wrap gap-1.5 pt-1">
@@ -1451,10 +1457,6 @@
                                                         ))}
                                                       </div>
                                                     )}
-                                                  </div>
-                                                  <div className="flex flex-wrap justify-end gap-1.5 mt-1 pt-2 border-t border-slate-100 dark:border-slate-700">
-                                                    <button onClick={() => setAddingLogTaskId(null)} className="text-[9px] text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 border border-transparent dark:border-slate-700 px-2.5 py-1.5 rounded-lg font-bold transition-colors">キャンセル</button>
-                                                    <button onClick={() => addLog(task.id)} disabled={!newLogText.trim() && newLogImages.length === 0} className="text-[9px] bg-indigo-600 text-white px-3.5 py-1.5 rounded-lg font-black disabled:bg-slate-300">メモを追加</button>
                                                   </div>
                                                 </div>
                                               )}
@@ -1498,13 +1500,12 @@
                                                                 ))}
                                                               </div>
                                                             )}
-                                                            <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(log.text, 'コピー完了！'); }} className="absolute right-0 top-0 opacity-100 p-1 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 rounded text-[9px] font-bold shadow-xs select-none transition-colors" title="コピーする">📋</button>
                                                           </div>
                                                           <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                                                             {log.to && (<span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-lg font-black">TO: {log.to}</span>)}
                                                             {log.dueDate && (<span className="inline-flex items-center gap-1 text-[9px] bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 px-2 py-0.5 rounded-lg font-mono font-bold">期日: {log.dueDate}</span>)}
                                                             {log.links && log.links.map(lnk => (
-                                                              <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1 text-[9px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-lg transition">
+                                                              <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[9px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-lg transition">
                                                                 <IconExternalLink className="h-2.5 w-2.5" /> <span className="font-bold">{lnk.label}</span>
                                                                 {!log.completed && (<button onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeSingleLinkFromLog(task.id, log.id, lnk.id); }} className="text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 font-bold text-[10px] ml-1" title="リンクのみ削除">×</button>)}
                                                               </a>
