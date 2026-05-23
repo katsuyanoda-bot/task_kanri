@@ -1446,13 +1446,13 @@
                               </div>
                             )}
 
-                            {/* 下半分のタスク一覧表示エリア */}
+                   {/* 下半分のタスク一覧表示エリア */}
                             {!isCol && (
                               <div className="bg-slate-55/20 dark:bg-slate-900/20 p-4 space-y-4">
                                 {addingTaskStepId === step.id && (
                                   <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-4 bg-slate-55 dark:bg-slate-900 border rounded-2xl space-y-4 text-xs animate-in fade-in">
                                     <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700">
-                                      <span className="font-extrabold text-indigo-600 dark:text-indigo-400">➕ 新規タスクの追加</span>
+                                      <span className="font-extrabold text-indigo-600 dark:text-indigo-404">➕ 新規タスクの追加</span>
                                       <div className="flex justify-end gap-2">
                                         <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
                                         <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">追加する</button>
@@ -1486,7 +1486,7 @@
                                   </form>
                                 )}
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   {stepTksAll.map((task, taskIndex) => {
                                     if (!taskFilter[task.status]) return null;
                                     const isEditingTask = editingTaskId === task.id; // 💡編集中フラグ
@@ -1614,6 +1614,8 @@
                                     );
                                   })}
                                 </div>
+                              </div>
+                            )}     
             {/* ============================== */}
             {/* 2. 🗃️ データベースビュー       */}
             {/* ============================== */}
