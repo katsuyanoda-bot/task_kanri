@@ -918,8 +918,43 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
         return { deptStats, memberStats: Object.values(memberStats) };
       }, [projects, deptList]);
 
-      // 💡 エラー（真っ白画面）防止用の安全なダミー。ステップ2と3で本実装に書き換えます。
-      const analyticsLeadTimeData = useMemo(() => [], []);
+      // 【ステップ2】安全な日付引き算による大ステップ別の平均処理日数分析
+      const analyticsLeadTimeData = useMemo(() => {
+        const stepStats = {};
+        
+        projects.forEach(p => {
+          (p.stepList || []).forEach(step => {
+            // 完了済、かつ開始日と完了日が両方記録されているタスクだけを抽出
+            const tks = (p.tasks || []).filter(t => t.stepId === step.id && t.status === 'completed' && t.startedAt && t.completedAt);
+            
+            if (tks.length > 0) {
+              const name = step.name;
+              if (!stepStats[name]) stepStats[name] = { totalDays: 0, count: 0 };
+              
+              tks.forEach(t => {
+                const start = new Date(t.startedAt);
+                const end = new Date(t.completedAt);
+                // フリーズの原因になるwhileは使わず、ミリ秒の差分から日数を一発で計算
+                const days = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+                stepStats[name].totalDays += days;
+                stepStats[name].count += 1;
+              });
+            }
+          });
+        });
+
+        return Object.keys(stepStats).map(name => {
+          const stat = stepStats[name];
+          return {
+            step: name,
+            avg: stat.count > 0 ? Math.round((stat.totalDays / stat.count) * 10) / 10 : 0,
+            target: 5 // 目標日数の基準線（ステップ3で変数化します）
+          };
+        });
+      }, [projects]);
+
+      // 💡 リスク検知はステップ3で実装するため、まだ安全なダミーのままにしておきます
+      const analyticsRiskTasks = useMemo(() => [], []);
       const analyticsRiskTasks = useMemo(() => [], []);
       // ==========================================
       // 未ログイン（Sansanメンバー認証前）画面
