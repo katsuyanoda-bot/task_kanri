@@ -132,6 +132,7 @@
     const IconList = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>;
     const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
     const IconMoon = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>;
+    const IconChart = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>;
 
     // Google カラーロゴ
     const IconGoogle = () => (
@@ -504,6 +505,9 @@
       const [editingDescTaskId, setEditingDescTaskId] = useState(null);
       const [tmpDescValue, setTmpDescValue] = useState('');
 
+      // --- アナリティクス用のステート ---
+      const [analyticsTab, setAnalyticsTab] = useState('resource');
+
       useEffect(() => {
         if (editingProject && activeProject) {
           setProjectForm({ id: activeProject.id, folderId: activeProject.folderId || 'f1', name: activeProject.name || '', code: activeProject.code || '', status: activeProject.status || 'pending', startDate: activeProject.startDate || '2026-05-15', endDate: activeProject.endDate || '2026-06-25' });
@@ -875,6 +879,97 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
       const moveDeptOrder = async (i, dir) => { if (!isSansanUser) return; const t=i+dir; if(t<0||t>=deptList.length)return; const l=[...deptList]; [l[i],l[t]]=[l[t],l[i]]; const o=l.map((d,idx)=>({...d,order:idx})); if(!useFirebase||(gistToken&&gistId)){updateData('depts',o);return;} setDeptList(o); try{await Promise.all(o.map(d=>setDoc(doc(db,'artifacts',appId,'public','data','departments',d.key),d)));}catch(e){} };
       const handleOpenProjectFromDb = (proj) => { setSelectedFolderId(proj.folderId); setCurrentProjectId(proj.id); setViewMode('board'); };
 
+
+      // =========================================================================
+      // --- アナリティクス（アルファ）用のデータ集計ロジック ---
+      // =========================================================================
+
+      const analyticsResourceData = useMemo(() => {
+        const allTasks = projects.flatMap(p => p.tasks || []);
+        return deptList.map(dept => {
+          const deptTasks = allTasks.filter(t => t.department === dept.key && t.status !== 'completed' && t.status !== 'not_applicable');
+          const urgentCount = deptTasks.filter(t => t.isHighPriority).length;
+          
+          const memberCounts = {};
+          deptTasks.forEach(t => {
+            const assignee = t.assignee || '未設定';
+            memberCounts[assignee] = (memberCounts[assignee] || 0) + 1;
+          });
+          const members = Object.keys(memberCounts).map(name => ({ name, tasks: memberCounts[name] })).sort((a, b) => b.tasks - a.tasks);
+
+          return {
+            deptKey: dept.key,
+            deptLabel: dept.label,
+            colorClass: colorClassesMap[dept.color]?.bar || 'bg-slate-500',
+            active: deptTasks.length,
+            urgent: urgentCount,
+            members
+          };
+        }).filter(d => d.active > 0); 
+      }, [projects, deptList]);
+
+      const analyticsLeadTimeData = useMemo(() => {
+        const stepStats = {};
+        projects.forEach(p => {
+          (p.stepList || []).forEach(step => {
+            const tks = (p.tasks || []).filter(t => t.stepId === step.id && t.status === 'completed' && t.startedAt && t.completedAt);
+            if (tks.length > 0) {
+              const name = step.name;
+              if (!stepStats[name]) stepStats[name] = { totalDays: 0, count: 0 };
+              tks.forEach(t => {
+                const start = new Date(t.startedAt);
+                const end = new Date(t.completedAt);
+                const days = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+                stepStats[name].totalDays += days;
+                stepStats[name].count += 1;
+              });
+            }
+          });
+        });
+
+        return Object.keys(stepStats).map(name => {
+          const stat = stepStats[name];
+          return {
+            step: name,
+            avg: Math.round((stat.totalDays / stat.count) * 10) / 10,
+            target: 5 // 仮のターゲット日数（要件定義次第で動的に変更可能）
+          };
+        });
+      }, [projects]);
+
+      const analyticsRiskTasks = useMemo(() => {
+        const risks = [];
+        projects.forEach(p => {
+          (p.tasks || []).forEach(t => {
+            if (t.status === 'completed' || t.status === 'not_applicable') return;
+            
+            // 期限超過
+            if (isOverdue(t.dueDate, t.status)) {
+              risks.push({ id: t.id, title: t.title, proj: p.name, type: '期限超過', desc: `期限: ${t.dueDate}`, badge: 'bg-amber-900/50 text-amber-400 border border-amber-500' });
+              return;
+            }
+            // 炎上予兆
+            const logs = t.contextLogs || [];
+            const hasHighlight = logs.some(l => l.isHighlighted);
+            if (logs.length >= 5 || hasHighlight) {
+              risks.push({ id: t.id, title: t.title, proj: p.name, type: '炎上予兆', desc: `メモ ${logs.length}件${hasHighlight ? ' (重要あり)' : ''}`, badge: 'bg-rose-900/50 text-rose-400 border border-rose-500' });
+              return;
+            }
+            // 放置リスク (7日間メモの更新がない)
+            if (t.status === 'in_progress' && logs.length > 0) {
+              const lastLogDate = new Date(logs[0].date.split(' ')[0].replace(/\//g, '-'));
+              const today = new Date(TODAY_STR);
+              const diffDays = Math.round((today - lastLogDate) / (1000 * 60 * 60 * 24));
+              if (diffDays > 7) {
+                 risks.push({ id: t.id, title: t.title, proj: p.name, type: '放置', desc: `${diffDays}日間更新なし`, badge: 'bg-slate-700 text-slate-300 border border-slate-500' });
+              }
+            }
+          });
+        });
+        return risks;
+      }, [projects]);
+
+
       // ==========================================
       // 未ログイン（Sansanメンバー認証前）画面
       // ==========================================
@@ -1043,9 +1138,11 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                 </div>
               </div>
 
+              {/* ----- ★ヘッダーのタブ切替ボタン（3つ目の「アナリティクス」を追加） ----- */}
               <div className="flex bg-slate-150 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-202 dark:border-slate-700 text-xs shadow-inner">
                 <button onClick={() => setViewMode('board')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'board' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-455 hover:text-slate-955 dark:hover:text-white'}`}><IconCalendar className="h-3 w-3 text-indigo-500" /><span>📋 進行ダッシュボード</span></button>
                 <button onClick={() => setViewMode('database')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'database' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-455 hover:text-slate-955 dark:hover:text-white'}`}><IconDatabase className="h-3 w-3 text-indigo-500" /><span>🗃️ データベース</span></button>
+                <button onClick={() => setViewMode('analytics')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'analytics' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-455 hover:text-slate-955 dark:hover:text-white'}`}><IconChart className="h-3 w-3 text-indigo-500" /><span>📊 アナリティクス</span></button>
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
@@ -1224,6 +1321,10 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
           </header>
 
           <main className="max-w-7xl mx-auto p-6 space-y-6">
+            
+            {/* ============================== */}
+            {/* 1. ボード（カンバン）ビュー    */}
+            {/* ============================== */}
             {viewMode === 'board' && (
               <React.Fragment>
                 {activeProject ? (
@@ -2067,6 +2168,153 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                 </div>
               </div>
             )}
+
+            {/* ============================== */}
+            {/* 3. アナリティクス（分析）ビュー */}
+            {/* ============================== */}
+            {viewMode === 'analytics' && (
+              <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in transition-colors">
+                <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm space-y-6">
+                  <div>
+                    <h2 className="text-xl font-black text-slate-805 dark:text-white flex items-center gap-2"><IconChart className="text-indigo-600 dark:text-indigo-400" /> プロジェクト横断分析ダッシュボード</h2>
+                    <p className="text-sm text-slate-505 dark:text-slate-400 mt-1">案件に紐づくタスクデータをリアルタイムに集計し、ボトルネックやリソース負荷を可視化します。</p>
+                  </div>
+                  
+                  <div className="flex gap-2 border-b border-slate-202 dark:border-slate-700 pb-px">
+                    {[
+                      { id: 'resource', icon: '👥', label: 'リソース・負荷状況' },
+                      { id: 'leadtime', icon: '⏱️', label: 'リードタイム分析' },
+                      { id: 'risk', icon: '🚨', label: 'リスク・放置タスク検知' },
+                    ].map(tab => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setAnalyticsTab(tab.id)}
+                        className={`px-5 py-2.5 rounded-t-xl text-sm font-bold transition-all ${analyticsTab === tab.id ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-505 dark:text-slate-400 hover:bg-slate-150 dark:hover:bg-slate-700/50'}`}
+                      >
+                        {tab.icon} {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="animate-in slide-in-from-bottom-2 fade-in duration-300">
+                  {/* 1. リソース・負荷状況 */}
+                  {analyticsTab === 'resource' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {analyticsResourceData.map(d => (
+                        <div key={d.deptKey} className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl p-5 shadow-sm space-y-4 relative overflow-hidden">
+                          <div className={`absolute top-0 left-0 w-full h-1 ${d.colorClass}`}></div>
+                          <div className="flex justify-between items-start">
+                            <h3 className="font-black text-slate-805 dark:text-white">{d.deptLabel}</h3>
+                            <span className="text-2xl font-black text-slate-805 dark:text-white">{d.active}<span className="text-xs text-slate-404 dark:text-slate-400 ml-1">件</span></span>
+                          </div>
+                          <div className="bg-rose-55 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50 rounded-lg p-2 flex justify-between items-center text-xs">
+                            <span className="text-rose-605 dark:text-rose-400 font-bold">最優先タスク</span>
+                            <span className="text-rose-605 dark:text-rose-400 font-black">{d.urgent} 件</span>
+                          </div>
+                          <div className="space-y-2 pt-2 border-t border-slate-150 dark:border-slate-700">
+                            <p className="text-[10px] text-slate-440 dark:text-slate-400 font-bold uppercase tracking-wide">担当者別 内訳</p>
+                            {d.members.map(m => (
+                              <div key={m.name} className="space-y-1">
+                                <div className="flex justify-between text-xs font-bold text-slate-605 dark:text-slate-300">
+                                  <span>{m.name}</span>
+                                  <span>{m.tasks}件</span>
+                                </div>
+                                <div className="h-1.5 w-full bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden">
+                                  <div className={`h-full ${d.colorClass} opacity-80`} style={{ width: `${(m.tasks / d.active) * 100}%` }}></div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                      {analyticsResourceData.length === 0 && (
+                        <div className="col-span-full py-12 text-center text-slate-404 dark:text-slate-500 font-bold border border-dashed border-slate-300 dark:border-slate-700 rounded-3xl">
+                          現在進行中のタスクがありません。
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 2. リードタイム分析 */}
+                  {analyticsTab === 'leadtime' && (
+                    <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm space-y-6">
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-black text-slate-805 dark:text-white">ステップ別 平均消化日数</h3>
+                        <span className="text-xs bg-slate-150 dark:bg-slate-700 text-slate-605 dark:text-slate-300 px-3 py-1 rounded-lg font-bold">全 {projects.length} プロジェクト実績</span>
+                      </div>
+                      <div className="space-y-4">
+                        {analyticsLeadTimeData.length > 0 ? analyticsLeadTimeData.map(d => {
+                          const isOver = d.avg > d.target;
+                          return (
+                            <div key={d.step} className="flex items-center gap-4">
+                              <div className="w-32 text-xs font-bold text-slate-605 dark:text-slate-300 truncate" title={d.step}>{d.step}</div>
+                              <div className="flex-1 h-4 bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden relative border border-slate-202 dark:border-slate-600">
+                                {/* 目標ラインのマーカー */}
+                                <div className="absolute top-0 bottom-0 border-r-2 border-slate-805 dark:border-white z-10" style={{ left: `${(d.target / 15) * 100}%` }}></div>
+                                {/* 実績バー */}
+                                <div className={`h-full ${isOver ? 'bg-rose-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min((d.avg / 15) * 100, 100)}%` }}></div>
+                              </div>
+                              <div className="w-48 text-xs font-bold flex gap-3 text-right">
+                                <span className={isOver ? 'text-rose-605 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}>実績: {d.avg}日</span>
+                                <span className="text-slate-440 dark:text-slate-400">(目安: {d.target}日)</span>
+                              </div>
+                            </div>
+                          );
+                        }) : (
+                          <div className="py-8 text-center text-slate-404 dark:text-slate-500 font-bold border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl">
+                            完了したタスクのデータが蓄積されていません。
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-505 dark:text-slate-400 italic">💡 縦線（マーカー）は目安となる目標日数（初期値5日）を表しています。これを超過しているステップはボトルネックの可能性があります。</p>
+                    </div>
+                  )}
+
+                  {/* 3. リスク・放置タスク */}
+                  {analyticsTab === 'risk' && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="col-span-1 md:col-span-2 space-y-3">
+                        <h3 className="font-black text-slate-805 dark:text-white text-sm mb-4">⚠️ 要確認タスク一覧</h3>
+                        {analyticsRiskTasks.length > 0 ? analyticsRiskTasks.map((t, i) => (
+                          <div key={`${t.id}-${i}`} onClick={() => { setViewMode('board'); setCurrentProjectId(projects.find(p => p.name === t.proj)?.id); }} className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer shadow-sm">
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg ${t.badge}`}>{t.type}</span>
+                                <span className="text-xs text-slate-505 dark:text-slate-400 font-bold">{t.proj}</span>
+                              </div>
+                              <h4 className="text-sm font-black text-slate-805 dark:text-slate-100">{t.title}</h4>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-xs font-bold text-slate-605 dark:text-slate-400 bg-slate-55 dark:bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-202 dark:border-slate-700">{t.desc}</span>
+                            </div>
+                          </div>
+                        )) : (
+                          <div className="py-12 text-center text-slate-404 dark:text-slate-500 font-bold border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl">
+                            現在、放置・遅延・炎上予兆のタスクはありません。素晴らしい！🎉
+                          </div>
+                        )}
+                      </div>
+                      <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-5 space-y-4 shadow-sm h-fit sticky top-24">
+                        <h3 className="font-black text-slate-805 dark:text-white text-sm">💡 リスクサマリー</h3>
+                        <ul className="text-xs text-slate-605 dark:text-slate-300 space-y-3 font-bold">
+                          <li className="flex justify-between items-center bg-slate-55 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-202 dark:border-slate-700">
+                            <span>放置リスク (7日超)</span><span className="text-slate-606 dark:text-slate-300 text-sm">{analyticsRiskTasks.filter(r => r.type === '放置').length} 件</span>
+                          </li>
+                          <li className="flex justify-between items-center bg-slate-55 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-202 dark:border-slate-700">
+                            <span>炎上予兆 (メモ多数/重要)</span><span className="text-rose-605 dark:text-rose-400 text-sm">{analyticsRiskTasks.filter(r => r.type === '炎上予兆').length} 件</span>
+                          </li>
+                          <li className="flex justify-between items-center bg-slate-55 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-202 dark:border-slate-700">
+                            <span>期限超過</span><span className="text-amber-600 dark:text-amber-400 text-sm">{analyticsRiskTasks.filter(r => r.type === '期限超過').length} 件</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
           </main>
 
           {/* 大分類フォルダ追加モーダル */}
