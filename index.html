@@ -85,12 +85,12 @@
     const IconSettings = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>;
     const IconDragHandle = () => <svg className="h-4 w-4 text-slate-404 dark:text-slate-505 cursor-grab active:cursor-grabbing" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line></svg>;
     const IconArrowUp = () => <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>;
-    const IconArrowDown = () => <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>; // ⭕修正：閉じタグを</svg>に修正
+    const IconArrowDown = () => <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>;
     const IconFolder = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>;
     const IconDatabase = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>;
     const IconEye = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
     const IconWarning = ({ className = "h-6 w-6 text-rose-605" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
-    const IconList = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>; // ⭕修正：タイポをy2="6"に修正
+    const IconList = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>;
     const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
     const IconMoon = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>;
     const IconChart = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>;
@@ -107,7 +107,7 @@
 
     // --- カラー定義マップ ---
     const colorClassesMap = {
-      purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#25183a]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-55 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-400' },
+      purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#25183a]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-55 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-404' },
       indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-[#f0f2ff] dark:bg-[#1e223b]', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-150 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-404' },
       blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-amber-404' },
       emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-404' },
@@ -714,18 +714,18 @@
       const handleAddStep = (e) => { e.preventDefault(); if (!newStepName.trim()) return; saveProjectToFirestore({ ...activeProject, stepList: [...stepList, { id: stepList.length > 0 ? Math.max(...stepList.map(s => s.id)) + 1 : 1, name: newStepName.trim(), desc: newStepDesc.trim(), deptKey: newStepDeptKey, startDate: newStepStartDate, dueDate: newStepDueDate, links: [...newStepLinks] }] }); setShowAddStepForm(false); showAlert('追加しました'); };
       const handleDeleteStep = (stepId, stepName, e) => { e.stopPropagation(); triggerConfirm('削除', `削除しますか？`, () => { saveProjectToFirestore({ ...activeProject, stepList: stepList.filter(s => s.id !== stepId), tasks: tasks.filter(t => t.stepId !== stepId) }); showAlert('削除完了'); }); };
 
-      const handleAddLinkToNewStep = (e) => { e.preventDefault(); if(tmpStepLinkUrl.trim()) { setNewStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpStepLinkLabel.trim()||'リンク',url:tmpStepLinkUrl.trim()}]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); }};
-      const handleRemoveLinkFromNewStep = (id,e) => { e.preventDefault(); setNewStepLinks(p=>p.filter(l=>l.id!==id)); };
-      const handleAddLinkToEditStep = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
-      const handleRemoveLinkFromEditStep = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddStepLink = (e) => { e.preventDefault(); if(tmpStepLinkUrl.trim()) { setNewStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpStepLinkLabel.trim()||'リンク',url:tmpStepLinkUrl.trim()}]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); }};
+      const handleRemoveStepLink = (id,e) => { e.preventDefault(); setNewStepLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddEditStepLink = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
+      const handleRemoveEditStepLink = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
       
-      const handleAddLinkToNewTask = (e) => { e.preventDefault(); if(tmpTaskLinkUrl.trim()) { setNewTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpTaskLinkLabel.trim()||'リンク',url:tmpTaskLinkUrl.trim()}]); setTmpTaskLinkLabel(''); setTmpTaskLinkUrl(''); }};
-      const handleRemoveLinkFromNewTask = (id,e) => { e.preventDefault(); setNewTaskLinks(p=>p.filter(l=>l.id!==id)); };
-      const handleAddLinkToEditTask = (e) => { e.preventDefault(); if(tmpEditTaskLinkUrl.trim()) { setEditTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpEditTaskLinkLabel.trim()||'リンク',url:tmpEditTaskLinkUrl.trim()}]); setTmpEditTaskLinkLabel(''); setTmpEditTaskLinkUrl(''); };
-      const handleRemoveLinkFromEditTask = (id,e) => { e.preventDefault(); setEditTaskLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddTaskLink = (e) => { e.preventDefault(); if(tmpTaskLinkUrl.trim()) { setNewTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpTaskLinkLabel.trim()||'リンク',url:tmpTaskLinkUrl.trim()}]); setTmpTaskLinkLabel(''); setTmpTaskLinkUrl(''); }};
+      const handleRemoveTaskLink = (id,e) => { e.preventDefault(); setNewTaskLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddEditTaskLink = (e) => { e.preventDefault(); if(tmpEditTaskLinkUrl.trim()) { setEditTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpEditTaskLinkLabel.trim()||'リンク',url:tmpEditTaskLinkUrl.trim()}]); setTmpEditTaskLinkLabel(''); setTmpEditTaskLinkUrl(''); }; };
+      const handleRemoveEditTaskLink = (id,e) => { e.preventDefault(); setEditTaskLinks(p=>p.filter(l=>l.id!==id)); };
 
-      const handleAddLinkToNewLog = (e) => { e.preventDefault(); if(tmpLinkUrl.trim()){ setNewLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpLinkLabel.trim()||'リンク',url:tmpLinkUrl.trim()}]); setTmpLinkLabel(''); setTmpLinkUrl(''); }};
-      const handleRemoveLinkFromNewLog = (id,e) => { e.preventDefault(); setNewLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpLinkLabel.trim()||'リンク',url:tmpLinkUrl.trim()}]); setTmpLinkLabel(''); setTmpLinkUrl(''); };
+      const handleAddLogLink = (e) => { e.preventDefault(); if(tmpLinkUrl.trim()){ setNewLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpLinkLabel.trim()||'リンク',url:tmpLinkUrl.trim()}]); setTmpLinkLabel(''); setTmpLinkUrl(''); }};
+      const handleRemoveLogLink = (id,e) => { e.preventDefault(); setNewLogLinks(p=>p.filter(l=>l.id!==id)); };
 
       const addLog = (taskId) => {
         if (!newLogText.trim() && newLogImages.length === 0) return;
@@ -1023,13 +1023,13 @@
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">所属フォルダ</label>
-                        <select value={newProjFolderId} onChange={e => setNewProjFolderId(e.target.value)} className="w-full border border-slate-350 dark:border-slate-800 text-xs font-bold text-slate-805 dark:text-slate-150 focus:outline-none focus:border-indigo-500">
+                        <select value={newProjFolderId} onChange={e => setNewProjFolderId(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-xs font-bold text-slate-805 dark:text-slate-150 focus:outline-none focus:border-indigo-500">
                           {folders.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                         </select>
                       </div>
                       <div>
                         <label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-1">初期ステータス</label>
-                        <select value={newProjStatus} onChange={e => setNewProjStatus(e.target.value)} className="w-full border border-slate-350 dark:border-slate-800 text-xs font-bold text-slate-805 dark:text-slate-150 focus:outline-none focus:border-indigo-500">
+                        <select value={newProjStatus} onChange={e => setNewProjStatus(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-xs font-bold text-slate-805 dark:text-slate-150 focus:outline-none focus:border-indigo-500">
                           <option value="pending">未着手</option><option value="in_progress">進行中</option><option value="completed">完了</option>
                         </select>
                       </div>
@@ -1209,7 +1209,7 @@
                     <div className="h-1.5 w-16 bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner">
                       <div className="h-full bg-indigo-500 bg-gradient-to-r from-indigo-500 to-purple-600" style={{ width: `${projectProgress}%` }}></div>
                     </div>
-                    <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 font-mono">{projectProgress}%</span>
+                    <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-404 font-mono">{projectProgress}%</span>
                   </div>
                 </div>
               </div>
@@ -1224,7 +1224,7 @@
                   </select>
                   <div className="flex items-center gap-0.5 border-l border-slate-202 dark:border-slate-705 pl-1.5 ml-0.5">
                     <button onClick={() => setShowAddFolderModal(true)} className="text-[9px] text-purple-600 dark:text-purple-400 font-extrabold px-1">＋</button>
-                    <button onClick={(e) => handleDeleteFolder(selectedFolderId, e)} className="text-[9px] text-slate-404 dark:text-slate-505 font-extrabold px-1">×</button>
+                    <button onClick={(e) => handleDeleteFolder(selectedFolderId, e)} className="text-[9px] text-slate-440 dark:text-slate-505 font-extrabold px-1">×</button>
                   </div>
                 </div>
                 <IconChevronRight className="h-3 w-3 text-slate-404 dark:text-slate-505 shrink-0" />
@@ -1386,7 +1386,7 @@
                                         <div className="mt-10 space-y-3 flex-1 flex flex-col justify-between">
                                           <div className="space-y-2">
                                             <h4 className="font-extrabold text-sm text-slate-805 dark:text-slate-150 select-text cursor-text leading-snug">{task.title}</h4>
-                                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-550 dark:text-slate-404">
+                                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-550 dark:text-slate-444">
                                               <span className={`px-2 py-0.5 rounded border ${tkCls.badge}`}>{deptList.find(dl => dl.key === task.department)?.label || '未設定'} : {task.assignee}</span>
                                               <span className="font-mono">⌛ 期日: {task.dueDate}</span>
                                               {task.startedAt && <span className="font-mono text-indigo-600 dark:text-indigo-404 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-900/40">⏱️ {d ? `${task.startedAt} 〜 ${task.completedAt} (${dDays} 日)` : `${task.startedAt} 着手 (${dDays} 日)`}</span>}
@@ -1496,7 +1496,7 @@
               <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in transition-colors">
                 
                 {/* 案件選択のヘッダーパネル */}
-                <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 border border-slate-202 dark:border-slate-700">
                   <div className="space-y-1">
                     <h2 className="text-base font-black text-slate-805 dark:text-white flex items-center gap-2"><IconChart className="text-indigo-600 dark:text-indigo-404" />組織・案件推進状況アナリティクス</h2>
                     <p className="text-xs text-slate-505 dark:text-slate-440">実データに基づき、ボトルネックやリソース負荷状況をリアルタイム評価します。</p>
@@ -1541,7 +1541,7 @@
                         <div className="overflow-x-auto rounded-xl border dark:border-slate-700">
                           <table className="w-full text-xs text-left border-collapse">
                             <thead>
-                              <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 text-slate-550 dark:text-slate-404 font-black text-[10px] uppercase tracking-wide">
+                              <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 text-slate-550 dark:text-slate-440 font-black text-[10px] uppercase tracking-wide">
                                 <th className="py-2.5 px-4">担当者</th>
                                 <th className="py-2.5 px-4 text-center">対応合計</th>
                                 <th className="py-2.5 px-4 text-center text-emerald-600 dark:text-emerald-404">完了済</th>
@@ -1623,7 +1623,7 @@
                     <input required type="text" value={newFolderName} onChange={e => setNewFolderName(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200 focus:outline-none focus:border-indigo-400" placeholder="例: 新商品設計（ECD）" />
                   </div>
                   <div className="flex justify-end gap-2 pt-2">
-                    <button type="button" onClick={() => setShowAddFolderModal(false)} className="bg-slate-150 dark:bg-slate-700 hover:bg-slate-202 dark:hover:bg-slate-600 text-slate-605 dark:text-slate-300 px-4 py-2 rounded-xl font-bold">キャンセル</button>
+                    <button type="button" onClick={() => setShowAddFolderModal(false)} className="bg-slate-150 dark:bg-slate-700 hover:bg-slate-220 dark:hover:bg-slate-600 text-slate-605 dark:text-slate-300 px-4 py-2 rounded-xl font-bold">キャンセル</button>
                     <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-bold">作成</button>
                   </div>
                 </form>
@@ -1636,7 +1636,7 @@
             <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in p-4">
               <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-base font-black text-slate-805 dark:text-slate-100 flex items-center gap-2"><IconSettings className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />設定</h2>
+                  <h2 className="text-base font-black text-slate-805 dark:text-slate-100 flex items-center gap-2"><IconSettings className="h-5 w-5 text-indigo-600 dark:text-indigo-404" />設定</h2>
                   <button onClick={() => setShowSettingsModal(false)} className="text-slate-404 dark:text-slate-505 hover:bg-slate-150 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition-colors"><IconX className="h-5 w-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin">
@@ -1651,7 +1651,7 @@
                           <input type="password" value={tmpGistToken} onChange={e => setTmpGistToken(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2 text-xs bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200 focus:outline-none focus:border-indigo-400" placeholder="ghp_xxxxxxxxxxxx" />
                         </div>
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">Gist ID</label>
+                          <label className="block text-[10px] font-bold text-slate-605 dark:text-amber-404 mb-1">Gist ID</label>
                           <input type="text" value={tmpGistId} onChange={e => setTmpGistId(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2 text-xs bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200 focus:outline-none focus:border-indigo-400 font-mono" placeholder="1a2b3c4d5e6f7g8h9i0j" />
                         </div>
                       </div>
@@ -1679,7 +1679,7 @@
                       ))}
                     </div>
                     <form onSubmit={handleCreateDept} className="flex items-center gap-2 mt-4 bg-indigo-50/50 dark:bg-indigo-900/20 p-3 rounded-2xl border border-indigo-100 dark:border-indigo-800/50 shadow-inner">
-                      <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 shrink-0 uppercase flex items-center gap-0.5"><IconPlus className="h-3 w-3"/>追加</span>
+                      <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-404 shrink-0 uppercase flex items-center gap-0.5"><IconPlus className="h-3 w-3"/>追加</span>
                       <input type="text" placeholder="部署名..." value={newDeptLabel} onChange={e => setNewDeptLabel(e.target.value)} className="flex-1 text-xs font-bold bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-705 text-slate-805 dark:text-slate-200 rounded-xl p-2 focus:outline-none shadow-sm" />
                       <select value={newDeptColor} onChange={e => setNewDeptColor(e.target.value)} className={`text-xs font-bold rounded-xl p-2 border border-slate-202 dark:border-slate-700 shadow-sm focus:outline-none ${colorClassesMap[newDeptColor]?.badge || 'bg-white dark:bg-slate-800'}`}>
                         {Object.keys(colorClassesMap).map(c => <option key={c} value={c} className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200">{c}色</option>)}
