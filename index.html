@@ -1129,10 +1129,12 @@
                                           <div className="p-5 space-y-3 text-xs font-bold w-full animate-in fade-in" onClick={e => e.stopPropagation()}>
                                             <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="font-black text-indigo-600">✏️ タスク情報のマスタ編集</span><div className="flex gap-2"><button type="button" onClick={() => setEditingTaskId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-3 py-1 rounded-xl">キャンセル</button><button type="button" onClick={() => saveEdit(task.id)} className="bg-indigo-600 text-white px-4 py-1 rounded-xl">保存</button></div></div>
                                             <div className="space-y-2">
-                                              <div><label className="block text-[10px] text-slate-404 mb-0.5">タスク名 *</label><input required type="text" value={editFormData.title || ''} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold" /></div>
-                                              <div className="grid grid-cols-2 gap-2">
-                                                <div>
-                                                  <label className="block text-[10px] text-slate-404 mb-0.5">やり取り相手 (To)</label>
+                                <div>
+  <label className="block text-[10px] text-slate-404 mb-0.5">ボール保持部署</label>
+  <select value={editFormData.department || ''} onChange={e => setEditFormData({...editFormData, department: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white">
+    {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+  </select>
+</div>
                                                   <input type="text" list={`suggest-edit-${task.id}`} value={editFormData.interactor || ''} onChange={e => setEditFormData({...editFormData, interactor: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold" />
                                                   <datalist id={`suggest-edit-${task.id}`}><option value={user?.displayName || '自分'} /><option value="上司・決裁者" /></datalist>
                                                 </div>
