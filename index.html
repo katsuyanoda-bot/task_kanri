@@ -149,9 +149,9 @@
           { id: 1, name: '企画合意', desc: '方針策定', deptKey: 'sales', startDate: '2026-05-15', dueDate: '2026-05-20', links: [{ id: 'slnk_1', label: 'MTG議事録', url: 'https://example.com' }] },
           { id: 2, name: '部門検証', desc: '並行調整', deptKey: 'legal', startDate: '2026-05-19', dueDate: '2026-06-05', links: [] }
         ],
-        tasks: [
-          { id: 't1', sequenceId: 1, stepId: 1, title: '全体確認', description: '合意を得る', assignee: '山田', department: 'sales', dueDate: '2026-05-18', status: 'completed', isHighPriority: false, doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', attachedImages: [], contextLogs: [], links: [{ id: 'tlnk_1', label: '確認事項一覧', url: 'https://example.com' }] },
-          { id: 't2', sequenceId: 2, stepId: 2, title: '収益認識確認', description: '計上基準', assignee: '田中', department: 'finance', dueDate: '2026-05-25', status: 'in_progress', isHighPriority: true, doToday: true, startedAt: '2026-05-19', attachedImages: [], contextLogs: [], links: [] }
+      tasks: [
+          { id: 't1', sequenceId: 1, stepId: 1, title: '全体確認', description: '合意を得る', assignee: '営業部門 担当者', department: 'sales', dueDate: '2026-05-18', status: 'completed', isHighPriority: false, doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', attachedImages: [], contextLogs: [], links: [{ id: 'tlnk_1', label: '確認事項一覧', url: 'https://example.com' }], level: 1, isBlocked: false },
+          { id: 't2', sequenceId: 2, stepId: 2, title: '収益認識確認', description: '計上基準', assignee: '経理部門 担当者', department: 'finance', dueDate: '2026-05-25', status: 'in_progress', isHighPriority: true, doToday: true, startedAt: '2026-05-19', attachedImages: [], contextLogs: [], links: [], level: 4, isBlocked: false }
         ]
       }
     ];
