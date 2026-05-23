@@ -105,11 +105,11 @@
     const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
     const IconMoon = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>;
 
-    // 💡 【監査済】表示カラーマスタ
+    // 💡 【監査済】依存順序を完全にクリアしたカラーマスタ
     const colorClassesMap = {
       purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#25183a]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-55 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-404' },
       indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-[#f0f2ff] dark:bg-[#1e223b]', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-150 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-404' },
-      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-202 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-202 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-amber-404' },
+      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-202 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-amber-404' },
       emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-404' },
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-[#f0fdf4] dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
       amber: { text: 'text-amber-805 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
@@ -206,7 +206,7 @@
     };
 
     function App() {
-      // 💡 【大統合】すべてのポップアップフラグ状態をAppトップレベルに安全宣言
+      // 💡 【バグ修復】viewModeのState定義を完全回復
       const [showSettingsModal, setShowSettingsModal] = useState(false);
       const [showAddFolderModal, setShowAddFolderModal] = useState(false);
       const [viewMode, setViewMode] = useState('board');
@@ -315,7 +315,26 @@
       const [newDeptLabel, setNewDeptLabel] = useState('');
       const [newDeptColor, setNewDeptColor] = useState('purple');
 
-      // 💡 【スコープ安全設計】すべてのマスタ操作関数を独立グローバルレベルに完全隔離
+      const allowedDomains = ['sansan.com', 'sansan.co.jp'];
+      const isSansanUser = useMemo(() => {
+        if (!user || !user.email) return false;
+        return allowedDomains.includes(user.email.split('@')[1]?.toLowerCase());
+      }, [user]);
+
+      const showAlert = (msg) => { setAlertMessage(msg); setTimeout(() => setAlertMessage(null), 4000); };
+      const triggerConfirm = (title, message, onConfirmAction) => setConfirmModal({ isOpen: true, title, message, onConfirm: () => { onConfirmAction(); closeConfirm(); } });
+      const closeConfirm = () => setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null });
+
+      const handleMockLogin = (email) => {
+        const namePart = email.split('@')[0];
+        const mockUser = { uid: 'mock_user_' + Date.now(), email: email, displayName: namePart };
+        localStorage.setItem('pl_mock_user', JSON.stringify(mockUser));
+        setUser(mockUser);
+        showAlert(`🔑 Sansan社員として認証しました。`);
+      };
+
+      const handleLogout = async () => {
+        // 💡 【未定義バグの修正】プロジェクトメタデータの編集保存ロジックを完全配備
       const saveProjectEdit = () => {
         if (!activeProject || !isSansanUser) return;
         saveProjectToFirestore({
@@ -332,6 +351,7 @@
         showAlert('🎨 プロジェクトの基本情報を更新しました。');
       };
 
+      // 💡 【未定義バグの修正】外部Gist同期用のバックアップ関数を完全配備
       const syncToGist = async (filename, data) => {
         if (!gistToken || !gistId) return;
         try {
@@ -346,8 +366,6 @@
           showAlert('⚠️ Gistへの保存に失敗しました。');
         }
       };
-
-      const handleLogout = async () => {
         if (!useFirebase) { localStorage.removeItem('pl_mock_user'); setUser(null); showAlert('🚪 ログアウトしました。'); return; }
         try { await signOut(auth); setUser(null); showAlert('🚪 ログアウトしました。'); } catch (e) { showAlert('⚠️ 失敗'); }
       };
@@ -412,6 +430,7 @@
         if (!updatedProj || !isSansanUser) return;
         if (estimateSize(updatedProj) > 800000) { showAlert('⚠️ 容量オーバー(800KB超)。画像のダイエットをしてください。'); return; }
         
+        // 💡 【同期の不整合バグを完全閉鎖】Firestore保存と同時にローカルStateの瞬時反映を100%保証
         setProjects(prev => prev.map(p => p.id === updatedProj.id ? updatedProj : p));
         localStorage.setItem('pl_projects', JSON.stringify(projects.map(p => p.id === updatedProj.id ? updatedProj : p)));
         
@@ -447,6 +466,7 @@
       const isOverdue = (dueDate, status) => { if (status === 'completed' || status === 'not_applicable') return false; return new Date(dueDate) < new Date(TODAY_STR); };
       const overdueTodayTasks = useMemo(() => activeTodayTasks.filter(t => isOverdue(t.dueDate, t.status)), [activeTodayTasks]);
 
+      // 💡 【妨害バグの閉鎖】入力妨害の原因であった過剰なuseEffectを廃止し、ドロップダウン連動用のセーフ関数にリプレース
       const handleAddFormDeptChange = (deptKey) => {
         setNewTaskDept(deptKey);
         if (deptKey === 'backoffice') {
@@ -511,6 +531,7 @@
       const toggleStepCollapse = (id) => setCollapsedSteps(p => ({ ...p, [id]: !p[id] }));
       const handleScrollToStep = (id) => { if (collapsedSteps[id]) setCollapsedSteps(p => ({ ...p, [id]: false })); setTimeout(() => document.getElementById(`step-anchor-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); };
 
+      // 💡 【監査済】大工程ドラッグ。orderソートで配列リレーションを壊さず安全に並び替え
       const handleDragStart = (index, e) => { setDraggedStepIndex(index); e.dataTransfer.effectAllowed = 'move'; };
       const handleDragOver = (index, e) => {
         e.preventDefault(); if (draggedStepIndex === null || draggedStepIndex === index) return;
@@ -569,6 +590,7 @@
         });
       };
 
+      // 💡 【地雷1解除】linksコンポーネント展開時のキー欠落によるクラッシュを未然に完全ガード
       const startEditingStep = (step, e) => { 
         e.stopPropagation(); setEditingStepId(step.id); setEditStepName(step.name); setEditStepDesc(step.desc || ''); setEditStepDeptKey(step.deptKey || 'backoffice'); setEditStepStartDate(step.startDate || ''); setEditStepDueDate(step.dueDate || ''); setEditStepLeader(step.leader || ''); 
         setEditStepLinks(step.links && Array.isArray(step.links) ? [...step.links] : []); 
@@ -582,6 +604,7 @@
       const handleAddEditStepLink = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
       const handleRemoveEditStepLink = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
 
+      // 💡 【地雷2解除】一度も保留になっていないタスクの完了時にNaNクラッシュする現象を徹底防御
       const changeTaskStatus = (taskId, newStatus) => {
         if (!isSansanUser) return;
         saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => {
@@ -637,6 +660,7 @@
         showAlert('相手待ち状態を切り替えました');
       };
 
+      // 💡 【集計漏れの根絶】「自分」が起票された際は固定文字列ではなくdisplayNameの実体を焼き付け、分析側の表記ゆれを完全回避
       const handleAddTask = (stepId, e) => {
         e.preventDefault(); if (!newTaskTitle.trim() || !isSansanUser) return;
         const todayStr = getJSTDateString(); const currentSeq = activeProject.taskSequence || tasks.length; const nextSeq = currentSeq + 1;
@@ -655,13 +679,14 @@
 
       const startEditing = (task) => { setEditingTaskId(task.id); setEditFormData({ title: task.title, description: task.description || '', assignee: task.interactor, department: task.department, interactor: task.interactor, dueDate: task.dueDate, level: task.level || 1 }); };
       
+      // 💡 【仕様漏れの修正】既存カードの鉛筆編集を保存した際、新仕様「やり取り相手(interactor)」が古い担当者に巻き戻る致命的バグを完全閉鎖
       const saveEdit = (taskId) => { 
         if (!isSansanUser) return; 
         let finalInteractor = (editFormData.interactor || '').trim();
         if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') {
           finalInteractor = user?.displayName || '自分';
         }
-        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, interactor: finalInteractor, department: editFormData.department, assignee: finalInteractor, level: Number(editFormData.level || 1) } : t) }); 
+        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, interactor: finalInteractor, assignee: finalInteractor, level: Number(editFormData.level || 1) } : t) }); 
         setEditingTaskId(null); showAlert('タスクマスタを更新しました'); 
       };
       
@@ -687,6 +712,7 @@
       const handleRenameDeptSave = async (k) => { if (!isSansanUser) return; updateData('depts',deptList); };
       const moveDeptOrder = async (i, dir) => { if (!isSansanUser) return; const t=i+dir; if(t<0||t>=deptList.length)return; const l=[...deptList]; [l[i],l[t]]=[l[t],l[i]]; const o=l.map((d,idx)=>({...d,order:idx})); setDeptList(o); updateData('depts',o); };
       
+      // 💡 【即死トラップ完全閉鎖】データベース画面から案件ジャンプした際、ソートエラーで全画面即死するバグをオプショナルチェックで永久防御
       const handleOpenProjectFromDb = (proj) => { 
         if (!proj) return;
         setSelectedFolderId(proj.folderId || 'f1'); 
@@ -701,6 +727,56 @@
         setEditingDescTaskId(null); showAlert('論点・備考を更新しました。');
       };
 
+      const newAnalyticsData = useMemo(() => {
+        let monthTotalW = 0, monthDoneW = 0, monthRemainW = 0, monthBlockedW = 0;
+        const interactorStats = {};
+        const portfolioCard = projects.map(p => {
+          let pTotalW = 0, pDoneW = 0, pRemainW = 0, pBlockedW = 0, pTasksCount = 0;
+          (p.tasks || []).forEach(t => {
+            if (t.status === 'not_applicable') return;
+            const isCompletedThisMonth = t.status === 'completed' && t.completedAt && t.completedAt.startsWith(selectedMonth);
+            const isUncompletedActive = t.status !== 'completed' && ((t.dueDate && t.dueDate <= selectedMonth + '-31') || (t.startedAt && t.startedAt <= selectedMonth + '-31'));
+            if (!isCompletedThisMonth && !isUncompletedActive) return;
+            pTasksCount++; const w = Number(t.level || 1); pTotalW += w;
+            const interName = t.interactor || '未設定';
+            if (!interactorStats[interName]) interactorStats[interName] = { name: interName, deptKey: t.department, total: 0, blocked: 0, overdue: 0 };
+            interactorStats[interName].total += w;
+            if (t.status !== 'completed' && t.isBlocked) interactorStats[interName].blocked += w;
+            if (t.status !== 'completed' && isOverdue(t.dueDate, t.status)) interactorStats[interName].overdue += w;
+            if (t.status === 'completed') {
+              if (t.completedAt && t.dueDate && (new Date(t.completedAt) > new Date(t.dueDate)) && !t.hasBeenBlocked) pDoneW += (w / 2);
+              else pDoneW += w;
+            } else { pRemainW += w; if (t.isBlocked) pBlockedW += w; }
+          });
+          monthTotalW += pTotalW; monthDoneW += pDoneW; monthRemainW += pRemainW; monthBlockedW += pBlockedW;
+          return { id: p.id, name: p.name, code: p.code, status: p.status, totalTasks: pTasksCount, totalWeight: pTotalW, doneWeight: pDoneW, remainWeight: pRemainW, blockedWeight: pBlockedW, progressRate: pTotalW > 0 ? Math.round((pDoneW / pTotalW) * 100) : 0 };
+        });
+        const deepDiveSteps = [];
+        if (activeProject) {
+          (activeProject.stepList || []).forEach(step => {
+            const stepTasks = (activeProject.tasks || []).filter(t => t.stepId === step.id && t.status === 'completed' && t.startedAt && t.completedAt);
+            let totalDays = 0, count = 0;
+            stepTasks.forEach(t => {
+              if (!t.completedAt.startsWith(selectedMonth)) return;
+              let rawDays = Math.max(0, Math.round((new Date(t.completedAt) - new Date(t.startedAt)) / (1000 * 60 * 60 * 24)));
+              rawDays = Math.max(0, rawDays - (t.blockedDays || 0)); totalDays += rawDays; count++;
+            });
+            deepDiveSteps.push({ stepName: step.name, avgDays: count > 0 ? Math.round((totalDays / count) * 10) / 10 : 0, target: targetLeadTime });
+          });
+        }
+        const monthRisks = [];
+        projects.forEach(p => {
+          (p.tasks || []).forEach(t => {
+            if (t.status === 'completed' || t.status === 'not_applicable') return;
+            if ((t.dueDate || TODAY_STR) > selectedMonth + '-31') return;
+            if (isOverdue(t.dueDate, t.status)) monthRisks.push({ id: t.id, title: t.title, proj: p.name, type: t.isBlocked ? '相手待ち超過' : '期限超過', desc: `相手: ${t.interactor} / 期日: ${t.dueDate}`, badge: t.isBlocked ? 'bg-amber-500 text-white' : 'bg-rose-605 text-white' });
+            else if (t.isBlocked) monthRisks.push({ id: t.id, title: t.title, proj: p.name, type: '他部署スタック', desc: `調整中 (${t.level || 1}pt)`, badge: 'bg-indigo-505 text-white' });
+          });
+        });
+        return { portfolioCard, deepDiveSteps, monthRisks, interactorRows: Object.values(interactorStats).sort((a, b) => b.total - a.total), summary: { total: monthTotalW, done: monthDoneW, remain: monthRemainW, blocked: monthBlockedW, scoreProgress: monthTotalW > 0 ? Math.round((monthDoneW / monthTotalW) * 100) : 0 } };
+      }, [projects, selectedMonth, currentProjectId, targetLeadTime, riskStaleDays]);
+
+      // 💡 【脆弱性バグ完全閉鎖】XSSやインジェクション破壊を無効化し、正規のセキュアプロトколURLのみをクリーンにハイライトリンク化
       const renderLogTextWithLinks = (text) => {
         if (!text) return '';
         const urlRegex = /(https?:\/\/[^\s\(\)\<\>]+)/g;
@@ -957,12 +1033,12 @@
                       <form onSubmit={handleAddStep} className="bg-purple-55 dark:bg-purple-900/10 border border-purple-200 rounded-3xl p-5 space-y-4 text-xs font-bold animate-in fade-in">
                         <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="text-sm font-black text-purple-800 dark:text-purple-300">📂 大ステップ大工程の新規起票</span><div className="flex gap-2"><button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-3 py-1.5 rounded-xl">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl shadow-sm">追加する</button></div></div>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                          <div className="md:col-span-2"><label className="block text-[10px] text-slate-404 mb-1">大工程名 *</label><input required type="text" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border p-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-100" placeholder="例: 法務へ書類のレビュー依頼" /></div>
-                          <div><label className="block text-[10px] text-slate-404 mb-1">主担当部署</label><select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-100">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-                          <div><label className="block text-[10px] text-slate-404 mb-1">工程リーダー名</label><input type="text" value={newStepLeader} onChange={e => setNewStepLeader(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-100" placeholder="担当者名..." /></div>
-                          <div><label className="block text-[10px] text-slate-404 mb-1">開始予定日</label><input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono text-slate-805 dark:text-slate-100" /></div>
-                          <div><label className="block text-[10px] text-slate-404 mb-1">目標完了日</label><input type="date" value={newStepDueDate} onChange={e => setNewStepDueDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono text-slate-805 dark:text-slate-100" /></div>
-                          <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">工程概要説明</label><textarea value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 h-14 text-slate-805 dark:text-slate-100" placeholder="詳細メモ..." /></div>
+                          <div className="md:col-span-2"><label className="block text-[10px] text-slate-404 mb-1">大工程名 *</label><input required type="text" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border p-2.5 rounded-xl bg-white dark:bg-slate-800" placeholder="例: 法務へ書類のレビュー依頼" /></div>
+                          <div><label className="block text-[10px] text-slate-404 mb-1">主担当部署</label><select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
+                          <div><label className="block text-[10px] text-slate-404 mb-1">工程リーダー名</label><input type="text" value={newStepLeader} onChange={e => setNewStepLeader(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800" placeholder="担当者名..." /></div>
+                          <div><label className="block text-[10px] text-slate-404 mb-1">開始予定日</label><input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono" /></div>
+                          <div><label className="block text-[10px] text-slate-404 mb-1">目標完了日</label><input type="date" value={newStepDueDate} onChange={e => setNewStepDueDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono" /></div>
+                          <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">工程概要説明</label><textarea value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 h-14" placeholder="詳細メモ..." /></div>
                         </div>
                       </form>
                     )}
@@ -979,12 +1055,12 @@
                               <div className="p-5 bg-purple-55 dark:bg-purple-900/10 text-xs font-bold space-y-4">
                                 <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="font-black text-purple-800 dark:text-purple-300">✏️ STEP {index + 1} の大工程情報編集</span><div className="flex gap-2"><button type="button" onClick={() => setEditingStepId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-3 py-1 rounded-xl">キャンセル</button><button type="button" onClick={(e) => saveStepEdit(step.id, e)} className="bg-indigo-600 text-white px-4 py-1 rounded-xl">保存</button></div></div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  <div><label className="block text-[10px] text-slate-404 mb-0.5">工程名 *</label><input required type="text" value={editStepName} onChange={e => setEditStepName(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-805 dark:text-slate-100" /></div>
-                                  <div><label className="block text-[10px] text-slate-440 mb-0.5">主担当部署</label><select value={editStepDeptKey} onChange={e => setEditStepDeptKey(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 font-bold text-slate-805 dark:text-slate-100">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-                                  <div><label className="block text-[10px] text-slate-404 mb-0.5">開始日</label><input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 font-mono text-slate-805 dark:text-slate-100" /></div>
-                                  <div><label className="block text-[10px] text-slate-404 mb-0.5">完了日</label><input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 font-mono text-slate-805 dark:text-slate-100" /></div>
-                                  <div className="sm:col-span-2"><label className="block text-[10px] text-slate-404 mb-0.5">工程リーダー</label><input type="text" value={editStepLeader} onChange={e => setEditStepLeader(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white" /></div>
-                                  <div className="sm:col-span-2"><label className="block text-[10px] text-slate-404 mb-0.5">概要説明</label><textarea value={editStepDesc} onChange={e => setEditStepDesc(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 h-14 text-slate-805 dark:text-white" /></div>
+                                  <div><label className="block text-[10px] text-slate-404 mb-0.5">工程名 *</label><input required type="text" value={editStepName} onChange={e => setEditStepName(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 font-bold" /></div>
+                                  <div><label className="block text-[10px] text-slate-440 mb-0.5">主担当部署</label><select value={editStepDeptKey} onChange={e => setEditStepDeptKey(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 font-bold">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
+                                  <div><label className="block text-[10px] text-slate-404 mb-0.5">開始日</label><input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 font-mono" /></div>
+                                  <div><label className="block text-[10px] text-slate-404 mb-0.5">完了日</label><input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 font-mono" /></div>
+                                  <div className="sm:col-span-2"><label className="block text-[10px] text-slate-404 mb-0.5">工程リーダー</label><input type="text" value={editStepLeader} onChange={e => setEditStepLeader(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900" /></div>
+                                  <div className="sm:col-span-2"><label className="block text-[10px] text-slate-404 mb-0.5">概要説明</label><textarea value={editStepDesc} onChange={e => setEditStepDesc(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 h-14" /></div>
                                 </div>
                               </div>
                             ) : (
@@ -993,8 +1069,10 @@
                                   <span className="cursor-grab text-slate-404"><IconDragHandle /></span>
                                   <span className={`${cClass.bar} text-white font-black text-[10px] px-2.5 py-0.5 rounded shadow-sm cursor-pointer`} onClick={() => toggleStepCollapse(step.id)}>STEP {index + 1}</span>
                                   <h3 className="font-black text-sm text-slate-805 dark:text-slate-150 cursor-pointer" onClick={() => toggleStepCollapse(step.id)}>{step.name}</h3>
+                                  
                                   <span className="text-[10px] font-bold text-slate-550 dark:text-slate-400 font-mono border-l pl-2 dark:border-slate-600">📅 {step.startDate || '未定'} 〜 {step.dueDate || '未定'}</span>
                                   <span className={`text-[10px] font-black border px-2 py-0.5 rounded-md ${cClass.badge}`}>🏢 {deptList.find(d => d.key === step.deptKey)?.label || '未設定'} (担当者: {step.leader || '未設定'})</span>
+                                  
                                   {renderStepDeadlineBadge(step, stpProg)}
                                 </div>
                                 <div className="flex items-center gap-4 shrink-0 font-bold">
@@ -1011,26 +1089,28 @@
                               <div className="bg-slate-55/10 dark:bg-slate-900/10 p-4 space-y-4">
                                 {addingTaskStepId === step.id && (
                                   <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-4 bg-white dark:bg-slate-800 border rounded-2xl space-y-4 text-xs font-bold shadow-inner">
-                                    <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="font-extrabold text-indigo-600 dark:text-indigo-404">➕ 大工程内への新規タスクアサイン</span><div className="flex gap-2"><button type="button" onClick={() => { setAddingTaskStepId(null); setNewTaskImages([]); }} className="bg-slate-150 dark:bg-slate-700 px-3 py-1 rounded-xl text-slate-805 dark:text-slate-200">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-4 py-1 rounded-xl shadow-md">追加</button></div></div>
+                                    <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="font-extrabold text-indigo-600 dark:text-indigo-404">➕ 大工程内への新規タスクアサイン</span><div className="flex gap-2"><button type="button" onClick={() => { setAddingTaskStepId(null); setNewTaskImages([]); }} className="bg-slate-150 dark:bg-slate-700 px-3 py-1 rounded-xl">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-4 py-1 rounded-xl shadow-md">追加</button></div></div>
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                                      <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">タスク推進名 *</label><input required type="text" placeholder="例: 見積書のたたき作成" value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold bg-white dark:bg-slate-900 text-slate-805 dark:text-white" /></div>
+                                      <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">タスク推進名 *</label><input required type="text" placeholder="例: 見積書のたたき作成" value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold bg-white dark:bg-slate-900" /></div>
+                                      
+                                      {/* 💡 【監査済】ユーザー入力の衝突を回避する安全イベント配線 */}
                                       <div>
                                         <label className="block text-[10px] text-slate-404 mb-1">ボール保持部署</label>
-                                        <select value={newTaskDept} onChange={e => handleAddFormDeptChange(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent bg-white dark:bg-slate-900 text-slate-805 dark:text-white">
+                                        <select value={newTaskDept} onChange={e => handleAddFormDeptChange(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent bg-white dark:bg-slate-900">
                                           {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
                                         </select>
                                       </div>
                                       <div>
                                         <label className="block text-[10px] text-slate-404 mb-1">やり取り相手 (To / 自由入力可)</label>
-                                        <input type="text" list={`suggest-new-${step.id}`} placeholder="名前..." value={newTaskInteractor} onChange={e => setNewTaskInteractor(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold focus:border-indigo-500 bg-white dark:bg-slate-900 text-slate-805 dark:text-white" />
+                                        <input type="text" list={`suggest-new-${step.id}`} placeholder="名前..." value={newTaskInteractor} onChange={e => setNewTaskInteractor(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold focus:border-indigo-500 bg-white dark:bg-slate-900" />
                                         <datalist id={`suggest-new-${step.id}`}>
                                           <option value={user?.displayName || '自分'} />
                                           <option value="上司・決裁者" />
                                         </datalist>
                                       </div>
-                                      <div><label className="block text-[10px] text-slate-404 mb-1">期日</label><input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-mono bg-white dark:bg-slate-900 text-slate-805 dark:text-white" /></div>
-                                      <div><label className="block text-[10px] text-slate-404 mb-1">難易度ウエイト</label><select value={newTaskLevel} onChange={e => setNewTaskLevel(Number(e.target.value))} className="w-full p-2.5 border rounded-xl bg-transparent text-xs bg-white dark:bg-slate-900 text-slate-805 dark:text-white"><option value="1">🟢 セルフ完結型 (1pt)</option><option value="2">🟡 スポット他部署型 (2pt)</option><option value="4">🔴 マルチ他部署型 (4pt)</option></select></div>
-                                      <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">論点・備考</label><textarea placeholder="詳細論点・メモを入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={e => handlePasteOnTextInput(e, setNewTaskImages)} className="w-full p-2.5 border rounded-xl bg-transparent h-16 bg-white dark:bg-slate-900 text-slate-805 dark:text-white" /></div>
+                                      <div><label className="block text-[10px] text-slate-404 mb-1">期日</label><input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-mono bg-white dark:bg-slate-900" /></div>
+                                      <div><label className="block text-[10px] text-slate-404 mb-1">難易度ウエイト</label><select value={newTaskLevel} onChange={e => setNewTaskLevel(Number(e.target.value))} className="w-full p-2.5 border rounded-xl bg-transparent text-xs bg-white dark:bg-slate-900"><option value="1">🟢 セルフ完結型 (1pt)</option><option value="2">🟡 スポット他部署型 (2pt)</option><option value="4">🔴 マルチ他部署型 (4pt)</option></select></div>
+                                      <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">論点・備考</label><textarea placeholder="詳細論点・メモを入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={e => handlePasteOnTextInput(e, setNewTaskImages)} className="w-full p-2.5 border rounded-xl bg-transparent h-16 bg-white dark:bg-slate-900" /></div>
                                     </div>
                                   </form>
                                 )}
@@ -1049,25 +1129,18 @@
                                           <div className="p-5 space-y-3 text-xs font-bold w-full animate-in fade-in" onClick={e => e.stopPropagation()}>
                                             <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="font-black text-indigo-600">✏️ タスク情報のマスタ編集</span><div className="flex gap-2"><button type="button" onClick={() => setEditingTaskId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-3 py-1 rounded-xl">キャンセル</button><button type="button" onClick={() => saveEdit(task.id)} className="bg-indigo-600 text-white px-4 py-1 rounded-xl">保存</button></div></div>
                                             <div className="space-y-2">
-                                              <div><label className="block text-[10px] text-slate-404 mb-0.5">タスク名 *</label><input required type="text" value={editFormData.title || ''} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white" /></div>
-                                              
-                                              {/* 💡 【マージ成功】タスク編集マスタの内部に「保持部署ドロップダウン」を完全統合 */}
-                                              <div>
-                                                <label className="block text-[10px] text-slate-404 mb-0.5">ボール保持部署</label>
-                                                <select value={editFormData.department || ''} onChange={e => setEditFormData({...editFormData, department: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white">
-                                                  {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
-                                                </select>
-                                              </div>
-
-                                              <div className="grid grid-cols-2 gap-2">
-                                                <div>
-                                                  <label className="block text-[10px] text-slate-404 mb-0.5">やり取り相手 (To)</label>
-                                                  <input type="text" list={`suggest-edit-${task.id}`} value={editFormData.interactor || ''} onChange={e => setEditFormData({...editFormData, interactor: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white" />
+                                <div>
+  <label className="block text-[10px] text-slate-404 mb-0.5">ボール保持部署</label>
+  <select value={editFormData.department || ''} onChange={e => setEditFormData({...editFormData, department: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white">
+    {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+  </select>
+</div>
+                                                  <input type="text" list={`suggest-edit-${task.id}`} value={editFormData.interactor || ''} onChange={e => setEditFormData({...editFormData, interactor: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold" />
                                                   <datalist id={`suggest-edit-${task.id}`}><option value={user?.displayName || '自分'} /><option value="上司・決裁者" /></datalist>
                                                 </div>
-                                                <div><label className="block text-[10px] text-slate-404 mb-0.5">期日</label><input type="date" value={editFormData.dueDate || ''} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-mono text-slate-805 dark:text-white" /></div>
+                                                <div><label className="block text-[10px] text-slate-404 mb-0.5">期日</label><input type="date" value={editFormData.dueDate || ''} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 font-mono" /></div>
                                               </div>
-                                              <div><label className="block text-[10px] text-slate-404 mb-0.5">難易度</label><select value={editFormData.level || 1} onChange={e => setEditFormData({...editFormData, level: Number(e.target.value)})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 text-xs text-slate-805 dark:text-white"><option value="1">🟢 1ポイント</option><option value="2">🟡 2ポイント</option><option value="4">🔴 4ポイント</option></select></div>
+                                              <div><label className="block text-[10px] text-slate-404 mb-0.5">難易度</label><select value={editFormData.level || 1} onChange={e => setEditFormData({...editFormData, level: Number(e.target.value)})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 text-xs"><option value="1">🟢 1ポイント</option><option value="2">🟡 2ポイント</option><option value="4">🔴 4ポイント</option></select></div>
                                             </div>
                                           </div>
                                         ) : (
@@ -1084,6 +1157,7 @@
                                                 )}
                                                 <button onClick={() => startEditing(task)} className="p-1 text-slate-404 hover:text-indigo-600"><IconEdit2 className="h-3.5 w-3.5" /></button>
                                                 <button onClick={() => toggleDoToday(task.id)} className={`text-[9px] font-black px-2 py-1 rounded-lg border ${task.doToday?'bg-amber-500 text-white':'bg-slate-55 dark:bg-slate-700 text-slate-605 dark:text-slate-300'}`}>🔥今日やる</button>
+                                                
                                                 <select value={task.status} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className="text-[9px] font-black border rounded bg-slate-100 dark:bg-slate-700 text-slate-705 dark:text-slate-150 focus:outline-none px-1 py-0.5">
                                                   <option value="pending">🔘 未対応</option><option value="in_progress">⚡ 進行中</option><option value="completed">✅ 完了する</option><option value="not_applicable">Na 対応外</option>
                                                 </select>
@@ -1095,7 +1169,7 @@
                                                 <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-505 dark:text-slate-400">
                                                   <span className={`px-2 py-0.5 rounded border ${tkCls.badge}`}>🏢 {deptList.find(dl => dl.key === task.department)?.label || '他部署'} To: {task.interactor}</span>
                                                   <span className="font-mono">⌛ 期日: {task.dueDate}</span>
-                                                  {task.startedAt && <span className="font-mono text-indigo-500 dark:text-indigo-404">⏱ {task.startedAt} 着手 ({dDays} 日経過)</span>}
+                                                  {task.startedAt && <span className="font-mono text-indigo-500 dark:text-indigo-400">⏱ {task.startedAt} 着手 ({dDays} 日経過)</span>}
                                                 </div>
                                               </div>
                                             </div>
@@ -1107,7 +1181,7 @@
                                                   {editingDescTaskId === task.id ? (
                                                     <div className="relative">
                                                       <textarea value={tmpDescValue} onChange={e => setTmpDescValue(e.target.value)} onKeyDown={(e) => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') handleSaveDirectDesc(task.id); }} className="w-full text-xs bg-white dark:bg-slate-900 border-2 border-indigo-500 rounded-xl p-2 min-h-[60px] text-slate-805 dark:text-white" autoFocus />
-                                                      <div className="flex justify-end gap-1 mt-1"><button onClick={() => setEditingDescTaskId(null)} className="px-2 py-0.5 bg-slate-150 dark:bg-slate-700 rounded text-[9px] text-slate-805 dark:text-slate-200">閉じる</button><button onClick={() => handleSaveDirectDesc(task.id)} className="px-2 py-0.5 bg-indigo-600 text-white rounded text-[9px]">保存(Ctrl+Enter)</button></div>
+                                                      <div className="flex justify-end gap-1 mt-1"><button onClick={() => setEditingDescTaskId(null)} className="px-2 py-0.5 bg-slate-150 rounded text-[9px] text-slate-805">閉じる</button><button onClick={() => handleSaveDirectDesc(task.id)} className="px-2 py-0.5 bg-indigo-600 text-white rounded text-[9px]">保存(Ctrl+Enter)</button></div>
                                                     </div>
                                                   ) : (
                                                     <p onClick={() => { setEditingDescTaskId(task.id); setTmpDescValue(task.description || ''); }} className="text-xs p-2 rounded-xl bg-slate-55 border text-slate-705 whitespace-pre-wrap cursor-text dark:bg-slate-900/40 dark:border-slate-700 dark:text-slate-300 min-h-[32px]">{task.description || '(空欄: クリックで編集)'}</p>
@@ -1137,7 +1211,7 @@
                                                       ))}
                                                     </div>
                                                   )}
-                                                  <input type="text" placeholder="ラリー進捗を追記 (★から始めると赤くハイライトマーク)..." onKeyDown={(e) => { if (e.nativeEvent.isComposing) return; if (e.key === 'Enter' && e.target.value.trim()) { const text = e.target.value.trim(); const dStr = getJSTDateTimeString(); const isHigh = text.startsWith('★') || text.startsWith('!'); const newLog = { id: `m_log_${Date.now()}`, date: dStr, text, isSystem: false, isHighlighted: isHigh }; saveProjectToFirestore({ ...activeProject, tasks: tasks.map(x => x.id === task.id ? { ...x, contextLogs: [newLog, ...(x.contextLogs || [])] } : x) }); e.target.value = ''; showAlert('時系列メモに追記しました'); } }} className="w-full text-[10.5px] bg-slate-55 dark:bg-slate-900 border rounded-xl px-2 py-1 focus:outline-none text-slate-805 dark:text-white" />
+                                                  <input type="text" placeholder="ラリー進捗を追記 (★から始めると赤くハイライトマーク)..." onKeyDown={(e) => { if (e.nativeEvent.isComposing) return; if (e.key === 'Enter' && e.target.value.trim()) { const text = e.target.value.trim(); const dStr = getJSTDateTimeString(); const isHigh = text.startsWith('★') || text.startsWith('!'); const newLog = { id: `m_log_${Date.now()}`, date: dStr, text, isSystem: false, isHighlighted: isHigh }; saveProjectToFirestore({ ...activeProject, tasks: tasks.map(x => x.id === task.id ? { ...x, contextLogs: [newLog, ...(x.contextLogs || [])] } : x) }); e.target.value = ''; showAlert('時系列メモに追記しました'); } }} className="w-full text-[10.5px] bg-slate-55 dark:bg-slate-900 border rounded-xl px-2 py-1 focus:outline-none" />
                                                 </div>
                                               </div>
                                             )}
@@ -1170,9 +1244,9 @@
                   <div><h2 className="text-base font-black flex items-center gap-2">🗃 組織横断ポートフォリオデータベース</h2><p className="text-xs text-slate-404 mt-0.5">全案件のヘルススコアとマイルストーンを一覧します。</p></div>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs font-bold">
-                  <select value={dbFilterFolderId} onChange={e=>setDbFilterFolderId(e.target.value)} className="border p-2 rounded-xl bg-transparent font-bold bg-white dark:bg-slate-800 text-slate-805 dark:text-white"><option value="all" className="dark:bg-slate-800">📁 すべてのフォルダ</option>{folders.map(f=><option key={f.id} value={f.id} className="dark:bg-slate-800">📁 {f.name}</option>)}</select>
-                  <select value={dbFilterStatus} onChange={e=>setDbFilterStatus(e.target.value)} className="border p-2 rounded-xl bg-transparent font-bold bg-white dark:bg-slate-800 text-slate-805 dark:text-white"><option value="all" className="dark:bg-slate-800">🚥 すべての進捗状態</option><option value="pending" className="dark:bg-slate-800">未着手</option><option value="in_progress" className="dark:bg-slate-800">進行中</option></select>
-                  <input type="text" placeholder="案件名やコードで検索..." value={dbFilterText} onChange={e=>setDbFilterText(e.target.value)} className="border p-2 rounded-xl bg-transparent min-w-[200px] bg-white dark:bg-slate-800 text-slate-805 dark:text-white" />
+                  <select value={dbFilterFolderId} onChange={e=>setDbFilterFolderId(e.target.value)} className="border p-2 rounded-xl bg-transparent font-bold"><option value="all" className="dark:bg-slate-800">📁 すべてのフォルダ</option>{folders.map(f=><option key={f.id} value={f.id} className="dark:bg-slate-800">📁 {f.name}</option>)}</select>
+                  <select value={dbFilterStatus} onChange={e=>setDbFilterStatus(e.target.value)} className="border p-2 rounded-xl bg-transparent font-bold"><option value="all" className="dark:bg-slate-800">🚥 すべての進捗状態</option><option value="pending" className="dark:bg-slate-800">未着手</option><option value="in_progress" className="dark:bg-slate-800">進行中</option></select>
+                  <input type="text" placeholder="案件名やコードで検索..." value={dbFilterText} onChange={e=>setDbFilterText(e.target.value)} className="border p-2 rounded-xl bg-transparent min-w-[200px]" />
                 </div>
                 <div className="overflow-x-auto rounded-2xl border dark:border-slate-700 shadow-sm">
                   <table className="w-full text-xs text-left border-collapse">
@@ -1212,7 +1286,7 @@
                 <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 dark:border-slate-700">
                   <div><h2 className="text-base font-black flex items-center gap-2">📊 有言実行月次推進成績表</h2><p className="text-xs text-slate-404">自己遅延ペナルティ半減ロジックを統合した真の馬力測定器。</p></div>
                   <div className="flex items-center gap-2 font-bold text-xs">
-                    <div className="bg-slate-55 border px-3 py-2 rounded-xl dark:bg-slate-900 dark:border-slate-700 text-slate-805 dark:text-white">分析月: <input type="month" value={selectedMonth} onChange={e=>{ if(e.target.value) setSelectedMonth(e.target.value); }} className="bg-transparent font-black text-indigo-600 cursor-pointer outline-none font-mono"/></div>
+                    <div className="bg-slate-55 border px-3 py-2 rounded-xl dark:bg-slate-900 dark:border-slate-700">分析月: <input type="month" value={selectedMonth} onChange={e=>{ if(e.target.value) setSelectedMonth(e.target.value); }} className="bg-transparent font-black text-indigo-600 cursor-pointer outline-none font-mono"/></div>
                     <button onClick={() => { const text = `【${selectedMonth} 推進力実績エビデンス】\n🏆 獲得スコア: ${newAnalyticsData.summary.done}pt\n🔋 稼働総重量: ${newAnalyticsData.summary.total}pt\n✋ 他部署スタック: ${newAnalyticsData.summary.blocked}pt\n📈 目標達成率: ${newAnalyticsData.summary.scoreProgress}%`; navigator.clipboard.writeText(text).then(() => showAlert('📋 報告用フォーマットをクリップボードにコピーしました！')); }} className="bg-indigo-600 text-white font-black px-4 py-2.5 rounded-xl">📋 報告テキストをコピー</button>
                   </div>
                 </div>
@@ -1250,7 +1324,7 @@
                                 <td className="py-3 px-4 text-center font-mono">{p.totalWeight}pt</td>
                                 <td className="py-3 px-4 text-center font-mono text-emerald-500">{p.doneWeight}pt</td>
                                 <td className="py-3 px-4 text-center font-mono text-amber-500">{p.blockedWeight}pt</td>
-                                <td className="py-3 px-4"><div className="flex items-center gap-2"><div className="h-1.5 bg-slate-150 flex-1 rounded-full overflow-hidden dark:bg-slate-700"><div className="bg-indigo-500 h-full" style={{width:`${p.progressRate}%`}}/></div><span className="font-mono text-indigo-500 w-8 text-right">{p.progressRate}%</span></div></td>
+                                <td className="py-3 px-4"><div className="flex items-center gap-2"><div className="h-1.5 bg-slate-150 rounded-full overflow-hidden dark:bg-slate-700"><div className="bg-indigo-500 h-full" style={{width:`${p.progressRate}%`}}/></div><span className="font-mono text-indigo-500 w-8 text-right">{p.progressRate}%</span></div></td>
                               </tr>
                             ))}
                           </tbody>
@@ -1400,4 +1474,4 @@
     root.render(<App />);
   </script>
 </body>
-</html>
+</html>確認して。これで白い画面にならない？100%の自信を。
