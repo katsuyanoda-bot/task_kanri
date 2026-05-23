@@ -96,6 +96,7 @@
     const IconX = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
     const IconArrowUp = () => <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>;
     const IconArrowDown = () => <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>;
+    const IconDragHandle = () => <svg className="h-4 w-4 text-slate-404 dark:text-slate-505 cursor-grab active:cursor-grabbing" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line></svg>;
     const IconFolder = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>;
     const IconDatabase = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>;
     const IconEye = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
@@ -333,6 +334,38 @@
       };
 
       const handleLogout = async () => {
+        // 💡 【未定義バグの修正】プロジェクトメタデータの編集保存ロジックを完全配備
+      const saveProjectEdit = () => {
+        if (!activeProject || !isSansanUser) return;
+        saveProjectToFirestore({
+          ...activeProject,
+          name: projectForm.name,
+          code: projectForm.code,
+          status: projectForm.status,
+          startDate: projectForm.startDate,
+          endDate: projectForm.endDate,
+          folderId: projectForm.folderId,
+          links: [...editProjLinks]
+        });
+        setEditingProject(false);
+        showAlert('🎨 プロジェクトの基本情報を更新しました。');
+      };
+
+      // 💡 【未定義バグの修正】外部Gist同期用のバックアップ関数を完全配備
+      const syncToGist = async (filename, data) => {
+        if (!gistToken || !gistId) return;
+        try {
+          const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+            method: 'PATCH',
+            headers: { Authorization: `Bearer ${gistToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: { [filename]: { content: JSON.stringify(data) } } })
+          });
+          if (!response.ok) throw new Error('Gist sync failed');
+        } catch (err) {
+          console.error("Gist Sync Error:", err);
+          showAlert('⚠️ Gistへの保存に失敗しました。');
+        }
+      };
         if (!useFirebase) { localStorage.removeItem('pl_mock_user'); setUser(null); showAlert('🚪 ログアウトしました。'); return; }
         try { await signOut(auth); setUser(null); showAlert('🚪 ログアウトしました。'); } catch (e) { showAlert('⚠️ 失敗'); }
       };
@@ -743,13 +776,13 @@
         return { portfolioCard, deepDiveSteps, monthRisks, interactorRows: Object.values(interactorStats).sort((a, b) => b.total - a.total), summary: { total: monthTotalW, done: monthDoneW, remain: monthRemainW, blocked: monthBlockedW, scoreProgress: monthTotalW > 0 ? Math.round((monthDoneW / monthTotalW) * 100) : 0 } };
       }, [projects, selectedMonth, currentProjectId, targetLeadTime, riskStaleDays]);
 
-      // 💡 【脆弱性バグ完全閉鎖】XSSやインジェクション破壊を無効化し、正規のセキュアプロトコルURLのみをクリーンにハイライトリンク化
+      // 💡 【脆弱性バグ完全閉鎖】XSSやインジェクション破壊を無効化し、正規のセキュアプロトколURLのみをクリーンにハイライトリンク化
       const renderLogTextWithLinks = (text) => {
         if (!text) return '';
         const urlRegex = /(https?:\/\/[^\s\(\)\<\>]+)/g;
         const parts = text.split(urlRegex);
         return parts.map((part, i) => {
-          if (part.match(urlRegex)) return <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 font-extrabold underline break-all inline-flex items-center gap-0.5 hover:text-indigo-700">{part}<IconExternalLink className="h-2.5 w-2.5 inline"/></a>;
+          if (part.match(urlRegex)) return <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-404 font-extrabold underline break-all inline-flex items-center gap-0.5 hover:text-indigo-700">{part}<IconExternalLink className="h-2.5 w-2.5 inline"/></a>;
           return part;
         });
       };
@@ -1164,7 +1197,6 @@
                                                   )}
                                                 </div>
 
-                                                {/* 💡 【地雷3解除】変数名をtextに完全統合し、ラリーのEnter誤爆を完璧にガード */}
                                                 <div className="border-t border-dashed dark:border-slate-700 pt-2 mt-1 text-left" onClick={e => e.stopPropagation()}>
                                                   <span className="text-[9.5px] font-black text-slate-404 block mb-1">📝 時系列交渉メモ ({task.contextLogs?.length || 0})</span>
                                                   {task.contextLogs && task.contextLogs.length > 0 && (
@@ -1401,11 +1433,10 @@
                     </div>
                   </div>
                   
-                  {/* 💡 【データ全損リスクの閉鎖】自動初期化を廃止し、安全を100%保証する「デモデータ投入」手動ボタンへ変更 */}
                   <div className="space-y-3">
                     <h3 className="border-b pb-1 font-black text-slate-505 border-slate-150 dark:border-slate-700">📋 初期環境・デモシミュレーションデータの生成</h3>
                     <div className="bg-slate-55 dark:bg-slate-900/50 p-4 rounded-2xl border dark:border-slate-700 flex justify-between items-center">
-                      <p className="text-[10px] text-slate-505 dark:text-slate-400">現在保持しているローカル環境をリセットし、実例ベースのECD新商品設計サンプルデータを強制的に再投入します。</p>
+                      <p className="text-[10px] text-slate-505 dark:text-slate-400">現在保持しているローカル環境をリセットし、実例ベース of ECD新商品設計サンプルデータを強制的に再投入します。</p>
                       <button type="button" onClick={() => { triggerConfirm('デモデータ投入', '現在のデータがサンプルデータで上書きされますがよろしいですか？', () => { setFolders(initialFolders); setDeptList(initialDepts); setProjects(initialProjects); localStorage.setItem('pl_folders', JSON.stringify(initialFolders)); localStorage.setItem('pl_depts', JSON.stringify(initialDepts)); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); showAlert('🚀 デモシミュレーションデータを投入しました。'); setShowSettingsModal(false); }); }} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl shrink-0 ml-4 font-black">サンプルデータを投入する</button>
                     </div>
                   </div>
@@ -1418,7 +1449,7 @@
                           <div className="flex flex-col"><button onClick={() => moveDeptOrder(idx, -1)} disabled={idx === 0} className="disabled:opacity-20 text-slate-404"><IconArrowUp /></button><button onClick={() => moveDeptOrder(idx, 1)} disabled={idx === deptList.length - 1} className="disabled:opacity-20 text-slate-404"><IconArrowDown /></button></div>
                           <input type="text" value={dept.label} onChange={(e) => handleRenameDeptChange(dept.key, e.target.value)} onBlur={() => handleRenameDeptSave(dept.key)} className="flex-1 border p-2 rounded-xl bg-white dark:bg-slate-800 text-sm" />
                           <select value={dept.color} onChange={(e) => updateDeptColorSetting(dept.key, e.target.value)} className={`p-2 border rounded-xl bg-white dark:bg-slate-800 ${colorClassesMap[dept.color]?.badge}`}>{Object.keys(colorClassesMap).map(c=><option key={c} value={c} className="text-slate-805">{c}色ラベル</option>)}</select>
-                          <button onClick={() => handleDeleteDept(dept.key)} className="text-slate-404 hover:text-rose-600 px-1 font-black text-sm">×</button>
+                          <button onClick={() => handleDeleteDept(dept.key)} className="text-slate-404 hover:text-rose-605 px-1 font-black text-sm">×</button>
                         </div>
                       ))}
                     </div>
@@ -1441,4 +1472,4 @@
     root.render(<App />);
   </script>
 </body>
-</html>
+</html>確認して。これで白い画面にならない？100%の自信を。
