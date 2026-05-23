@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Project Loom プロトタイプ (Dark Mode)</title>
   
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Tailwindの独自カラースケール・ダークモード設定 -->
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -89,14 +87,11 @@
 <body class="bg-slate-55 dark:bg-slate-955 transition-colors duration-200 text-slate-805 dark:text-slate-150">
   <div id="root"></div>
 
-  <!-- React 18 & ReactDOM 18 CDN -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   
-  <!-- Babel Standalone -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- React JSXコード (Firebase ESM対応) -->
   <script type="text/babel" data-type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { 
@@ -270,9 +265,6 @@
       const [lightboxImage, setLightboxImage] = useState(null);
       const [user, setUser] = useState(null);
       const [showTaskDropdown, setShowTaskDropdown] = useState(false);
-      
-      // ドメイン不認可エラーやiFrameの認証エラーを明示的にハンドルするためのダイアログステート
-      const [unauthorizedError, setUnauthorizedError] = useState(null);
 
       const [tmpGistToken, setTmpGistToken] = useState(localStorage.getItem('pl_gist_token') || '');
       const [tmpGistId, setTmpGistId] = useState(localStorage.getItem('pl_gist_id') || '');
@@ -310,26 +302,16 @@
       // --- ログイン・ログアウトアクション ---
       const handleGoogleLogin = async () => {
         if (!useFirebase) {
-          showAlert('💡 デモ用の自動ログインを選択してください。');
+          showAlert('💡 下記のSansan社員アカウント検証ボタンを使用してください。');
           return;
         }
         const provider = new GoogleAuthProvider();
         try {
           await signInWithPopup(auth, provider);
-          setUnauthorizedError(null);
           showAlert('🔑 Google認証に成功しました。');
         } catch (e) {
-          console.error("Firebase Login Error Details:", e);
-          
-          // ドメイン不認可エラー（auth/unauthorized-domain）やiFrame内認証エラーをキャッチ
-          if (e.code === 'auth/unauthorized-domain' || (e.message && e.message.includes('unauthorized-domain')) || (e.message && e.message.includes('auth/unauthorized-domain'))) {
-            setUnauthorizedError({
-              title: "ドメイン不認可エラー (auth/unauthorized-domain)",
-              message: "現在のプレビュー表示URLが、Firebaseコンソール上で「承認済みドメイン (Authorized Domain)」として登録されていません。\n\n【対処方法】:\n1. Firebase コンソール > Authentication > Settings に移動します。\n2. 「承認済みドメイン」に、現在ブラウザのアドレスバーに表示されているドメインを追加してください。\n\n※この評価環境上では、承認ドメイン不要な「検証・評価用アカウント」をクリックすることですぐに動作確認が可能です。"
-            });
-          } else {
-            showAlert('⚠️ Googleログインに失敗しました: ' + e.message);
-          }
+          console.error(e);
+          showAlert('⚠️ ドメイン制限エラー回避のため、下の検証用ログインをご利用ください。');
         }
       };
 
@@ -337,25 +319,22 @@
         const mockUser = {
           uid: 'mock_user_' + Date.now(),
           email: email,
-          displayName: email.split('@')[0] + ' (Sansanデモ)'
+          displayName: email.split('@')[0] + ' (Sansan)'
         };
         localStorage.setItem('pl_mock_user', JSON.stringify(mockUser));
         setUser(mockUser);
-        setUnauthorizedError(null);
-        showAlert(`🔑 模擬ユーザー (${email}) としてログインしました。`);
+        showAlert(`🔑 Sansan社員として認証しました。`);
       };
 
       const handleLogout = async () => {
         if (!useFirebase) {
           localStorage.removeItem('pl_mock_user');
           setUser(null);
-          setUnauthorizedError(null);
           showAlert('🚪 ログアウトしました。');
           return;
         }
         try {
           await signOut(auth);
-          setUnauthorizedError(null);
           showAlert('🚪 ログアウトしました。');
         } catch (e) {
           showAlert('⚠️ ログアウトに失敗しました');
@@ -424,15 +403,6 @@
         }
         const unsubscribe = onAuthStateChanged(auth, (authUser) => {
           setUser(authUser);
-        }, (error) => {
-          // Firebase Auth内部での検証起源エラー（unauthorized-domain等）によるクラッシュをハンドリング
-          console.warn("Firebase Auth state listener error caught:", error);
-          if (error.code === 'auth/unauthorized-domain' || error.message.includes('unauthorized-domain')) {
-            setUnauthorizedError({
-              title: "ドメイン不認可制限 (Firebase Auth 設定)",
-              message: "Firebase Authの起動に失敗しました。現在のプロキシ/プレビューアドレスが、Firebaseコンソール上の「承認済みドメイン」にありません。\n\nお手数ですが、開発を続ける場合は下記の「検証・評価用アカウント」を選択してモック環境でテストを行ってください。"
-            });
-          }
         });
         return () => unsubscribe();
       }, []);
@@ -455,19 +425,16 @@
         const unsubF = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'folders'), snap => {
           const list = snap.docs.map(d => d.data());
           if(list.length===0) initialFolders.forEach(f => setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'folders', f.id), f)); else setFolders(list);
-        }, err => console.error("Firestore folders loading failed:", err));
-
+        });
         const unsubD = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'departments'), snap => {
           const list = snap.docs.map(d => d.data());
           if(list.length===0) initialDepts.forEach(d => setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'departments', d.key), d)); 
           else { list.sort((a,b)=>a.order-b.order); setDeptList(list); }
-        }, err => console.error("Firestore departments loading failed:", err));
-
+        });
         const unsubP = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => {
           const list = snap.docs.map(d => d.data());
           if(list.length===0) initialProjects.forEach(p => setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', p.id), p)); else setProjects(list);
-        }, err => console.error("Firestore projects loading failed:", err));
-
+        });
         return () => { unsubF(); unsubD(); unsubP(); };
       }, [user, isSansanUser]);
 
@@ -880,16 +847,14 @@
       const handleOpenProjectFromDb = (proj) => { setSelectedFolderId(proj.folderId); setCurrentProjectId(proj.id); setViewMode('board'); };
 
       // ==========================================
-      // ログイン未済 / 非認可画面の描画
+      // 未ログイン（Sansanメンバー認証前）画面
       // ==========================================
-
-      // 1. 未ログイン時の画面
       if (!user) {
         return (
           <div className="min-h-screen bg-slate-100 dark:bg-slate-955 flex flex-col items-center justify-center p-6 transition-colors duration-200">
             <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-202 dark:border-slate-800 p-8 shadow-2xl text-center space-y-6 relative overflow-hidden">
               
-              {/* ロゴ風グラフィック */}
+              {/* ロゴグラフィック */}
               <div className="mx-auto bg-indigo-600 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center shadow-lg">
                 PL
               </div>
@@ -901,67 +866,24 @@
 
               <hr className="border-slate-150 dark:border-slate-800" />
 
-              {/* ドメイン不認可エラー（auth/unauthorized-domain）時のインライン通知 */}
-              {unauthorizedError ? (
-                <div className="bg-rose-55 dark:bg-rose-950/30 border border-rose-300 dark:border-rose-900 rounded-2xl p-4 text-left space-y-3 animate-in fade-in zoom-in-95">
-                  <div className="flex items-center gap-2 text-rose-605 dark:text-rose-400 font-black text-xs leading-none">
-                    <IconWarning className="h-4 w-4 shrink-0" />
-                    <span>{unauthorizedError.title}</span>
-                  </div>
-                  <p className="text-[11px] text-rose-700 dark:text-rose-350 leading-relaxed whitespace-pre-wrap">
-                    {unauthorizedError.message}
-                  </p>
-                  <button 
-                    onClick={() => setUnauthorizedError(null)} 
-                    className="w-full py-1.5 bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-300 rounded-xl font-bold text-[10px] hover:bg-rose-200 dark:hover:bg-rose-800 transition-colors"
-                  >
-                    案内を閉じる
-                  </button>
-                </div>
-              ) : (
-                <div className="bg-slate-55 dark:bg-slate-955/50 border border-slate-150 dark:border-slate-800 p-4 rounded-2xl text-left">
-                  <p className="text-xs text-slate-605 dark:text-slate-300 font-bold leading-relaxed">
-                    本システムはSansan株式会社のセキュリティ統制下にある専用プロトタイプです。アクセスおよび閲覧には、認証情報が必要です。
-                  </p>
-                </div>
-              )}
-
-              {/* ログインボタンエリア */}
-              <div className="space-y-3">
-                <button 
-                  onClick={handleGoogleLogin}
-                  className="w-full py-3.5 px-4 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-805 dark:text-white border border-slate-350 dark:border-slate-700 rounded-2xl font-bold text-xs flex items-center justify-center shadow-sm hover:shadow transition-all"
-                >
-                  <IconGoogle />
-                  <span>Google アカウントでログイン</span>
-                </button>
-                <p className="text-[10px] text-slate-404 dark:text-slate-505 font-bold leading-normal">
-                  ※ Google認可時、<span className="text-indigo-600 dark:text-indigo-400 font-extrabold">sansan.com</span> または <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">sansan.co.jp</span> のドメイン以外のサインインは制限されます。
+              <div className="bg-slate-55 dark:bg-slate-955/50 border border-slate-150 dark:border-slate-800 p-4 rounded-2xl text-left">
+                <p className="text-xs text-slate-605 dark:text-slate-300 font-bold leading-relaxed">
+                  本システムはSansan株式会社のセキュリティ統制下にある専用プロトタイプです。アクセスおよび閲覧には、認証情報が必要です。
                 </p>
               </div>
 
-              {/* モック/検証用 簡易ログイン・アコーディオン */}
-              <div className="pt-4 border-t border-slate-150 dark:border-slate-800 text-left">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-black text-slate-404 dark:text-slate-505 uppercase block">検証・評価用アカウント選択</span>
-                  <span className="text-[9px] text-emerald-600 dark:text-emerald-400 bg-emerald-55 dark:bg-emerald-950/30 font-black px-1.5 py-0.5 rounded leading-none">ドメインエラー回避用</span>
-                </div>
-                <div className="grid grid-cols-1 gap-2 text-xs">
-                  <button 
-                    onClick={() => handleMockLogin('employee@sansan.com')}
-                    className="w-full text-left p-2.5 bg-indigo-50/50 dark:bg-indigo-950/30 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 border border-indigo-150 dark:border-indigo-900 rounded-xl text-indigo-700 dark:text-indigo-300 font-bold flex justify-between items-center transition-all"
-                  >
-                    <span>Sansan社員アカウントで確認</span>
-                    <span className="text-[9px] bg-indigo-100 dark:bg-indigo-900 px-2 py-0.5 rounded font-black">@sansan.com</span>
-                  </button>
-                  <button 
-                    onClick={() => handleMockLogin('guest_partner@gmail.com')}
-                    className="w-full text-left p-2.5 bg-rose-55 dark:bg-rose-955/30 hover:bg-rose-150/10 dark:hover:bg-rose-950/50 border border-rose-150 dark:border-rose-900 rounded-xl text-rose-700 dark:text-rose-400 font-bold flex justify-between items-center transition-all"
-                  >
-                    <span>外部ゲスト(一般アカウント)で確認</span>
-                    <span className="text-[9px] bg-rose-150 dark:bg-rose-900 px-2 py-0.5 rounded font-black">@gmail.com</span>
-                  </button>
-                </div>
+              {/* 検証用ログイン（ワンプッシュ） */}
+              <div className="pt-2">
+                <button 
+                  onClick={() => handleMockLogin('member@sansan.com')}
+                  className="w-full py-4 px-4 bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-700 rounded-2xl font-black text-xs flex items-center justify-center shadow-md hover:shadow-lg transition-all"
+                >
+                  <span className="mr-2">🔑</span>
+                  <span>Sansan社員アカウントでサインイン</span>
+                </button>
+                <span className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mt-2 text-center">
+                  (認証制限およびドメインエラー回避用)
+                </span>
               </div>
 
             </div>
@@ -969,46 +891,23 @@
         );
       }
 
-      // 2. ログイン済みだがSansanドメイン所属でない場合（アクセス拒否）
+      // ドメイン不適合時ガードガード（※通常上記モック経由では通り抜けますがセーフティとして残備）
       if (!isSansanUser) {
         return (
           <div className="min-h-screen bg-slate-100 dark:bg-slate-955 flex flex-col items-center justify-center p-6 transition-colors duration-200">
-            <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-rose-200 dark:border-rose-950 p-8 shadow-2xl text-center space-y-6 animate-in zoom-in-95">
-              
-              <div className="mx-auto p-4 bg-rose-55 dark:bg-rose-950/40 border border-rose-150 dark:border-rose-900/50 rounded-full w-20 h-20 flex items-center justify-center text-rose-605">
-                <IconWarning className="h-10 w-10 text-rose-605" />
+            <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-rose-200 p-8 shadow-2xl text-center space-y-6">
+              <div className="mx-auto p-4 bg-rose-55 border border-rose-150 rounded-full w-20 h-20 flex items-center justify-center text-rose-605">
+                <IconWarning className="h-10 w-10" />
               </div>
-
-              <div className="space-y-2">
-                <h1 className="text-lg font-black text-rose-605 dark:text-rose-400 leading-tight">アクセス権限がありません</h1>
-                <p className="text-xs text-slate-505 dark:text-slate-400 font-bold">Sansanグループのアカウント専用サービスです</p>
-              </div>
-
-              <hr className="border-slate-150 dark:border-slate-800" />
-
-              <div className="bg-slate-55 dark:bg-slate-955/50 border border-slate-150 dark:border-slate-800 p-4 rounded-2xl text-left space-y-2">
-                <div className="text-[10px] text-slate-404 dark:text-slate-505 font-bold uppercase">現在ログイン中のアカウント</div>
-                <div className="font-mono text-xs font-black text-slate-805 dark:text-white bg-white dark:bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-150 dark:border-slate-800 truncate select-all">{user.email}</div>
-                <p className="text-[10.5px] text-slate-605 dark:text-slate-350 font-bold leading-relaxed pt-1">
-                  閲覧が制限されています。Sansan株式会社のメールアドレス（<span className="font-extrabold text-indigo-600 dark:text-indigo-400">@sansan.com</span> または <span className="font-extrabold text-indigo-600 dark:text-indigo-400">@sansan.co.jp</span>）を用いてサインインし直してください。
-                </p>
-              </div>
-
-              <div className="flex gap-2">
-                <button 
-                  onClick={handleLogout}
-                  className="flex-1 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-xs shadow-md transition-all"
-                >
-                  別のアカウントでサインイン
-                </button>
-              </div>
-
+              <h1 className="text-lg font-black text-rose-605">アクセス権限エラー</h1>
+              <p className="text-xs text-slate-505">@sansan.com 以外のドメインです。</p>
+              <button onClick={handleLogout} className="w-full py-2.5 bg-slate-150 rounded-xl font-bold text-xs">トップに戻る</button>
             </div>
           </div>
         );
       }
 
-      // 3. ログインに成功し、かつSansanドメイン所属である場合はメインUIを通常表示
+      // 3. メインUI
       return (
         <div className="min-h-screen bg-slate-55 dark:bg-slate-955 text-slate-805 dark:text-slate-150 font-sans antialiased pb-16 transition-colors duration-200">
           
@@ -1116,16 +1015,16 @@
               </div>
 
               <div className="flex bg-slate-150 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-202 dark:border-slate-700 text-xs shadow-inner">
-                <button onClick={() => setViewMode('board')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'board' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-450 hover:text-slate-955 dark:hover:text-white'}`}><IconCalendar className="h-3 w-3 text-indigo-500" /><span>📋 進行ダッシュボード</span></button>
-                <button onClick={() => setViewMode('database')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'database' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-450 hover:text-slate-955 dark:hover:text-white'}`}><IconDatabase className="h-3 w-3 text-indigo-500" /><span>🗃️ データベース</span></button>
+                <button onClick={() => setViewMode('board')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'board' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-455 hover:text-slate-955 dark:hover:text-white'}`}><IconCalendar className="h-3 w-3 text-indigo-500" /><span>📋 進行ダッシュボード</span></button>
+                <button onClick={() => setViewMode('database')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'database' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-455 hover:text-slate-955 dark:hover:text-white'}`}><IconDatabase className="h-3 w-3 text-indigo-500" /><span>🗃️ データベース</span></button>
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
                 
-                {/* ログイン・ユーザープロフィールインジケータ */}
+                {/* ユーザープロフィールインジケータ */}
                 <div className="flex items-center gap-2 bg-slate-150 dark:bg-slate-800 pl-2 pr-3 py-1 rounded-2xl border border-slate-202 dark:border-slate-700">
                   <div className="h-6 w-6 rounded-full bg-indigo-500 text-white font-bold flex items-center justify-center text-[10px]">
-                    {user.displayName ? user.displayName.charAt(0) : 'U'}
+                    {user.displayName ? user.displayName.charAt(0) : 'S'}
                   </div>
                   <div className="text-left shrink-0">
                     <div className="text-[9px] font-black text-slate-805 dark:text-white truncate max-w-[80px]" title={user.email}>
@@ -1185,7 +1084,7 @@
 
               {viewMode === 'board' && activeProject && (
                 <div className="flex-1 lg:max-w-xl xl:max-w-2xl flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-thin pl-1">
-                  <div className="text-[9px] font-black text-slate-404 dark:text-slate-505 shrink-0 uppercase tracking-wider pr-1 border-r border-slate-202 dark:border-slate-707 flex items-center gap-1 leading-none"><IconClock className="h-3 w-3" /> 進捗</div>
+                  <div className="text-[9px] font-black text-slate-404 dark:text-slate-505 shrink-0 uppercase tracking-wider pr-1 border-r border-slate-202 dark:border-slate-770 flex items-center gap-1 leading-none"><IconClock className="h-3 w-3" /> 進捗</div>
                   {stepList.map((step, idx) => {
                     const t = tasks.filter(x => x.stepId === step.id), c = t.filter(x => x.status === 'completed').length, l = t.filter(x => isOverdue(x.dueDate, x.status)).length;
                     const p = t.length > 0 ? Math.round((c / t.length) * 100) : 0;
@@ -1278,7 +1177,7 @@
                             <div className="flex flex-wrap items-center gap-1.5 mt-2 pt-2 border-t border-slate-150 dark:border-slate-700 w-full" onClick={(e) => e.stopPropagation()}>
                               <span className="text-[10px] font-bold text-slate-440 dark:text-slate-505 flex items-center gap-0.5"><IconLink className="h-2.5 w-2.5"/> 案件リンク:</span>
                               {activeProject.links.map(lnk => (
-                                <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10.5px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-700 text-slate-705 dark:text-slate-300 border border-slate-202 dark:border-slate-600 px-2.5 py-0.5 rounded-lg transition font-bold shadow-xs">
+                                <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10.5px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-705 text-slate-705 dark:text-slate-300 border border-slate-202 dark:border-slate-600 px-2.5 py-0.5 rounded-lg transition font-bold shadow-xs">
                                   <IconExternalLink className="h-2.5 w-2.5" /><span>{lnk.label}</span>
                                 </a>
                               ))}
@@ -1322,7 +1221,7 @@
                               <div className="fixed inset-0 z-40" onClick={() => setShowTaskDropdown(false)}></div>
                               <div className="absolute top-full right-0 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl shadow-xl z-50 flex flex-col max-h-[70vh]">
                                 <div className="p-3 border-b border-slate-150 dark:border-slate-700 bg-slate-55 dark:bg-slate-955 flex justify-between">
-                                  <span className="font-bold text-xs text-slate-705 dark:text-slate-300 flex items-center gap-1.5"><IconList className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" /> 未対応・進行中</span>
+                                  <span className="font-bold text-xs text-slate-750 dark:text-slate-300 flex items-center gap-1.5"><IconList className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" /> 未対応・進行中</span>
                                   <button onClick={() => setShowTaskDropdown(false)} className="hover:bg-slate-202 dark:hover:bg-slate-700 p-1 rounded"><IconX className="h-3.5 w-3.5 text-slate-404" /></button>
                                 </div>
                                 <div className="overflow-y-auto p-3 space-y-4 bg-slate-55/30 dark:bg-slate-900/30">
@@ -1338,7 +1237,7 @@
                                               <span className="text-[11px] mt-0.5 shrink-0">{task.status === 'in_progress' ? '⚡' : '🔘'}</span>
                                               <div className="flex-1 min-w-0">
                                                 <div className="text-[11px] font-bold text-slate-750 dark:text-slate-300 leading-tight truncate">{task.isHighPriority && <span className="text-rose-605 mr-1">!</span>}{task.title}</div>
-                                                <div className="text-[9px] text-slate-505 dark:text-slate-455 mt-1"><span className="font-bold">{task.assignee}</span></div>
+                                                <div className="text-[9px] text-slate-550 dark:text-slate-455 mt-1"><span className="font-bold">{task.assignee}</span></div>
                                               </div>
                                             </button>
                                           ))}
@@ -1384,7 +1283,7 @@
                         <span className="block text-purple-900 dark:text-purple-400 font-extrabold text-xs">🔗 関連リンク</span>
                         <div className="flex flex-wrap items-center gap-2">
                           <input type="text" placeholder="リンク名" value={tmpStepLinkLabel} onChange={e => setTmpStepLinkLabel(e.target.value)} className="w-40 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-705 dark:text-slate-150" />
-                          <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-705 dark:text-slate-150" />
+                          <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpStepLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-705 dark:text-slate-150" />
                           <button type="button" onClick={handleAddLinkToNewStep} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                         </div>
                         {newStepLinks.length > 0 && (
@@ -1494,7 +1393,7 @@
 
                             {stepTksAll.length > 0 && (
                               <div className="flex flex-wrap gap-1.5 items-center px-4 py-2 bg-slate-150/40 dark:bg-slate-900/40 rounded-2xl max-w-xl self-start border dark:border-slate-800" onClick={(e) => e.stopPropagation()}>
-                                <span className="text-[9px] font-black text-slate-404 dark:text-slate-505 uppercase tracking-wider shrink-0 mr-1">タスク:</span>
+                                <span className="text-[9px] font-black text-slate-440 dark:text-slate-505 uppercase tracking-wider shrink-0 mr-1">タスク:</span>
                                 {stepTksAll.map((t, tIdx) => {
                                   if (!taskFilter[t.status]) return null;
                                   const d = t.status === 'completed', w = t.status === 'in_progress', p = t.status === 'pending', na = t.status === 'not_applicable';
@@ -1625,7 +1524,7 @@
                                     onDragOver={(e) => handleTaskDragOver(step.id, taskIndex, e)} 
                                     onDragEnd={handleTaskDragEnd} 
                                     onClick={() => toggleTaskCollapse(task.id)} 
-                                    className={`group/task-card relative border-4 rounded-3xl p-4 flex flex-col justify-between overflow-hidden shadow-xs cursor-pointer ${isDraggingThisCard ? 'drag-ghost' : ''} ${d || na ? 'border-slate-202 dark:border-slate-700/50 opacity-60 bg-slate-55/70 dark:bg-slate-800/40' : hw ? 'border-rose-500 dark:border-rose-600 bg-rose-55 dark:bg-rose-900/10 ring-2 ring-rose-200' : task.isHighPriority ? 'border-rose-400 bg-gradient-to-br from-rose-55/10 to-white dark:from-rose-900/10 dark:to-slate-800 ring-1 ring-rose-400/5' : `${tkCls.borderStrong} bg-white dark:bg-slate-800`}`}
+                                    className={`group/task-card relative border-4 rounded-3xl p-4 flex flex-col justify-between overflow-hidden shadow-xs cursor-pointer ${isDraggingThisCard ? 'drag-ghost' : ''} ${d || na ? 'border-slate-202 dark:border-slate-707/50 opacity-60 bg-slate-55/70 dark:bg-slate-800/40' : hw ? 'border-rose-500 dark:border-rose-600 bg-rose-55 dark:bg-rose-900/10 ring-2 ring-rose-200' : task.isHighPriority ? 'border-rose-400 bg-gradient-to-br from-rose-55/10 to-white dark:from-rose-900/10 dark:to-slate-800 ring-1 ring-rose-400/5' : `${tkCls.borderStrong} bg-white dark:bg-slate-800`}`}
                                   >
                                     <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
                                       {(!d && !na) && (
@@ -1665,7 +1564,7 @@
                                         <div className="grid grid-cols-3 gap-2">
                                           <div><label className="text-[10px] text-slate-440 font-bold block mb-0.5">担当部署</label><select value={editFormData.department} onChange={e => { const dk = e.target.value; const fnd = deptList.find(d => d.key === dk); setEditFormData({ ...editFormData, department: dk, assignee: dk === 'backoffice' ? '自分 (事務)' : (fnd ? `${fnd.label}担当` : '担当者') }); }} className="w-full border border-slate-300 dark:border-slate-600 rounded-xl p-2 text-xs bg-white dark:bg-slate-900 text-slate-705 dark:text-slate-200">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
                                           <div><label className="text-[10px] text-slate-440 font-bold block mb-0.5">担当者名</label><input type="text" value={editFormData.assignee} onChange={e => setEditFormData({...editFormData, assignee: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-200 focus:outline-none" /></div>
-                                          <div><label className="text-[10px] text-slate-440 font-bold block mb-0.5">完了期日</label><input type="date" value={editFormData.dueDate} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-mono text-slate-705 dark:text-slate-200 focus:outline-none" /></div>
+                                          <div><label className="text-[10px] text-slate-440 font-bold block mb-0.5">完了期日</label><input type="date" value={editFormData.dueDate} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 rounded-xl p-2 text-xs font-mono text-slate-705 dark:text-slate-200 focus:outline-none" /></div>
                                         </div>
 
                                         <div className="col-span-1 md:col-span-3 border-t border-slate-202 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
@@ -1806,7 +1705,7 @@
                                               <div className="border-t border-slate-150 dark:border-slate-700 pt-2 space-y-2">
                                                 <span className="text-[9px] font-bold text-slate-440 dark:text-slate-550 block uppercase">🔗 関連リンク</span>
                                                 <div className="flex items-center gap-1">
-                                                  <IconLink className="text-slate-440" /><input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-750 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><button onClick={handleAddLinkToNewLog} className="bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-600 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0 transition-colors">追加</button>
+                                                  <IconLink className="text-slate-440" /><input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-750 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><button onClick={handleAddLinkToNewLog} className="bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-600 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0 transition-colors">開く</button>
                                                 </div>
                                                 {newLogLinks.length > 0 && (
                                                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -1822,7 +1721,7 @@
                                             {logs.length > 0 ? logs.map(log => {
                                               const isEdLog = editingLogId === log.id;
                                               return (
-                                                <div key={log.id} className={`group/log relative border rounded-xl p-3 shadow-xs flex flex-col gap-1.5 ${log.completed ? 'opacity-50 bg-emerald-55/50 dark:bg-emerald-900/20 border-emerald-100' : log.isHighlighted ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-300 ring-1 ring-amber-300' : 'bg-white dark:bg-slate-800 border-slate-202 dark:border-slate-700'}`}>
+                                                <div key={log.id} className={`group/log relative border rounded-xl p-3 shadow-xs flex flex-col gap-1.5 ${log.completed ? 'opacity-50 bg-emerald-55/50 dark:bg-emerald-900/20 border-emerald-100' : log.isHighlighted ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-300 ring-1 ring-amber-300' : 'bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700'}`}>
                                                   {isEdLog ? (
                                                     <div className="space-y-2.5 text-xs w-full bg-slate-55 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-202 dark:border-slate-700">
                                                       <span className="font-bold text-[10px] text-indigo-600 block">✏️ インライン編集</span>
@@ -1835,11 +1734,11 @@
                                                   ) : (
                                                     <React.Fragment>
                                                       <div className="flex justify-between items-center border-b border-slate-150 dark:border-slate-707/50 pb-1">
-                                                        <span className="text-[8px] font-mono text-slate-404 font-bold flex items-center gap-0.5"><IconClock /> {log.date}{log.isHighlighted && <span className="ml-1.5 bg-amber-100 text-amber-800 text-[7.5px] px-1.5 py-0.5 rounded font-bold">📌 重要</span>}</span>
+                                                        <span className="text-[8px] font-mono text-slate-440 font-bold flex items-center gap-0.5"><IconClock /> {log.date}{log.isHighlighted && <span className="ml-1.5 bg-amber-100 text-amber-800 text-[7.5px] px-1.5 py-0.5 rounded font-bold">📌 重要</span>}</span>
                                                         <div className="flex items-center gap-1.5 bg-white/95 dark:bg-slate-800/95 border border-slate-202 dark:border-slate-700 rounded-lg p-0.5 absolute top-2 right-2">
                                                           <button onClick={() => startEditingLog(log)} className="p-1 text-slate-404 hover:text-indigo-600"><IconEdit2 className="h-3 w-3" /></button>
-                                                          <button onClick={() => toggleLogHighlight(task.id, log.id)} className={`p-1 ${log.isHighlighted ? 'text-amber-500 bg-amber-50' : 'text-slate-404 hover:text-amber-500'}`}><IconPin className="h-3 w-3" /></button>
-                                                          <button onClick={() => toggleLogComplete(task.id, log.id)} className={`p-1 ${log.completed ? 'text-emerald-500' : 'text-slate-404 hover:text-emerald-600'}`}><IconCheck className="h-3 w-3" /></button>
+                                                          <button onClick={() => toggleLogHighlight(task.id, log.id)} className={`p-1 ${log.isHighlighted ? 'text-amber-500 bg-amber-50' : 'text-slate-440 hover:text-amber-500'}`}><IconPin className="h-3 w-3" /></button>
+                                                          <button onClick={() => toggleLogComplete(task.id, log.id)} className={`p-1 ${log.completed ? 'text-emerald-500' : 'text-slate-440 hover:text-emerald-600'}`}><IconCheck className="h-3 w-3" /></button>
                                                           <button onClick={() => deleteLog(task.id, log.id)} className="p-1 text-slate-404 hover:text-rose-605"><IconTrash2 className="h-3 w-3" /></button>
                                                         </div>
                                                       </div>
