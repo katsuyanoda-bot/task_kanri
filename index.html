@@ -133,7 +133,7 @@
     const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
     const IconMoon = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>;
     
-    // ① ヘッダーアイコンのサイズバグ（巨大化）を修正
+    // ① ヘッダーアイコンバグ（サイズ指定className漏れ）を完全修正
     const IconChart = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>;
 
     // Google カラーロゴ
@@ -153,9 +153,9 @@
       blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-blue-400' },
       emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-400' },
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-[#f0fdf4] dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
-      amber: { text: 'text-amber-805 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
+      amber: { text: 'text-amber-804 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
       rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-purple-404' },
-      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-550 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
+      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-555' }
     };
 
     // 初期マスタデータ
@@ -197,7 +197,7 @@
       }
     ];
 
-    // ④ 土日を除外した実「営業日」を計算するヘルパー関数
+    // ④ 土日を除外した「実稼働営業日」を正確にカウントするアルゴリズム関数
     const getWorkingDaysDiff = (startStr, endStr) => {
       if (!startStr || !endStr) return 0;
       const start = new Date(startStr);
@@ -208,7 +208,7 @@
       let cur = new Date(start);
       while (cur <= end) {
         const day = cur.getDay();
-        if (day !== 0 && day !== 6) { // 0: 日曜日, 6: 土曜日
+        if (day !== 0 && day !== 6) { // 0:日, 6:土 を完全に除外
           count++;
         }
         cur.setDate(cur.getDate() + 1);
@@ -259,7 +259,7 @@
       });
     };
 
-    // 期間計算を営業日ベースに置き換え
+    // 全体のタスク消化日数計測を「営業日ベース」へアップデート
     const getDurationDays = (task) => {
       if (!task || !task.startedAt) return null;
       const end = task.completedAt ? task.completedAt : TODAY_STR;
@@ -307,11 +307,11 @@
         not_applicable: false
       });
 
-      // --- ⑥ 設定画面から動的に変えられる変数群 (State) ---
+      // --- ⑥ 設定画面からポチポチ変えられる動的しきい値環境用State群 ---
       const [riskThresholdDays, setRiskThresholdDays] = useState(() => Number(localStorage.getItem('pl_cfg_risk_days')) || 5);
       const [targetLeadTimeDays, setTargetLeadTimeDays] = useState(() => Number(localStorage.getItem('pl_cfg_target_lt')) || 7);
 
-      // --- ② 個別案件 ✕ 全体切替用のState群 ---
+      // --- ② 分析スコープ（ミクロ案件/全体マクロ横断）切り替え用のState群 ---
       const [analyticsProjectId, setAnalyticsProjectId] = useState('all');
       const [analyticsTab, setAnalyticsTab] = useState('resource');
 
@@ -669,17 +669,17 @@
       // --- ② ✕ ③ ✕ ④ ✕ ⑤ アナリティクス用の高度な動的集計ロジック (マクロ/ミクロ対応) ---
       // =========================================================================
 
-      // セレクトボックスで選ばれたターゲット案件群
+      // ② セレクトボックスで選択されたターゲット案件群の算出
       const analyticsTargetProjects = useMemo(() => {
         if (analyticsProjectId === 'all') return projects;
         return projects.filter(p => p.id === analyticsProjectId);
       }, [projects, analyticsProjectId]);
 
-      // ③ リソース・個人負荷の詳細分析
+      // ③ リソース・個人負荷の詳細多重分析（未完了遅延、進行中遅延、完了率の全自動算出）
       const analyticsResourceData = useMemo(() => {
         const allTasks = analyticsTargetProjects.flatMap(p => p.tasks || []);
         
-        // 個人ごとの深い多重集計データ作成
+        // 個人ごとの深い集計マップの構築
         const memberStats = {};
         allTasks.forEach(t => {
           if (t.status === 'not_applicable') return;
@@ -698,14 +698,14 @@
             memberStats[name].completed++;
           } else if (t.status === 'in_progress') {
             memberStats[name].inProgress++;
-            if (isDelay) memberStats[name].progressDelay++; // 進行中かつ遅延
+            if (isDelay) memberStats[name].progressDelay++; // 進行中なのに超過
           } else if (t.status === 'pending') {
             memberStats[name].pending++;
-            if (isDelay) memberStats[name].pendingDelay++;   // 未対応かつ遅延
+            if (isDelay) memberStats[name].pendingDelay++;   // 未対応のまま超過
           }
         });
 
-        // 部署（部門）軸でのマッピングと紐付け
+        // 部署（マスタ）軸での構造マッピング
         const deptStats = deptList.map(dept => {
           const deptTasks = allTasks.filter(t => t.department === dept.key);
           const activeTasks = deptTasks.filter(t => t.status !== 'completed' && t.status !== 'not_applicable');
@@ -727,7 +727,7 @@
         return { deptStats, memberStats: Object.values(memberStats).sort((a, b) => b.total - a.total) };
       }, [analyticsTargetProjects, deptList]);
 
-      // ④ 営業日ベースのリードタイム・ステップ密度分析
+      // ④ 営業日ベースのリードタイム・ステップ密度分析（土日除外）
       const analyticsLeadTimeData = useMemo(() => {
         const stepStats = {};
         analyticsTargetProjects.forEach(p => {
@@ -748,7 +748,7 @@
             } else {
               if (startDates.length) {
                 const minStart = startDates.reduce((a, b) => a < b ? a : b);
-                duration = getWorkingDaysDiff(minStart, TODAY_STR); // 現在までの経過営業日
+                duration = getWorkingDaysDiff(minStart, TODAY_STR); // 本日までの経過営業日
               }
             }
 
@@ -770,7 +770,7 @@
             step: name,
             avg: stat.count > 0 ? Math.round((stat.totalDays / stat.count) * 10) / 10 : 0,
             taskCount: stat.taskCount,
-            target: targetLeadTimeDays // ⑥ 可変変数
+            target: targetLeadTimeDays // ⑥ 設定画面の可変しきい値と連動
           };
         });
       }, [analyticsTargetProjects, targetLeadTimeDays]);
@@ -782,7 +782,7 @@
           (p.tasks || []).forEach(t => {
             if (t.status === 'completed' || t.status === 'not_applicable') return;
             
-            // A. 期限超過
+            // A. 期限超過アラート
             if (isOverdue(t.dueDate, t.status)) {
               risks.push({ id: t.id, title: t.title, proj: p.name, type: '期限超過', desc: `期限: ${t.dueDate}`, badge: 'bg-amber-900/50 text-amber-400 border border-amber-500' });
               return;
@@ -798,7 +798,7 @@
             if (t.status === 'in_progress' && logs.length > 0) {
               const lastLogDateStr = logs[0].date.split(' ')[0].replace(/\//g, '-');
               const diffWDays = getWorkingDaysDiff(lastLogDateStr, TODAY_STR);
-              if (diffWDays >= riskThresholdDays) { // ⑥ 可変変数
+              if (diffWDays >= riskThresholdDays) { // ⑥ 設定画面の可変しきい値と連動
                  risks.push({ id: t.id, title: t.title, proj: p.name, type: '放置', desc: `${diffWDays}営業日更新なし`, badge: 'bg-slate-700 text-slate-300 border border-slate-500' });
               }
             }
@@ -807,7 +807,15 @@
         return risks;
       }, [analyticsTargetProjects, riskThresholdDays]);
 
-// ==========================================
+// 前半で漏れていた関数の定義を追加（ReferenceErrorの完全解消）
+      const handleDeleteProject = (e) => { 
+        e.stopPropagation(); 
+        if (activeProject) {
+          handleDeleteProjectByList(activeProject.id, e); 
+        }
+      };
+
+      // ==========================================
       // 未ログイン（Sansanメンバー認証前）画面
       // ==========================================
       if (!user) {
@@ -859,7 +867,6 @@
         );
       }
 
-      // 3. メインUI表示
       return (
         <div className="min-h-screen bg-slate-55 dark:bg-slate-955 text-slate-805 dark:text-slate-150 font-sans antialiased pb-16 transition-colors duration-200">
           
@@ -1005,7 +1012,7 @@
                         </div>
                         <div className="overflow-y-auto p-3 space-y-2 bg-slate-55/30 dark:bg-slate-900/30 scrollbar-thin max-h-[50vh]">
                           {todayTasks.length === 0 ? (
-                            <p className="text-[10px] text-slate-404 dark:text-slate-505 text-center py-6 italic">「今日やる」に指定されたタスクはありません。</p>
+                            <p className="text-[10px] text-slate-440 dark:text-slate-505 text-center py-6 italic">「今日やる」に指定されたタスクはありません。</p>
                           ) : (
                             todayTasks.map(t => {
                               const isOver = isOverdue(t.dueDate, t.status);
@@ -1044,7 +1051,7 @@
                                       className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0 h-3.5 w-3.5 cursor-pointer"
                                     />
                                   </div>
-                                  <div className="flex items-center justify-between text-[9px] text-slate-404 dark:text-slate-550 font-bold leading-none">
+                                  <div className="flex items-center justify-between text-[9px] text-slate-404 dark:text-slate-555 font-bold leading-none">
                                     <span>👤 {t.assignee} {step && `(${step.name})`}</span>
                                     <span className={isOver && t.status !== 'completed' ? 'text-rose-605 dark:text-rose-400 font-extrabold animate-pulse' : ''}>
                                       {isOver && t.status !== 'completed' ? '🚨 期限超過: ' : ''}{t.dueDate}
@@ -1123,7 +1130,7 @@
 
               {viewMode === 'board' && activeProject && (
                 <div className="flex-1 lg:max-w-xl xl:max-w-2xl flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-thin pl-1">
-                  <div className="text-[9px] font-black text-slate-404 dark:text-slate-505 shrink-0 uppercase tracking-wider pr-1 border-r border-slate-202 dark:border-slate-770 flex items-center gap-1 leading-none"><IconClock className="h-3 w-3" /> 進捗</div>
+                  <div className="text-[9px] font-black text-slate-440 dark:text-slate-505 shrink-0 uppercase tracking-wider pr-1 border-r border-slate-202 dark:border-slate-770 flex items-center gap-1 leading-none"><IconClock className="h-3 w-3" /> 進捗</div>
                   {stepList.map((step, idx) => {
                     const t = tasks.filter(x => x.stepId === step.id), c = t.filter(x => x.status === 'completed').length, l = t.filter(x => isOverdue(x.dueDate, x.status)).length;
                     const p = t.length > 0 ? Math.round((c / t.length) * 100) : 0;
@@ -1147,6 +1154,10 @@
           </header>
 
           <main className="max-w-7xl mx-auto p-6 space-y-6">
+            
+            {/* ======================================================== */}
+            {/* ビュー1: 📋 進行ダッシュボード (文字被り修正完了版)         */}
+            {/* ======================================================== */}
             {viewMode === 'board' && (
               <React.Fragment>
                 {activeProject ? (
@@ -1246,7 +1257,7 @@
                     {!editingProject && (
                       <div className="flex flex-col items-end gap-2 shrink-0 self-start">
                         <div className="flex gap-2">
-                          <button onClick={() => { setEditingProject(true); setProjectForm(activeProject); setEditProjLinks(activeProject.links ? [...activeProject.links] : []); }} className="text-[10px] text-indigo-600 dark:text-indigo-400 font-black flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 px-3 py-2 rounded-xl"><IconEdit2 className="h-3 w-3" /> 案件編集</button>
+                          <button onClick={() => { setEditingProject(true); setProjectForm(activeProject); setEditProjLinks(activeProject.links ? [...activeProject.links] : []); }} className="text-[10px] text-indigo-600 dark:text-indigo-404 font-black flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 px-3 py-2 rounded-xl"><IconEdit2 className="h-3 w-3" /> 案件編集</button>
                           <button onClick={(e) => handleCopyProjectUrl(activeProject.id, e)} className="text-[10px] text-slate-605 dark:text-slate-300 font-black flex items-center gap-1 bg-white dark:bg-slate-800 border border-slate-350 dark:border-slate-600 px-3 py-2 rounded-xl"><IconLink className="h-3 w-3 text-slate-404" /> 共有</button>
                           <button onClick={() => { setShowAddStepForm(true); setNewStepName(''); setNewStepDesc(''); setNewStepStartDate(activeProject.startDate); setNewStepDueDate(activeProject.endDate); setNewStepLinks([]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); setTimeout(() => document.getElementById('add-step-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white font-black flex items-center gap-1 px-3 py-2 rounded-xl"><IconPlus className="h-3 w-3" /> STEP追加</button>
                         </div>
@@ -1409,7 +1420,7 @@
                               </div>
                               <div className="flex flex-col gap-2 pl-8">
                                 <p 
-                                  className={`font-bold text-xs cursor-text select-text ${step.desc ? 'text-slate-606 dark:text-slate-350' : 'text-slate-404 dark:text-slate-505 italic'}`}
+                                  className={`font-bold text-xs cursor-text select-text ${step.desc ? 'text-slate-606 dark:text-slate-3xl' : 'text-slate-404 dark:text-slate-505 italic'}`}
                                   onPointerDown={(e) => e.stopPropagation()} 
                                   onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
                                 >
@@ -1525,7 +1536,7 @@
                                   
                                   {/* タスク追加時の関連リンク (インデントと縮小・デザインブラッシュアップ) */}
                                   <div className="col-span-1 md:col-span-2 border-t border-slate-202 dark:border-slate-700/50 pt-3 mt-1 space-y-2 pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-1">
-                                    <span className="text-[10px] font-black text-slate-505 dark:text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
+                                    <span className="text-[10px] font-black text-slate-505 dark:text-slate-440 flex items-center gap-1.5 uppercase tracking-wider">
                                       <IconLink className="h-3.5 w-3.5 text-indigo-500" />
                                       <span>タスク関連リンク (任意)</span>
                                     </span>
@@ -1596,7 +1607,7 @@
                                       d || na 
                                         ? 'border-slate-202 dark:border-slate-707/50 opacity-60 bg-slate-55/70 dark:bg-slate-800/40' 
                                         : isOverdueTodayTask
-                                          ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-955/20 ring-2 ring-rose-500 animate-pulse'
+                                          ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-2 ring-rose-500 animate-pulse'
                                           : task.doToday
                                             ? 'border-amber-400 bg-amber-50/10 dark:bg-amber-955/10 ring-1 ring-amber-300'
                                             : hw 
@@ -1711,7 +1722,7 @@
                                       <div className="space-y-3.5 flex-1 flex flex-col justify-between pl-1 mt-10">
                                         <div className="space-y-2.5">
                                           
-                                          {/* ① タスクナンバーを枠の左上に絶対配置 */}
+                                          {/* ① タスクナンバーをカードの左上（top-4 left-4）に絶対配置 */}
                                           <span className="absolute top-4 left-4 text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold bg-slate-150 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 text-slate-805 dark:text-slate-200 select-none">
                                             #{index+1}-{taskIndex+1}-<span className="font-black">{task.sequenceId || '?'}</span>
                                           </span>
@@ -1783,7 +1794,7 @@
                                                 </div>
                                               )}
                                               {editingDescTaskId !== task.id && task.description && (
-                                                <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }} className="absolute top-2 right-2 opacity-100 p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-600 text-slate-505 dark:text-slate-455 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors" title="タスクの説明をコピー">📋 コピー</button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }} className="absolute top-2 right-2 opacity-100 p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-600 text-slate-505 dark:text-slate-450 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors" title="タスクの説明をコピー">📋 コピー</button>
                                               )}
                                             </div>
                                           </div>
@@ -1894,7 +1905,7 @@
                                                         {log.to && (<span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-lg font-black">TO: {log.to}</span>)}
                                                         {log.dueDate && (<span className="inline-flex items-center gap-1 text-[9px] bg-rose-55 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 px-2 py-0.5 rounded-lg font-mono font-bold">期日: {log.dueDate}</span>)}
                                                         {log.links && log.links.map(lnk => (
-                                                          <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1 text-[9px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-700 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg transition">
+                                                          <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[9px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-700 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg transition">
                                                             <IconExternalLink className="h-2.5 w-2.5" /> <span className="font-bold">{lnk.label}</span>
                                                             {!log.completed && (<button onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeSingleLinkFromLog(task.id, log.id, lnk.id); }} className="text-slate-404 dark:text-slate-550 hover:text-rose-605 dark:hover:text-rose-400 font-bold text-[10px] ml-1" title="リンクのみ削除">×</button>)}
                                                           </a>
@@ -1940,7 +1951,7 @@
                     <option value="all">🚥 すべての進捗状況</option><option value="pending">未着手</option><option value="in_progress">進行中</option><option value="completed">完了</option><option value="not_applicable">対応なし</option>
                   </select>
                   <div className="flex-1 relative">
-                    <input type="text" placeholder="案件名やコードでリアルタイム検索..." value={dbFilterText} onChange={(e) => setDbFilterText(e.target.value)} className="w-full border border-slate-202 dark:border-slate-705 text-slate-705 dark:text-slate-200 font-bold bg-white dark:bg-slate-900 focus:outline-none focus:border-indigo-400" />
+                    <input type="text" placeholder="案件名やコードでリアルタイム検索..." value={dbFilterText} onChange={(e) => setDbFilterText(e.target.value)} className="w-full border border-slate-202 dark:border-slate-755 text-slate-705 dark:text-slate-200 font-bold bg-white dark:bg-slate-900 focus:outline-none focus:border-indigo-400" />
                   </div>
                 </div>
                 <div className="overflow-x-auto rounded-2xl border border-slate-202 dark:border-slate-700">
@@ -1993,35 +2004,35 @@
               </div>
             )}
 
-            {/* ======================================================= */}
-            {/* 3. 📊 アナリティクス（独立分析ダッシュボード）ビュー  */}
-            {/* ======================================================= */}
+            {/* ========================================================== */}
+            {/* 3. 📊 アナリティクス（独立分析ダッシュボード）ビュー実装終了 */}
+            {/* ========================================================== */}
             {viewMode === 'analytics' && (
-              <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in transition-colors">
+              <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in transition-colors">
                 
-                {/* ② ミクロとマクロの切り替えコントローラー */}
+                {/* ② 個別案件 ✕ マクロ全体横断のフィルタコントローラー */}
                 <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-1">
                     <h2 className="text-base font-black text-slate-805 dark:text-white flex items-center gap-2"><IconChart className="text-indigo-600 dark:text-indigo-400" />組織・案件推進状況アナリティクス</h2>
-                    <p className="text-xs text-slate-505 dark:text-slate-400">蓄積データから稼働負荷やボトルネックを自動抽出し、定量評価を行います。</p>
+                    <p className="text-xs text-slate-505 dark:text-slate-400">実データに基づき、ボトルネックやリソース負荷状況をリアルタイム評価します。</p>
                   </div>
                   
-                  <div className="flex items-center gap-2 bg-slate-55 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 rounded-xl px-3 py-1.5 shadow-xs shrink-0">
-                    <span className="text-xs font-bold text-slate-440">分析スコープ:</span>
+                  <div className="flex items-center gap-2 bg-slate-55 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 rounded-xl px-3 py-2 shadow-xs shrink-0">
+                    <span className="text-xs font-bold text-slate-505 dark:text-slate-400">分析スコープ:</span>
                     <select 
                       value={analyticsProjectId} 
                       onChange={(e) => setAnalyticsProjectId(e.target.value)} 
-                      className="bg-transparent text-xs font-black text-indigo-700 dark:text-indigo-300 focus:outline-none cursor-pointer pr-1 leading-none font-sans"
+                      className="bg-transparent text-xs font-black text-indigo-700 dark:text-indigo-300 focus:outline-none cursor-pointer pr-1"
                     >
-                      <option value="all" className="dark:bg-slate-800 text-slate-805 dark:text-slate-100">📁 すべての案件 (全体横断)</option>
+                      <option value="all" className="text-slate-805 dark:text-slate-100 dark:bg-slate-800">📁 すべての案件 (全体横断)</option>
                       {projects.map(p => (
-                        <option key={p.id} value={p.id} className="dark:bg-slate-800 text-slate-805 dark:text-slate-100">📄 {p.name}</option>
+                        <option key={p.id} value={p.id} className="text-slate-805 dark:text-slate-100 dark:bg-slate-800">📄 {p.name}</option>
                       ))}
                     </select>
                   </div>
                 </div>
 
-                {/* サブタブナビゲーション */}
+                {/* 分析サブナビゲーション */}
                 <div className="flex gap-2 border-b border-slate-202 dark:border-slate-700 pb-px">
                   {[
                     { id: 'resource', icon: '👥', label: 'リソース負荷 & 個人別処理力' },
@@ -2038,13 +2049,10 @@
                   ))}
                 </div>
 
-                {/* サブタブの中身 */}
                 <div className="animate-in slide-in-from-bottom-2 fade-in duration-300">
-                  
-                  {/* サブタブ1: リソース負荷 & 個人分析 */}
+                  {/* サブビュー1: リソース負荷 & 個人別分析 */}
                   {analyticsTab === 'resource' && (
                     <div className="space-y-6">
-                      {/* 部門サマリーカード */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {analyticsResourceData.deptStats.map(d => (
                           <div key={d.deptKey} className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl p-5 shadow-sm space-y-3 relative overflow-hidden">
@@ -2061,9 +2069,9 @@
                         ))}
                       </div>
 
-                      {/* ③ 深いリソース詳細テーブル (累計・完了・未完了・遅延内訳) */}
+                      {/* ③ 完了数・遅延内訳を含めたリッチな個人分析テーブル */}
                       <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-5 shadow-sm space-y-4">
-                        <h3 className="font-black text-slate-805 dark:text-white text-sm">👤 個人別詳細パフォーマンス分析</h3>
+                        <h3 className="font-black text-slate-805 dark:text-white text-sm">👤 個人別タスク処理能力 & 遅延詳細（累計実績ベース）</h3>
                         <div className="overflow-x-auto rounded-xl border border-slate-202 dark:border-slate-700">
                           <table className="w-full text-xs text-left border-collapse">
                             <thead>
@@ -2074,7 +2082,7 @@
                                 <th className="py-2.5 px-4 text-center text-blue-600 dark:text-blue-400">進行中</th>
                                 <th className="py-2.5 px-4 text-center text-slate-404">未対応</th>
                                 <th className="py-2.5 px-4 text-center text-rose-605 dark:text-rose-400 bg-rose-55/30 dark:bg-rose-950/20">進行中遅延</th>
-                                <th className="py-2.5 px-4 text-center text-amber-600 dark:text-amber-400 bg-amber-50/40 dark:bg-amber-950/20">未対応遅延</th>
+                                <th className="py-2.5 px-4 text-center text-amber-600 dark:text-amber-400 bg-amber-50/40 dark:bg-amber-955/10">未対応遅延</th>
                                 <th className="py-2.5 px-4 w-40">完了率</th>
                               </tr>
                             </thead>
@@ -2088,8 +2096,8 @@
                                     <td className="py-3 px-4 text-center font-mono text-emerald-600 dark:text-emerald-400">{m.completed}</td>
                                     <td className="py-3 px-4 text-center font-mono text-blue-600 dark:text-blue-400">{m.inProgress}</td>
                                     <td className="py-3 px-4 text-center font-mono text-slate-404">{m.pending}</td>
-                                    <td className="py-3 px-4 text-center font-mono text-rose-605 dark:text-rose-400 bg-rose-55/30 dark:bg-rose-950/20">{m.progressDelay > 0 ? `🚨 ${m.progressDelay}` : '0'}</td>
-                                    <td className="py-3 px-4 text-center font-mono text-amber-600 dark:text-amber-400 bg-amber-50/40 dark:bg-amber-955/10">{m.pendingDelay > 0 ? `⌛ ${m.pendingDelay}` : '0'}</td>
+                                    <td className="py-3 px-4 text-center font-mono text-rose-605 dark:text-rose-400 bg-rose-55/30 dark:bg-rose-950/20">{m.progressDelay > 0 ? `🔥 ${m.progressDelay}` : '0'}</td>
+                                    <td className="py-3 px-4 text-center font-mono text-amber-600 dark:text-amber-400 bg-amber-50/40 dark:bg-amber-955/10">{m.pendingDelay > 0 ? `🔘 ${m.pendingDelay}` : '0'}</td>
                                     <td className="py-3 px-4">
                                       <div className="flex items-center gap-2">
                                         <div className="h-1.5 flex-1 bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden"><div className="h-full bg-indigo-500" style={{ width: `${rate}%` }}></div></div>
@@ -2100,7 +2108,7 @@
                                 );
                               })}
                               {analyticsResourceData.memberStats.length === 0 && (
-                                <tr><td colSpan="8" className="py-8 text-center text-slate-404 dark:text-slate-500">分析可能な稼働データが存在しません。</td></tr>
+                                <tr><td colSpan="8" className="py-8 text-center text-slate-404 dark:text-slate-500">稼働中のリソース情報がありません。</td></tr>
                               )}
                             </tbody>
                           </table>
@@ -2109,15 +2117,15 @@
                     </div>
                   )}
 
-                  {/* サブタブ2: ④ 営業日ベースのリードタイム分析 */}
+                  {/* サブビュー2: ④ 営業日ベースの処理日数（リードタイム）グラフ */}
                   {analyticsTab === 'leadtime' && (
                     <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm space-y-6">
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center flex-wrap gap-2">
                         <div>
-                          <h3 className="font-black text-slate-805 dark:text-white">工程（大ステップ）別 実消費営業日の算出</h3>
-                          <p className="text-xs text-slate-404 mt-1">※土曜日および日曜日を自動除外した純粋な営業稼働日数です。</p>
+                          <h3 className="font-black text-slate-805 dark:text-white">大ステップ別 平均実処理営業日分析</h3>
+                          <p className="text-xs text-slate-404 mt-1">※土曜日・日曜日を除去した純粋な営業稼働日数。縦点線は設定目標値です。</p>
                         </div>
-                        <span className="text-xs bg-slate-150 dark:bg-slate-700 text-slate-605 dark:text-slate-300 px-3 py-1 rounded-lg font-bold">集計対象: {analyticsTargetProjects.length} 案件</span>
+                        <span className="text-xs bg-slate-150 dark:bg-slate-700 text-slate-605 dark:text-slate-300 px-3 py-1 rounded-lg font-bold">対象範囲: {analyticsTargetProjects.length} プロジェクト</span>
                       </div>
                       <div className="space-y-4">
                         {analyticsLeadTimeData.length > 0 ? analyticsLeadTimeData.map(d => {
@@ -2125,38 +2133,34 @@
                           return (
                             <div key={d.step} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b border-slate-55 dark:border-slate-750 pb-3">
                               <div className="sm:w-44 text-xs font-black text-slate-705 dark:text-slate-200 truncate" title={d.step}>{d.step}</div>
-                              
                               <div className="flex-1 h-5 bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden relative border border-slate-202 dark:border-slate-700 shadow-inner flex items-center">
-                                {/* 変数から読み出す目標ラインマーカー */}
-                                <div className="absolute top-0 bottom-0 border-r-2 border-dashed border-slate-404 dark:border-slate-500 z-10" style={{ left: `${Math.min((d.target / 20) * 100, 100)}%` }} title={`目標: ${d.target}営業日`}></div>
-                                {/* 営業日実績バー */}
-                                <div className={`h-full ${isOver ? 'bg-gradient-to-r from-rose-500 to-pink-500' : 'bg-gradient-to-r from-emerald-500 to-teal-500'}`} style={{ width: `${Math.min((d.avg / 20) * 100, 100)}%` }}></div>
+                                <div className="absolute top-0 bottom-0 border-r-2 border-dashed border-slate-404 dark:border-slate-500 z-10" style={{ left: `${Math.min((d.target / 20) * 100, 100)}%` }}></div>
+                                <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500" style={{ width: `${Math.min((d.avg / 20) * 100, 100)}%` }}></div>
                               </div>
-                              
                               <div className="sm:w-56 text-xs font-bold flex justify-between sm:justify-end gap-4 shrink-0 font-mono">
-                                <span className="text-slate-404">密度: <span className="text-slate-750 dark:text-slate-300 font-bold font-sans">{d.taskCount}件</span></span>
-                                <span className={isOver ? 'text-rose-605 dark:text-rose-400 font-black' : 'text-emerald-600 dark:text-emerald-400 font-black'}>平均: {d.avg} 営業日</span>
-                                <span className="text-slate-404">(目標: {d.target}日)</span>
+                                <span className="text-slate-404">タスク密度: <span className="text-slate-750 dark:text-slate-300 font-bold font-sans">{d.taskCount}件</span></span>
+                                <span className={isOver ? 'text-rose-605 dark:text-rose-400 font-black' : 'text-emerald-600 dark:text-emerald-400 font-black'}>平均 {d.avg} 日</span>
+                                <span className="text-slate-440">(目標: {d.target}日)</span>
                               </div>
                             </div>
                           );
                         }) : (
-                          <div className="py-12 text-center text-slate-404 dark:text-slate-500 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl">計算可能な営業実績データがありません。</div>
+                          <div className="py-12 text-center text-slate-404 dark:text-slate-500 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl">集計可能な完了データがまだありません。</div>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {/* サブタブ3: ⑤ 放置・リスク検知 */}
+                  {/* サブビュー3: ⑤ 放置・リスク検知 */}
                   {analyticsTab === 'risk' && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="col-span-1 md:col-span-2 space-y-3">
-                        <h3 className="font-black text-slate-805 dark:text-white text-sm mb-2">🚨 自動検知された要介入タスク</h3>
+                        <h3 className="font-black text-slate-805 dark:text-white text-sm mb-2">⚠️ 要介入リアルタイムアラート</h3>
                         {analyticsRiskTasks.length > 0 ? analyticsRiskTasks.map((t, i) => (
                           <div 
                             key={`${t.id}-${i}`} 
                             onClick={() => { setViewMode('board'); const foundP = projects.find(p => p.name === t.proj); if(foundP) { setSelectedFolderId(foundP.folderId); setCurrentProjectId(foundP.id); } }} 
-                            className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:border-indigo-500 dark:hover:border-indigo-400 transition-all cursor-pointer shadow-xs"
+                            className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:border-indigo-500 dark:hover:border-indigo-400 transition-all cursor-pointer shadow-xs animate-in fade-in"
                           >
                             <div className="space-y-1">
                               <div className="flex items-center gap-2 flex-wrap">
@@ -2170,19 +2174,19 @@
                             </div>
                           </div>
                         )) : (
-                          <div className="py-12 text-center text-slate-404 dark:text-slate-500 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl font-bold">現在、リスク要件を検知したタスクはありません。順調です！✨</div>
+                          <div className="py-12 text-center text-slate-404 dark:text-slate-500 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl font-bold">リスク条件に合致する要介入タスクはありません。順調です！🚀</div>
                         )}
                       </div>
                       
                       <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-5 space-y-4 shadow-sm h-fit sticky top-24">
-                        <h3 className="font-black text-slate-805 dark:text-white text-sm">💡 案件健全性リスク統計</h3>
+                        <h3 className="font-black text-slate-805 dark:text-white text-sm">💡 健全性サマリー統計</h3>
                         <ul className="text-xs text-slate-605 dark:text-slate-300 space-y-3 font-bold">
                           <li className="flex justify-between items-center bg-slate-55 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-202 dark:border-slate-700">
                             <span>💤 放置リスク ({riskThresholdDays}営業日超)</span>
                             <span className="text-slate-705 dark:text-slate-200 text-sm font-mono">{analyticsRiskTasks.filter(r => r.type === '放置').length} 件</span>
                           </li>
                           <li className="flex justify-between items-center bg-slate-55 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-202 dark:border-slate-700">
-                            <span>🔥 炎上予兆 (コミュニケーション過多)</span>
+                            <span>🔥 炎上予兆 (ピン留め/メモ多数)</span>
                             <span className="text-rose-605 dark:text-rose-400 text-sm font-mono">{analyticsRiskTasks.filter(r => r.type === '炎上予兆').length} 件</span>
                           </li>
                           <li className="flex justify-between items-center bg-slate-55 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-202 dark:border-slate-700">
@@ -2193,7 +2197,6 @@
                       </div>
                     </div>
                   )}
-
                 </div>
               </div>
             )}
@@ -2231,29 +2234,29 @@
                 </div>
                 <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin">
                   
-                  {/* ⑥ 設定モーダル内にアナリティクスの可変変数しきい値設定フォームを新設 */}
+                  {/* ⑥ 設定モーダル内にアナリティクスしきい値可変調整フォームを新設 */}
                   <div className="space-y-4">
-                    <h3 className="text-xs font-black text-slate-605 dark:text-slate-440 border-b border-slate-202 dark:border-slate-700 pb-2 flex items-center gap-1.5">📊 アナリティクス・しきい値(目標値)設定</h3>
+                    <h3 className="text-xs font-black text-slate-605 dark:text-slate-440 border-b border-slate-202 dark:border-slate-700 pb-2 flex items-center gap-1.5">📊 アナリティクス基準値（変数しきい値）の変更</h3>
                     <div className="bg-slate-55 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 shadow-sm grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">放置タスク判定基準 (営業日)</label>
+                        <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">放置リスク判定日数 (営業日)</label>
                         <input 
                           type="number" 
                           value={riskThresholdDays} 
                           onChange={e => { const val = Math.max(1, Number(e.target.value)); setRiskThresholdDays(val); localStorage.setItem('pl_cfg_risk_days', val); }} 
                           className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200 font-bold font-mono focus:outline-none focus:border-indigo-400" 
                         />
-                        <span className="text-[9px] text-slate-404 mt-1 block">指定営業日以上、メモ更新がない進行中タスクを検知。</span>
+                        <span className="text-[9px] text-slate-404 mt-1 block">進行中で指定営業日以上、更新がないタスクを自動検知します。</span>
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">各ステップの目標消化日数 (営業日)</label>
+                        <label className="block text-[10px] font-bold text-slate-605 dark:text-slate-440 mb-1">ステップ目標完了日数 (営業日基準)</label>
                         <input 
                           type="number" 
                           value={targetLeadTimeDays} 
                           onChange={e => { const val = Math.max(1, Number(e.target.value)); setTargetLeadTimeDays(val); localStorage.setItem('pl_cfg_target_lt', val); }} 
                           className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-200 font-bold font-mono focus:outline-none focus:border-indigo-400" 
                         />
-                        <span className="text-[9px] text-slate-404 mt-1 block">リードタイム分析でグラフ上の点線（目安目標）となります。</span>
+                        <span className="text-[9px] text-slate-404 mt-1 block">リードタイムグラフ上に目安目標としてプロットされる日数。</span>
                       </div>
                     </div>
                   </div>
