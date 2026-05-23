@@ -1840,18 +1840,17 @@ const handleCreateFolder = async (e) => {
                                             #{index+1}-{taskIndex+1}-<span className="font-black">{task.sequenceId || '?'}</span>
                                           </span>
 
-                                          {/* ② タスク名はボタンと被らない安全な下行（mt-10）かつフル幅で表示 */}
-                                          <h4 
-                                            className="font-extrabold text-sm text-slate-805 dark:text-slate-150 cursor-text select-text"
-                                            onPointerDown={(e) => e.stopPropagation()} 
-                                            onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                                          >
-                                            {task.title}
-                                          </h4>
+                                         {/* ② タスク名は横幅いっぱいに表示（plやprの制限をすべて削除） */}
+    <h4 
+      className="font-extrabold text-sm text-slate-805 dark:text-slate-150 cursor-text select-text"
+      onPointerDown={(e) => e.stopPropagation()} 
+      onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
+    >
+      {task.title}
+    </h4>
 
-                                          {/* 営業日ベース（○営業日）で実稼働日数を出力 */}
-                                          <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                                            <span className={`text-[9.5px] font-black px-2.5 py-0.5 rounded-full border ${tkCls.badge}`}>{deptList.find(d => d.key === task.department)?.label || '未設定'} : {task.assignee}</span>
+    <div className="flex flex-wrap items-center gap-2 pt-0.5">
+      <span className={`text-[9.5px] font-black px-2.5 py-0.5 rounded-full border ${tkCls.badge}`}>{deptList.find(d => d.key === task.department)?.label || '未設定'} : {task.assignee}</span>
                                             <div className="flex items-center gap-1 text-[10.5px] text-slate-440 font-mono font-bold"><IconCalendar /><span className={lt ? 'text-rose-605 dark:text-rose-400 font-black animate-pulse' : ''}>{task.dueDate}</span></div>
                                             {task.startedAt && <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2.5 py-0.5 rounded-lg border ${d ? 'bg-emerald-55 text-emerald-700 border-emerald-200' : na ? 'bg-slate-150 text-slate-505 border-slate-202' : 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse'}`}><IconClock className="h-2.5 w-2.5" /><span>{d ? `${task.startedAt} 〜 ${task.completedAt} (${dDays} 営業日)` : na ? `${task.startedAt} 〜 ${task.completedAt} (対応なし)` : `${task.startedAt} 着手 (${dDays} 営業日目)`}</span></span>}
                                           </div>
