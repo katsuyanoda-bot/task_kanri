@@ -114,7 +114,7 @@
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-[#f0fdf4] dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
       amber: { text: 'text-amber-805 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
       rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-purple-404' },
-      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
+      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-650', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
     };
 
     // 初期マスタデータ
@@ -600,6 +600,7 @@
         return validTasks.length === 0 ? 100 : Math.round((validTasks.filter(t => t.status === 'completed').length / validTasks.length) * 100);
       };
 
+      const fontMono = 'font-mono';
       const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverdue(t.dueDate, t.status)).length;
       const countTaskStatus = (proj) => {
         const pTasks = proj.tasks || [];
@@ -709,23 +710,23 @@
       };
       const handleDeleteProject = (e) => { e.stopPropagation(); handleDeleteProjectByList(activeProject.id, e); };
 
-      const startEditingStep = (step, e) => { e.stopPropagation(); setEditingStepId(step.id); setEditStepName(step.name); setEditStepDesc(step.desc); setEditStepDeptKey(step.deptKey || 'backoffice'); setEditStepStartDate(step.startDate || ''); setEditStepDueDate(step.dueDate || ''); setEditStepLinks(step.links ? [...step.links] : []); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); };
+      const startEditingStep = (step, e) => { e.stopPropagation(); setEditingStepId(step.id); setEditStepName(step.name); setEditStepDesc(step.desc || ''); setEditStepDeptKey(step.deptKey || 'backoffice'); setEditStepStartDate(step.startDate || ''); setEditStepDueDate(step.dueDate || ''); setEditStepLinks(step.links ? [...step.links] : []); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); };
       const saveStepEdit = (stepId, e) => { e.preventDefault(); e.stopPropagation(); saveProjectToFirestore({ ...activeProject, stepList: stepList.map(s => s.id === stepId ? { ...s, name: editStepName.trim(), desc: editStepDesc.trim(), deptKey: editStepDeptKey, startDate: editStepStartDate, dueDate: editStepDueDate, links: [...editStepLinks] } : s) }); setEditingStepId(null); showAlert('更新しました'); };
       const handleAddStep = (e) => { e.preventDefault(); if (!newStepName.trim()) return; saveProjectToFirestore({ ...activeProject, stepList: [...stepList, { id: stepList.length > 0 ? Math.max(...stepList.map(s => s.id)) + 1 : 1, name: newStepName.trim(), desc: newStepDesc.trim(), deptKey: newStepDeptKey, startDate: newStepStartDate, dueDate: newStepDueDate, links: [...newStepLinks] }] }); setShowAddStepForm(false); showAlert('追加しました'); };
       const handleDeleteStep = (stepId, stepName, e) => { e.stopPropagation(); triggerConfirm('削除', `削除しますか？`, () => { saveProjectToFirestore({ ...activeProject, stepList: stepList.filter(s => s.id !== stepId), tasks: tasks.filter(t => t.stepId !== stepId) }); showAlert('削除完了'); }); };
 
-      const handleAddStepLink = (e) => { e.preventDefault(); if(tmpStepLinkUrl.trim()) { setNewStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpStepLinkLabel.trim()||'リンク',url:tmpStepLinkUrl.trim()}]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); }};
-      const handleRemoveStepLink = (id,e) => { e.preventDefault(); setNewStepLinks(p=>p.filter(l=>l.id!==id)); };
-      const handleAddEditStepLink = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
-      const handleRemoveEditStepLink = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddLinkToNewStep = (e) => { e.preventDefault(); if(tmpStepLinkUrl.trim()) { setNewStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpStepLinkLabel.trim()||'リンク',url:tmpStepLinkUrl.trim()}]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); }};
+      const handleRemoveLinkFromNewStep = (id,e) => { e.preventDefault(); setNewStepLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleAddLinkToEditStep = (e) => { e.preventDefault(); if(tmpEditStepLinkUrl.trim()) { setEditStepLinks(p=>[...p,{id:`slnk_${Date.now()}`,label:tmpEditStepLinkLabel.trim()||'リンク',url:tmpEditStepLinkUrl.trim()}]); setTmpEditStepLinkLabel(''); setTmpEditStepLinkUrl(''); }};
+      const handleRemoveLinkFromEditStep = (id,e) => { e.preventDefault(); setEditStepLinks(p=>p.filter(l=>l.id!==id)); };
       
       const handleAddTaskLink = (e) => { e.preventDefault(); if(tmpTaskLinkUrl.trim()) { setNewTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpTaskLinkLabel.trim()||'リンク',url:tmpTaskLinkUrl.trim()}]); setTmpTaskLinkLabel(''); setTmpTaskLinkUrl(''); }};
       const handleRemoveTaskLink = (id,e) => { e.preventDefault(); setNewTaskLinks(p=>p.filter(l=>l.id!==id)); };
-      const handleAddEditTaskLink = (e) => { e.preventDefault(); if(tmpEditTaskLinkUrl.trim()) { setEditTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpEditTaskLinkLabel.trim()||'リンク',url:tmpEditTaskLinkUrl.trim()}]); setTmpEditTaskLinkLabel(''); setTmpEditTaskLinkUrl(''); }; };
+      const handleAddEditTaskLink = (e) => { e.preventDefault(); if(tmpEditTaskLinkUrl.trim()) { setEditTaskLinks(p=>[...p,{id:`tlnk_${Date.now()}`,label:tmpEditTaskLinkLabel.trim()||'リンク',url:tmpEditTaskLinkUrl.trim()}]); setTmpEditTaskLinkLabel(''); setTmpEditTaskLinkUrl(''); } };
       const handleRemoveEditTaskLink = (id,e) => { e.preventDefault(); setEditTaskLinks(p=>p.filter(l=>l.id!==id)); };
 
       const handleAddLogLink = (e) => { e.preventDefault(); if(tmpLinkUrl.trim()){ setNewLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpLinkLabel.trim()||'リンク',url:tmpLinkUrl.trim()}]); setTmpLinkLabel(''); setTmpLinkUrl(''); }};
-      const handleRemoveLogLink = (id,e) => { e.preventDefault(); setNewLogLinks(p=>p.filter(l=>l.id!==id)); };
+      const handleRemoveLogLink = (id,e) => { e.preventDefault(); setNewLogLinks(p=>[...p,{id:`lnk_${Date.now()}`,label:tmpLinkLabel.trim()||'リンク',url:tmpLinkUrl.trim()}]); setTmpLinkLabel(''); setTmpLinkUrl(''); };
 
       const addLog = (taskId) => {
         if (!newLogText.trim() && newLogImages.length === 0) return;
@@ -799,9 +800,9 @@
           const el = document.getElementById(`task-anchor-${newId}`);
           if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.classList.add('ring-4', 'ring-indigo-600', 'dark:ring-indigo-400', 'scale-[1.02]');
+            el.classList.add('ring-4', 'ring-indigo-600', 'dark:ring-indigo-404', 'scale-[1.02]');
             setTimeout(() => {
-              el.classList.remove('ring-4', 'ring-indigo-600', 'dark:ring-indigo-400', 'scale-[1.02]');
+              el.classList.remove('ring-4', 'ring-indigo-600', 'dark:ring-indigo-404', 'scale-[1.02]');
             }, 2000);
           }
         }, 300);
@@ -907,7 +908,7 @@
           return {
             step: name,
             avg: stat.count > 0 ? Math.round((stat.totalDays / stat.count) * 10) / 10 : 0,
-            target: 5 // 目報日数の基準線（ステップ3で変数化します）
+            target: 5 // 目報日数の基準線
           };
         });
       }, [projects]);
@@ -1054,7 +1055,7 @@
                       {newProjLinks.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 pt-1">
                           {newProjLinks.map(lnk => (
-                            <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-150 dark:bg-slate-800 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold"><IconLink className="h-2.5 w-2.5"/><span className="truncate max-w-[120px] ml-1">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromNewProj(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold text-[10px] ml-1">×</button></span>
+                            <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-150 dark:bg-slate-800 border border-slate-202 dark:border-slate-707 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold"><IconLink className="h-2.5 w-2.5"/><span className="truncate max-w-[120px] ml-1">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromNewProj(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold text-[10px] ml-1">×</button></span>
                           ))}
                         </div>
                       )}
@@ -1077,7 +1078,7 @@
                   <h1 className="text-xs font-black text-slate-955 dark:text-white leading-tight">Project Loom</h1>
                   <p className="text-[9px] text-slate-440 dark:text-slate-505 font-extrabold uppercase tracking-wider">
                     Sansan専用ダッシュボード 
-                    {(!useFirebase || (gistToken && gistId)) && <span className="ml-1 text-emerald-600 dark:text-emerald-400 bg-emerald-55 dark:bg-emerald-900/30 px-1 py-0.5 rounded font-black text-[7.5px]">{(gistToken && gistId) ? 'GIST-SYNC' : 'LOCAL-STORE'}</span>}
+                    {(!useFirebase || (gistToken && gistId)) && <span className="ml-1 text-emerald-600 dark:text-emerald-404 bg-emerald-55 dark:bg-emerald-900/30 px-1 py-0.5 rounded font-black text-[7.5px]">{(gistToken && gistId) ? 'GIST-SYNC' : 'LOCAL-STORE'}</span>}
                   </p>
                 </div>
               </div>
@@ -1273,6 +1274,8 @@
               <React.Fragment>
                 {activeProject ? (
                   <div className="space-y-6">
+                    
+                    {/* 案件ヘッダーカード */}
                     <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-4 flex flex-col md:flex-row justify-between gap-4 shadow-sm animate-in fade-in transition-colors">
                       <div className="space-y-2 flex-1">
                         <div className="flex items-center gap-2 text-xs text-slate-404 font-extrabold"><span>期間: {activeProject.startDate} 〜 {activeProject.endDate}</span></div>
@@ -1284,33 +1287,79 @@
                           {['pending','in_progress','completed','not_applicable'].map(st => <label key={st} className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer border ${taskFilter[st] ? 'bg-indigo-600 text-white' : 'text-slate-404 border-slate-202'}`}><input type="checkbox" className="sr-only" checked={taskFilter[st]} onChange={() => setTaskFilter({...taskFilter, [st]: !taskFilter[st]})} />{st === 'pending' ? '🔘 未対応' : st === 'in_progress' ? '⚡ 進行中' : st === 'completed' ? '✅ 完了' : '🚫 対応なし'}</label>)}
                         </div>
                       </div>
-                      <div className="flex flex-col items-end gap-2 shrink-0 self-start">
+                      <div className="flex flex-col md:items-end gap-2 shrink-0 self-start">
                         <button onClick={() => setShowAddStepForm(true)} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white font-black px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs"><IconPlus /> STEP追加</button>
                       </div>
                     </div>
 
+                    {/* 新規ステップ追加フォーム（フル版） */}
                     {showAddStepForm && (
                       <form onSubmit={handleAddStep} className="bg-purple-55 dark:bg-purple-900/20 border border-purple-300 rounded-3xl p-5 space-y-4 text-xs">
-                        <div className="flex justify-between items-center"><span className="font-extrabold text-purple-850 dark:text-purple-300">大ステップの新規作成</span><button type="submit" className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl font-bold">作成する</button></div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <input required type="text" placeholder="工程名 *" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="border p-2.5 rounded-xl bg-white dark:bg-slate-800" />
-                          <select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="border p-2.5 rounded-xl bg-white dark:bg-slate-800">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select>
+                        <div className="flex justify-between items-center">
+                          <span className="font-extrabold text-purple-850 dark:text-purple-300">大ステップの新規作成</span>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold">キャンセル</button>
+                            <button type="submit" className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl font-bold">作成する</button>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[10px] text-slate-404 font-bold mb-1">工程名 *</label>
+                            <input required type="text" placeholder="工程名を入力..." value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border p-2.5 rounded-xl bg-white dark:bg-slate-800 font-bold text-slate-805 dark:text-white" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] text-slate-404 font-bold mb-1">担当部署</label>
+                            <select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="w-full border p-2.5 rounded-xl bg-white dark:bg-slate-800 font-bold text-slate-805 dark:text-white">
+                              {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-[10px] text-slate-404 font-bold mb-1">開始予定日</label>
+                            <input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border p-2.5 rounded-xl bg-white dark:bg-slate-800 font-mono text-slate-805 dark:text-white" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] text-slate-404 font-bold mb-1">目標完了日</label>
+                            <input type="date" value={newStepDueDate} onChange={e => setNewStepDueDate(e.target.value)} className="w-full border p-2.5 rounded-xl bg-white dark:bg-slate-800 font-mono text-slate-805 dark:text-white" />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-[10px] text-slate-404 font-bold mb-1">工程の説明・概要</label>
+                            <textarea placeholder="工程の詳細や進め方のメモ..." value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border p-2.5 rounded-xl bg-white dark:bg-slate-800 h-16 text-slate-805 dark:text-white" />
+                          </div>
+                          <div className="md:col-span-2 border-t dark:border-slate-700 pt-3 space-y-2">
+                            <label className="block text-[10px] text-slate-404 font-bold">📢 工程関連リンク</label>
+                            <div className="flex gap-2">
+                              <input type="text" placeholder="リンク名" value={tmpStepLinkLabel} onChange={e => setTmpStepLinkLabel(e.target.value)} className="w-1/3 border p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white" />
+                              <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpLinkUrl(e.target.value)} className="flex-1 border p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white" />
+                              <button type="button" onClick={handleAddLinkToNewStep} className="bg-slate-600 text-white px-4 py-2 rounded-xl font-bold">追加</button>
+                            </div>
+                            {newStepLinks.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5 pt-1">
+                                {newStepLinks.map(lnk => (
+                                  <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-150 dark:bg-slate-800 border dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold">
+                                    <span>{lnk.label}</span>
+                                    <button type="button" onClick={(e) => handleRemoveLinkFromNewStep(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold ml-1">×</button>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </form>
                     )}
 
+                    {/* 大ステップのタイムラインループ */}
                     <div className="space-y-8">
                       {activeProject && stepList.map((step, index) => {
                         const stepTksAll = tasks.filter(t => t.stepId === step.id);
                         const stpProg = getStepProgress(step.id);
                         const isCol = !!collapsedSteps[step.id];
-                        const isEd = editingStepId === step.id; // 💡編集モードの判定
+                        const isEd = editingStepId === step.id;
                         const cClass = colorClassesMap[deptList.find(d => d.key === step.deptKey)?.color || 'slate'] || colorClassesMap.purple;
 
                         return (
                           <div key={step.id} id={`step-anchor-${step.id}`} className={`bg-white dark:bg-slate-800 rounded-3xl shadow-xs border-4 overflow-hidden ${isCol ? 'border-slate-202' : cClass.borderStrong}`}>
                             
-                            {/* 💡編集中はフォームを表示 */}
+                            {/* 💡大ステップの編集設定フォーム（フル装備版） */}
                             {isEd ? (
                               <div onClick={(e) => e.stopPropagation()} className="p-5 bg-purple-55 dark:bg-purple-900/20 space-y-4 text-xs animate-in fade-in">
                                 <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700">
@@ -1326,15 +1375,45 @@
                                     <input required type="text" value={editStepName} onChange={e => setEditStepName(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 text-slate-805 dark:text-white font-bold" />
                                   </div>
                                   <div>
-                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">担当部署</label>
+                                    <label className="block text-[10px] text-slate-440 font-bold mb-1">担当部署</label>
                                     <select value={editStepDeptKey} onChange={e => setEditStepDeptKey(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 text-slate-805 dark:text-white font-bold">
                                       {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
                                     </select>
                                   </div>
+                                  <div>
+                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">開始予定日</label>
+                                    <input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 text-slate-805 dark:text-white font-mono" />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">目標完了日</label>
+                                    <input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 text-slate-805 dark:text-white font-mono" />
+                                  </div>
+                                  <div className="sm:col-span-2">
+                                    <label className="block text-[10px] text-slate-404 font-bold mb-1">工程の説明・概要</label>
+                                    <textarea value={editStepDesc} onChange={e => setEditStepDesc(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-900 text-slate-805 dark:text-white h-16" />
+                                  </div>
+                                  <div className="sm:col-span-2 border-t dark:border-slate-700 pt-3 space-y-2">
+                                    <label className="block text-[10px] text-slate-404 font-bold">📢 工程関連リンク</label>
+                                    <div className="flex gap-2">
+                                      <input type="text" placeholder="リンク名" value={tmpEditStepLinkLabel} onChange={e => setTmpEditStepLinkLabel(e.target.value)} className="w-1/3 border p-2 rounded-xl bg-white dark:bg-slate-900 text-slate-805 dark:text-white" />
+                                      <input type="text" placeholder="URL" value={tmpEditStepLinkUrl} onChange={e => setTmpEditStepLinkUrl(e.target.value)} className="flex-1 border p-2 rounded-xl bg-white dark:bg-slate-900 text-slate-805 dark:text-white" />
+                                      <button type="button" onClick={handleAddLinkToEditStep} className="bg-slate-600 text-white px-3 py-2 rounded-xl font-bold">追加</button>
+                                    </div>
+                                    {editStepLinks.length > 0 && (
+                                      <div className="flex flex-wrap gap-1.5 pt-1">
+                                        {editStepLinks.map(lnk => (
+                                          <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-150 dark:bg-slate-800 border dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold">
+                                            <span>{lnk.label}</span>
+                                            <button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold ml-1">×</button>
+                                          </span>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             ) : (
-                              /* 通常時：アコーディオンヘッダー */
+                              /* 通常モード：ヘッダー表示 */
                               <div onClick={() => toggleStepCollapse(step.id)} className={`p-4 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer ${cClass.bg}`}>
                                 <div className="flex items-center gap-3">
                                   <span className={`${cClass.bar} text-white font-black text-[10px] px-2.5 py-0.5 rounded shadow-xs`}>STEP {index + 1}</span>
@@ -1343,18 +1422,15 @@
                                 </div>
                                 <div className="flex items-center gap-4 shrink-0" onClick={e => e.stopPropagation()}>
                                   <div className="text-right mr-1"><div className="text-xs font-black text-slate-705 dark:text-slate-300">{stpProg}%</div></div>
-                                  
-                                  {/* 💡追加：編集・削除ボタン（開閉イベントの衝突ガード付） */}
                                   <button onClick={(e) => startEditingStep(step, e)} className="p-1.5 text-slate-404 hover:text-indigo-600" title="STEPを編集"><IconEdit2 className="h-4 w-4" /></button>
                                   <button onClick={(e) => handleDeleteStep(step.id, step.name, e)} className="p-1.5 text-slate-404 hover:text-rose-605" title="STEPを削除"><IconTrash2 className="h-4 w-4" /></button>
-                                  
                                   <button onClick={() => { setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); }} className="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-xl font-black"><IconPlus /> タスク追加</button>
                                   <button onClick={() => toggleStepCollapse(step.id)} className="text-slate-404 ml-1">{isCol ? '▼' : '▲'}</button>
                                 </div>
                               </div>
                             )}
 
-                            {/* タスク展開エリア */}
+                            {/* 下半分のタスク一覧表示エリア */}
                             {!isCol && (
                               <div className="bg-slate-55/20 dark:bg-slate-900/20 p-4 space-y-4">
                                 {addingTaskStepId === step.id && (
@@ -1386,7 +1462,7 @@
                                         <div className="mt-10 space-y-3 flex-1 flex flex-col justify-between">
                                           <div className="space-y-2">
                                             <h4 className="font-extrabold text-sm text-slate-805 dark:text-slate-150 select-text cursor-text leading-snug">{task.title}</h4>
-                                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-550 dark:text-slate-444">
+                                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-550 dark:text-slate-404">
                                               <span className={`px-2 py-0.5 rounded border ${tkCls.badge}`}>{deptList.find(dl => dl.key === task.department)?.label || '未設定'} : {task.assignee}</span>
                                               <span className="font-mono">⌛ 期日: {task.dueDate}</span>
                                               {task.startedAt && <span className="font-mono text-indigo-600 dark:text-indigo-404 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-900/40">⏱️ {d ? `${task.startedAt} 〜 ${task.completedAt} (${dDays} 日)` : `${task.startedAt} 着手 (${dDays} 日)`}</span>}
@@ -1541,7 +1617,7 @@
                         <div className="overflow-x-auto rounded-xl border dark:border-slate-700">
                           <table className="w-full text-xs text-left border-collapse">
                             <thead>
-                              <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 text-slate-550 dark:text-slate-440 font-black text-[10px] uppercase tracking-wide">
+                              <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 text-slate-550 dark:text-slate-404 font-black text-[10px] uppercase tracking-wide">
                                 <th className="py-2.5 px-4">担当者</th>
                                 <th className="py-2.5 px-4 text-center">対応合計</th>
                                 <th className="py-2.5 px-4 text-center text-emerald-600 dark:text-emerald-404">完了済</th>
@@ -1585,7 +1661,7 @@
                               
                               <div className="sm:w-40 text-xs font-bold flex justify-between sm:justify-end gap-4 shrink-0 font-mono">
                                 <span className={isOver ? 'text-rose-605 dark:text-rose-400 font-black' : 'text-emerald-600 dark:text-emerald-400 font-black'}>平均 {d.avg} 日</span>
-                                <span className="text-slate-440">(目標: {d.target}日)</span>
+                                <span className="text-slate-404">(目標: {d.target}日)</span>
                               </div>
                             </div>
                           );
@@ -1636,7 +1712,7 @@
             <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in p-4">
               <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-base font-black text-slate-805 dark:text-slate-100 flex items-center gap-2"><IconSettings className="h-5 w-5 text-indigo-600 dark:text-indigo-404" />設定</h2>
+                  <h2 className="text-base font-black text-slate-805 dark:text-slate-100 flex items-center gap-2"><IconSettings className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />設定</h2>
                   <button onClick={() => setShowSettingsModal(false)} className="text-slate-404 dark:text-slate-505 hover:bg-slate-150 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition-colors"><IconX className="h-5 w-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin">
