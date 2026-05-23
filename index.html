@@ -14,55 +14,23 @@
         extend: {
           colors: {
             slate: { 
-              55: '#f8fafc', 
-              150: '#e2e8f0', 
-              202: '#e2e8f0', 
-              205: '#e2e8f0', 
-              250: '#e2e8f0', 
-              350: '#cbd5e1', 
-              404: '#94a3b8', 
-              405: '#94a3b8', 
-              450: '#94a3b8', 
-              455: '#94a3b8', 
-              505: '#64748b', 
-              550: '#64748b', 
-              555: '#64748b', 
-              605: '#475569', 
-              606: '#475569', 
-              650: '#475569', 
-              655: '#475569', 
-              705: '#334155', 
-              750: '#334155', 
-              755: '#334155', 
-              805: '#1e293b', 
-              850: '#1e293b', 
-              855: '#1e293b', 
-              955: '#0f172a' 
+              55: '#f8fafc', 150: '#e2e8f0', 202: '#e2e8f0', 205: '#e2e8f0', 
+              250: '#e2e8f0', 350: '#cbd5e1', 404: '#94a3b8', 405: '#94a3b8', 
+              450: '#94a3b8', 455: '#94a3b8', 505: '#64748b', 550: '#64748b', 
+              555: '#64748b', 605: '#475569', 606: '#475569', 650: '#475569', 
+              655: '#475569', 705: '#334155', 750: '#334155', 755: '#334155', 
+              805: '#1e293b', 850: '#1e293b', 855: '#1e293b', 955: '#0f172a' 
             },
             purple: { 55: '#faf5ff' },
             indigo: { 
-              150: '#e0e7ff', 
-              450: '#818cf8', 
-              455: '#818cf8', 
-              505: '#6366f1', 
-              550: '#6366f1', 
-              605: '#4f46e5', 
-              606: '#4f46e5', 
-              650: '#4f46e5', 
-              655: '#4f46e5', 
-              750: '#3730a3', 
-              755: '#3730a3' 
+              150: '#e0e7ff', 450: '#818cf8', 455: '#818cf8', 505: '#6366f1', 
+              550: '#6366f1', 605: '#4f46e5', 606: '#4f46e5', 650: '#4f46e5', 
+              655: '#4f46e5', 750: '#3730a3', 755: '#3730a3' 
             },
             emerald: { 55: '#ecfdf5', 555: '#10b981' },
             rose: { 
-              55: '#fff1f2', 
-              150: '#ffe4e6', 
-              550: '#f43f5e', 
-              605: '#e11d48', 
-              606: '#e11d48', 
-              650: '#e11d48', 
-              655: '#e11d48', 
-              850: '#881337' 
+              55: '#fff1f2', 150: '#ffe4e6', 550: '#f43f5e', 605: '#e11d48', 
+              606: '#e11d48', 650: '#e11d48', 655: '#e11d48', 850: '#881337' 
             },
             amber: { 955: '#78350f' },
             blue: { 606: '#2563eb' }
@@ -89,18 +57,11 @@
 
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <script type="text/babel" data-type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { 
-      getAuth, 
-      onAuthStateChanged, 
-      GoogleAuthProvider, 
-      signInWithPopup, 
-      signOut 
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const { useState, useMemo, useEffect } = React;
@@ -148,12 +109,12 @@
     const colorClassesMap = {
       purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#25183a]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-55 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-400' },
       indigo: { text: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-[#f0f2ff] dark:bg-[#1e223b]', border: 'border-indigo-200 dark:border-indigo-800', borderStrong: 'border-indigo-300 dark:border-indigo-600', badge: 'bg-indigo-150 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 border-indigo-200 dark:border-indigo-800', bar: 'bg-indigo-600 dark:bg-indigo-500', accentBar: 'bg-indigo-500 dark:bg-indigo-400' },
-      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-blue-400' },
-      emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-400' },
+      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-blue-404' },
+      emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-404' },
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-[#f0fdf4] dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
       amber: { text: 'text-amber-805 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
-      rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-purple-400' },
-      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-550 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
+      rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-purple-404' },
+      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
     };
 
     // 初期マスタデータ
@@ -639,7 +600,7 @@
         return validTasks.length === 0 ? 100 : Math.round((validTasks.filter(t => t.status === 'completed').length / validTasks.length) * 100);
       };
 
-const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverdue(t.dueDate, t.status)).length;
+      const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverdue(t.dueDate, t.status)).length;
       const countTaskStatus = (proj) => {
         const pTasks = proj.tasks || [];
         return { completed: pTasks.filter(t => t.status === 'completed').length, inProgress: pTasks.filter(t => t.status === 'in_progress').length, notStarted: pTasks.filter(t => t.status === 'pending' || t.status === 'blocked').length, notApplicable: pTasks.filter(t => t.status === 'not_applicable').length, total: pTasks.length };
@@ -955,7 +916,7 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
 
       // 💡 リスク検知はステップ3で実装するため、まだ安全なダミーのままにしておきます
       const analyticsRiskTasks = useMemo(() => [], []);
-      const analyticsRiskTasks = useMemo(() => [], []);
+
       // ==========================================
       // 未ログイン（Sansanメンバー認証前）画面
       // ==========================================
@@ -971,7 +932,7 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
               
               <div className="space-y-2">
                 <h1 className="text-xl font-black text-slate-905 dark:text-white leading-snug">Project Loom</h1>
-                <p className="text-xs text-slate-505 dark:text-slate-404 font-bold">Sansanグループ案件推進専用ダッシュボード</p>
+                <p className="text-xs text-slate-505 dark:text-slate-440 font-bold">Sansanグループ案件推進専用ダッシュボード</p>
               </div>
 
               <hr className="border-slate-150 dark:border-slate-800" />
@@ -991,7 +952,7 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                   <span className="mr-2">🔑</span>
                   <span>Sansan社員アカウントでサインイン</span>
                 </button>
-                <span className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mt-2 text-center">
+                <span className="text-[10px] text-slate-440 dark:text-slate-505 font-bold block mt-2 text-center">
                   (認証制限およびドメインエラー回避用)
                 </span>
               </div>
@@ -1056,7 +1017,7 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
             <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in p-4">
               <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-705 rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="flex justify-between items-center mb-4 border-b border-slate-150 dark:border-slate-700/50 pb-3">
-                  <h2 className="text-base font-black text-slate-805 dark:text-slate-150 flex items-center gap-2"><IconPlus className="text-indigo-600 dark:text-indigo-400" />新規プロジェクトの起票</h2>
+                  <h2 className="text-base font-black text-slate-805 dark:text-slate-150 flex items-center gap-2"><IconPlus className="text-indigo-600 dark:text-indigo-404" />新規プロジェクトの起票</h2>
                   <button onClick={() => setShowAddProjectModal(false)} className="text-slate-404 dark:text-slate-505 hover:bg-slate-150 dark:hover:bg-slate-700 p-1.5 rounded-lg transition-colors"><IconX className="h-5 w-5" /></button>
                 </div>
                 <form onSubmit={handleCreateProject} className="flex-1 overflow-y-auto pr-2 space-y-5 scrollbar-thin">
@@ -1100,10 +1061,9 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                         </div>
                       )}
                     </div>
-
                   </div>
                   <div className="flex justify-end gap-2 pt-4 border-t border-slate-150 dark:border-slate-700">
-                    <button type="button" onClick={() => setShowAddProjectModal(false)} className="bg-slate-150 dark:bg-slate-700 hover:bg-slate-202 dark:hover:bg-slate-600 text-slate-605 dark:text-slate-300 px-5 py-2.5 rounded-2xl font-bold transition-colors">キャンセル</button>
+                    <button type="button" onClick={() => setShowAddProjectModal(false)} className="bg-slate-150 dark:bg-slate-700 hover:bg-slate-220 dark:hover:bg-slate-600 text-slate-605 dark:text-slate-300 px-5 py-2.5 rounded-2xl font-bold transition-colors">キャンセル</button>
                     <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-2xl font-bold shadow-md transition-colors">プロジェクトを起票</button>
                   </div>
                 </form>
@@ -1124,11 +1084,11 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                 </div>
               </div>
 
-              {/* ----- ★ヘッダーのタブ切替ボタン（3つ目の「アナリティクス」を追加） ----- */}
+              {/* 👥 パターンB: ヘッダー部分に独立した第3の「アナリティクス」切替タブを実装 */}
               <div className="flex bg-slate-150 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-202 dark:border-slate-700 text-xs shadow-inner">
                 <button onClick={() => setViewMode('board')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'board' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-455 hover:text-slate-955 dark:hover:text-white'}`}><IconCalendar className="h-3 w-3 text-indigo-500" /><span>📋 進行ダッシュボード</span></button>
                 <button onClick={() => setViewMode('database')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'database' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-455 hover:text-slate-955 dark:hover:text-white'}`}><IconDatabase className="h-3 w-3 text-indigo-500" /><span>🗃️ データベース</span></button>
-                <button onClick={() => setViewMode('analytics')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'analytics' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-455 hover:text-slate-955 dark:hover:text-white'}`}><IconChart className="h-3 w-3 text-indigo-500" /><span>📊 アナリティクス</span></button>
+                <button onClick={() => setViewMode('analytics')} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black transition-all duration-200 ${viewMode === 'analytics' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-sm' : 'text-slate-605 dark:text-slate-455 hover:text-slate-955 dark:hover:text-white'}`}><IconChart className="h-4 w-4 text-indigo-500" /><span>📊 アナリティクス</span></button>
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
@@ -1191,7 +1151,7 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                                           }
                                         }, 250);
                                       }}
-                                      className="text-[11px] font-bold text-slate-805 dark:text-slate-100 hover:underline hover:text-indigo-600 dark:hover:text-indigo-400 truncate leading-tight flex-1 text-left"
+                                      className="text-[11px] font-bold text-slate-805 dark:text-slate-100 hover:underline hover:text-indigo-600 dark:hover:text-indigo-404 truncate leading-tight flex-1 text-left"
                                     >
                                       {t.isHighPriority && <span className="text-rose-605 mr-0.5">!</span>}
                                       {t.title}
@@ -1204,7 +1164,7 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                                       className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0 h-3.5 w-3.5 cursor-pointer"
                                     />
                                   </div>
-                                  <div className="flex items-center justify-between text-[9px] text-slate-404 dark:text-slate-550 font-bold leading-none">
+                                  <div className="flex items-center justify-between text-[9px] text-slate-404 dark:text-slate-555 font-bold leading-none">
                                     <span>👤 {t.assignee} {step && `(${step.name})`}</span>
                                     <span className={isOver && t.status !== 'completed' ? 'text-rose-605 dark:text-rose-400 font-extrabold animate-pulse' : ''}>
                                       {isOver && t.status !== 'completed' ? '🚨 期限超過: ' : ''}{t.dueDate}
@@ -1260,7 +1220,7 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
             <div className="px-6 py-2.5 bg-slate-55/50 dark:bg-slate-955/50 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-705 rounded-xl px-2.5 py-1 shadow-xs transition-colors">
-                  <IconFolder className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
+                  <IconFolder className="h-3.5 w-3.5 text-purple-600 dark:text-purple-404 shrink-0" />
                   <select value={selectedFolderId} onChange={(e) => { const fId = e.target.value; setSelectedFolderId(fId); setCurrentProjectId(projects.filter(p => p.folderId === fId)[0]?.id || ''); setEditingProject(false); }} className="bg-transparent text-xs font-black text-purple-800 dark:text-purple-300 focus:outline-none cursor-pointer pr-1 leading-none">
                     {folders.map(f => <option key={f.id} value={f.id} className="dark:bg-slate-800">{f.name}</option>)}
                   </select>
@@ -1276,14 +1236,14 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                     {filteredProjects.length > 0 ? filteredProjects.map(p => <option key={p.id} value={p.id} className="dark:bg-slate-800">{p.name}</option>) : <option value="">(案件なし)</option>}
                   </select>
                   <div className="flex items-center gap-0.5 border-l border-slate-202 dark:border-slate-705 pl-1.5 ml-0.5">
-                    <button onClick={() => { setNewProjFolderId(selectedFolderId); setShowAddProjectModal(true); }} className="text-[9px] text-indigo-600 dark:text-indigo-400 font-extrabold px-1">＋</button>
+                    <button onClick={() => { setNewProjFolderId(selectedFolderId); setShowAddProjectModal(true); }} className="text-[9px] text-indigo-600 dark:text-indigo-404 font-extrabold px-1">＋</button>
                   </div>
                 </div>
               </div>
 
               {viewMode === 'board' && activeProject && (
                 <div className="flex-1 lg:max-w-xl xl:max-w-2xl flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-thin pl-1">
-                  <div className="text-[9px] font-black text-slate-404 dark:text-slate-505 shrink-0 uppercase tracking-wider pr-1 border-r border-slate-202 dark:border-slate-770 flex items-center gap-1 leading-none"><IconClock className="h-3 w-3" /> 進捗</div>
+                  <div className="text-[9px] font-black text-slate-440 dark:text-slate-505 tracking-wider pr-1 border-r border-slate-202 dark:border-slate-770 flex items-center gap-1 leading-none"><IconClock className="h-3 w-3" /> 進捗</div>
                   {stepList.map((step, idx) => {
                     const t = tasks.filter(x => x.stepId === step.id), c = t.filter(x => x.status === 'completed').length, l = t.filter(x => isOverdue(x.dueDate, x.status)).length;
                     const p = t.length > 0 ? Math.round((c / t.length) * 100) : 0;
@@ -1314,777 +1274,129 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
             {viewMode === 'board' && (
               <React.Fragment>
                 {activeProject ? (
-                  <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-4 flex flex-col md:flex-row justify-between gap-4 shadow-sm animate-in fade-in transition-colors">
-                    <div className="space-y-2 flex-1">
-                      {editingProject ? (
-                        <div className="space-y-3.5 bg-slate-55/60 dark:bg-slate-900/60 p-4 rounded-3xl border border-slate-202 dark:border-slate-700 text-xs shadow-inner animate-in fade-in">
-                          <div className="flex justify-between items-center pb-3 border-b border-slate-202 dark:border-slate-700">
-                            <span className="font-extrabold text-indigo-600 dark:text-indigo-400 block mb-1">✏️ 案件変更</span>
-                            <div className="flex items-center gap-2">
-                              <button type="button" onClick={() => setEditingProject(false)} className="text-[10px] text-slate-550 dark:text-slate-455 px-3 py-1.5 bg-slate-150 dark:bg-slate-900 rounded-xl font-bold">戻る</button>
-                              <button type="button" onClick={saveProjectEdit} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold">適用</button>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-3 mt-3">
-                            <div>
-                              <label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-0.5">フォルダ</label>
-                              <select value={projectForm.folderId} onChange={e => setProjectForm({...projectForm, folderId: e.target.value})} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-800 font-bold text-slate-805 dark:text-slate-150 focus:outline-none">
-                                {folders.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
-                              </select>
-                            </div>
-                            <div>
-                              <label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-0.5">状態</label>
-                              <select value={projectForm.status} onChange={e => setProjectForm({...projectForm, status: e.target.value})} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-800 font-bold text-slate-805 dark:text-slate-150 focus:outline-none">
-                                <option value="pending">未着手</option><option value="in_progress">進行中</option><option value="completed">完了</option><option value="not_applicable">対応なし</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <div><label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-0.5">案件名</label><input type="text" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150 font-bold focus:outline-none" /></div>
-                            <div><label className="text-[10px] text-slate-404 dark:text-slate-505 font-bold block mb-0.5">コード</label><input type="text" value={projectForm.code} onChange={e => setProjectForm({...projectForm, code: e.target.value})} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150 font-bold font-mono focus:outline-none" /></div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-3 text-[10px]">
-                            <div><label className="font-bold text-slate-440 dark:text-slate-505 block mb-0.5">開始予定日</label><input type="date" value={projectForm.startDate} onChange={e => setProjectForm({...projectForm, startDate: e.target.value})} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2 font-mono bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150 font-bold focus:outline-none" /></div>
-                            <div><label className="font-bold text-slate-440 dark:text-slate-505 block mb-0.5">目標完了日</label><input type="date" value={projectForm.endDate} onChange={e => setProjectForm({...projectForm, endDate: e.target.value})} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2 font-mono bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150 font-bold focus:outline-none" /></div>
-                          </div>
-                          
-                          <div className="col-span-2 border-t border-slate-202 dark:border-slate-700 pt-3 mt-1 space-y-2">
-                            <span className="text-[10px] font-bold text-slate-605 dark:text-slate-455 flex items-center gap-1"><IconLink className="h-3 w-3"/> 関連リンクの編集</span>
-                            <div className="flex items-center gap-2">
-                              <input type="text" placeholder="リンク名" value={tmpEditProjLinkLabel} onChange={e => setTmpEditProjLinkLabel(e.target.value)} className="w-28 border border-slate-350 dark:border-slate-600 bg-white dark:bg-slate-955 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
-                              <input type="text" placeholder="URL (https://...)" value={tmpEditProjLinkUrl} onChange={e => setTmpEditProjLinkUrl(e.target.value)} className="flex-1 border border-slate-350 dark:border-slate-600 bg-white dark:bg-slate-955 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
-                              <button type="button" onClick={handleAddLinkToEditProj} className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
-                            </div>
-                            {editProjLinks.length > 0 && (
-                              <div className="flex flex-wrap gap-1.5 pt-1">
-                                {editProjLinks.map(lnk => (
-                                  <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-150 dark:bg-slate-800 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold"><IconLink className="h-2.5 w-2.5"/><span className="truncate max-w-[120px] ml-1">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromEditProj(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold text-[10px] ml-1">×</button></span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
+                  <div className="space-y-6">
+                    <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-4 flex flex-col md:flex-row justify-between gap-4 shadow-sm animate-in fade-in transition-colors">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex items-center gap-2 text-xs text-slate-404 font-extrabold"><span>期間: {activeProject.startDate} 〜 {activeProject.endDate}</span></div>
+                        <h2 className="text-base font-black text-slate-805 dark:text-white leading-tight">{activeProject.name}</h2>
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {activeProject.links?.map(lnk => <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10.5px] bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 px-2.5 py-0.5 rounded-lg font-bold border border-slate-202 dark:border-slate-600"><IconExternalLink />{lnk.label}</a>)}
                         </div>
-                      ) : (
-                        <div>
-                          <div className="flex items-center gap-2 text-xs text-slate-404 dark:text-slate-505 font-extrabold flex-wrap">
-                            <IconCalendar /><span>期間: {activeProject.startDate} 〜 {activeProject.endDate}</span>
-                            <span className="ml-1 bg-purple-55 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-black border border-purple-200 dark:border-purple-800 rounded-xl px-2 py-0.5 text-[9.5px]">📁 {folders.find(f => f.id === activeProject.folderId)?.name || '未分類'}</span>
-                            <span className={`ml-1 px-2 py-0.5 rounded-xl text-[9.5px] font-black border ${projectStatusOptions.find(o => o.value === (activeProject.status || 'pending'))?.className}`}>{projectStatusOptions.find(o => o.value === (activeProject.status || 'pending'))?.label}</span>
-                          </div>
-                          <div className="flex items-center gap-2 mt-1.5 flex-wrap group/project-title">
-                            <h2 className="text-base font-black text-slate-805 dark:text-white leading-tight">{activeProject.name}</h2>
-                            <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(activeProject.name, '案件名をコピー！'); }} className="p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 text-slate-555 dark:text-slate-455 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 transition-colors">📋 コピー</button>
-                            <button onClick={handleDeleteProject} className="text-slate-350 dark:text-slate-655 hover:text-rose-605 dark:hover:text-rose-500 p-1 rounded-xl transition-all ml-1"><IconTrash2 className="h-4 w-4" /></button>
-                          </div>
-                          {activeProject.links && activeProject.links.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-1.5 mt-2 pt-2 border-t border-slate-150 dark:border-slate-700 w-full" onClick={(e) => e.stopPropagation()}>
-                              <span className="text-[10px] font-bold text-slate-440 dark:text-slate-505 flex items-center gap-0.5"><IconLink className="h-2.5 w-2.5"/> 案件リンク:</span>
-                              {activeProject.links.map(lnk => (
-                                <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10.5px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-705 text-slate-705 dark:text-slate-300 border border-slate-202 dark:border-slate-600 px-2.5 py-0.5 rounded-lg transition font-bold shadow-xs">
-                                  <IconExternalLink className="h-2.5 w-2.5" /><span>{lnk.label}</span>
-                                </a>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      
-                      {!editingProject && (
                         <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-slate-202 dark:border-slate-700/50">
-                          <span className="text-[10px] font-black text-slate-440 dark:text-slate-505 mr-1 flex items-center gap-1"><IconEye className="h-3.5 w-3.5" />表示フィルター:</span>
-                          {[
-                            { id: 'pending', label: '🔘 未対応', c: 'slate' },
-                            { id: 'in_progress', label: '⚡ 進行中', c: 'blue' },
-                            { id: 'completed', label: '✅ 完了', c: 'emerald' },
-                            { id: 'not_applicable', label: '🚫 対応なし', c: 'slate' }
-                          ].map(st => (
-                            <label key={st.id} className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition-all border select-none ${taskFilter[st.id] ? (st.c==='emerald'?'bg-emerald-55 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : st.c==='blue'?'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300' : 'bg-slate-150 dark:bg-slate-800 border-slate-350 dark:border-slate-600 text-slate-705 dark:text-slate-300') : 'bg-transparent border-slate-202 dark:border-slate-700 text-slate-404 dark:text-slate-650 opacity-60 hover:opacity-100'}`}>
-                              <input type="checkbox" className="sr-only" checked={taskFilter[st.id]} onChange={() => setTaskFilter({...taskFilter, [st.id]: !taskFilter[st.id]})} />
-                              {st.label}
-                            </label>
-                          ))}
+                          {['pending','in_progress','completed','not_applicable'].map(st => <label key={st} className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer border ${taskFilter[st] ? 'bg-indigo-600 text-white' : 'text-slate-404 border-slate-202'}`}><input type="checkbox" className="sr-only" checked={taskFilter[st]} onChange={() => setTaskFilter({...taskFilter, [st]: !taskFilter[st]})} />{st === 'pending' ? '🔘 未対応' : st === 'in_progress' ? '⚡ 進行中' : st === 'completed' ? '✅ 完了' : '🚫 対応なし'}</label>)}
                         </div>
-                      )}
+                      </div>
+                      <div className="flex flex-col items-end gap-2 shrink-0 self-start">
+                        <button onClick={() => setShowAddStepForm(true)} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white font-black px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs"><IconPlus /> STEP追加</button>
+                      </div>
                     </div>
 
-                    {!editingProject && (
-                      <div className="flex flex-col items-end gap-2 shrink-0 self-start">
-                        <div className="flex gap-2">
-                          <button onClick={() => { setEditingProject(true); setProjectForm(activeProject); setEditProjLinks(activeProject.links ? [...activeProject.links] : []); }} className="text-[10px] text-indigo-600 dark:text-indigo-400 font-black flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 px-3 py-2 rounded-xl"><IconEdit2 className="h-3 w-3" /> 案件編集</button>
-                          <button onClick={(e) => handleCopyProjectUrl(activeProject.id, e)} className="text-[10px] text-slate-605 dark:text-slate-300 font-black flex items-center gap-1 bg-white dark:bg-slate-800 border border-slate-350 dark:border-slate-600 px-3 py-2 rounded-xl"><IconLink className="h-3 w-3 text-slate-404" /> 共有</button>
-                          <button onClick={() => { setShowAddStepForm(true); setNewStepName(''); setNewStepDesc(''); setNewStepStartDate(activeProject.startDate); setNewStepDueDate(activeProject.endDate); setNewStepLinks([]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); setTimeout(() => document.getElementById('add-step-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white font-black flex items-center gap-1 px-3 py-2 rounded-xl"><IconPlus className="h-3 w-3" /> STEP追加</button>
+                    {showAddStepForm && (
+                      <form onSubmit={handleAddStep} className="bg-purple-55 dark:bg-purple-900/20 border border-purple-300 rounded-3xl p-5 space-y-4 text-xs">
+                        <div className="flex justify-between items-center"><span className="font-extrabold text-purple-850 dark:text-purple-300">大ステップの新規作成</span><button type="submit" className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl font-bold">作成する</button></div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <input required type="text" placeholder="工程名 *" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="border p-2.5 rounded-xl bg-white dark:bg-slate-800" />
+                          <select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="border p-2.5 rounded-xl bg-white dark:bg-slate-800">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select>
                         </div>
-                        <div className="relative w-full text-right">
-                          <button onClick={() => setShowTaskDropdown(!showTaskDropdown)} className="text-[10px] text-slate-750 dark:text-slate-300 font-black flex items-center justify-between w-full bg-slate-55 dark:bg-slate-800 border border-slate-202 dark:border-slate-700 px-3 py-2 rounded-xl">
-                            <div className="flex items-center gap-1.5"><IconList className="h-3.5 w-3.5" /> <span>未完了タスク</span></div>
-                            {tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length > 0 && <span className="bg-rose-605 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black ml-2">{tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length}</span>}
-                          </button>
-                          {showTaskDropdown && (
-                            <React.Fragment>
-                              <div className="fixed inset-0 z-40" onClick={() => setShowTaskDropdown(false)}></div>
-                              <div className="absolute top-full right-0 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl shadow-xl z-50 flex flex-col max-h-[70vh]">
-                                <div className="p-3 border-b border-slate-150 dark:border-slate-700 bg-slate-55 dark:bg-slate-955 flex justify-between">
-                                  <span className="font-bold text-xs text-slate-750 dark:text-slate-300 flex items-center gap-1.5"><IconList className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" /> 未対応・進行中</span>
-                                  <button onClick={() => setShowTaskDropdown(false)} className="hover:bg-slate-202 dark:hover:bg-slate-700 p-1 rounded"><IconX className="h-3.5 w-3.5 text-slate-404" /></button>
-                                </div>
-                                <div className="overflow-y-auto p-3 space-y-4 bg-slate-55/30 dark:bg-slate-900/30">
-                                  {stepList.map(step => {
-                                    const stepTks = tasks.filter(t => t.stepId === step.id && (t.status === 'pending' || t.status === 'in_progress'));
-                                    if (stepTks.length === 0) return null;
+                      </form>
+                    )}
+
+                    <div className="space-y-8">
+                      {stepList.map((step, index) => {
+                        const stepTksAll = tasks.filter(t => t.stepId === step.id);
+                        const stpProg = getStepProgress(step.id);
+                        const isCol = !!collapsedSteps[step.id];
+                        const cClass = colorClassesMap[deptList.find(d => d.key === step.deptKey)?.color || 'slate'] || colorClassesMap.purple;
+                        return (
+                          <div key={step.id} className={`bg-white dark:bg-slate-800 rounded-3xl shadow-xs border-4 overflow-hidden ${isCol ? 'border-slate-202' : cClass.borderStrong}`}>
+                            <div onClick={() => toggleStepCollapse(step.id)} className={`p-4 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer ${cClass.bg}`}>
+                              <div className="flex items-center gap-3">
+                                <span className={`${cClass.bar} text-white font-black text-[10px] px-2.5 py-0.5 rounded shadow-xs`}>STEP {index + 1}</span>
+                                <h3 className="font-black text-sm text-slate-805 dark:text-slate-150">{step.name}</h3>
+                                {renderStepDeadlineBadge(step, stpProg)}
+                              </div>
+                              <div className="flex items-center gap-4 shrink-0" onClick={e => e.stopPropagation()}>
+                                <div className="text-right"><div className="text-xs font-black text-slate-705 dark:text-slate-300">{stpProg}%</div></div>
+                                <button onClick={() => { setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); }} className="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-xl font-black"><IconPlus /> タスク追加</button>
+                                <button onClick={() => toggleStepCollapse(step.id)} className="text-slate-404">{isCol ? '▼' : '▲'}</button>
+                              </div>
+                            </div>
+
+                            {!isCol && (
+                              <div className="p-4 space-y-4">
+                                {addingTaskStepId === step.id && (
+                                  <form onSubmit={(e) => handleAddTask(step.id, e)} className="p-4 bg-slate-55 dark:bg-slate-900 border rounded-2xl space-y-3 text-xs">
+                                    <input required type="text" placeholder="タスク名を入力..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800" />
+                                    <textarea placeholder="詳細・備考を入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800" />
+                                    <div className="flex justify-end gap-2"><button type="button" onClick={() => setAddingTaskStepId(null)} className="px-3 py-1 bg-slate-202 rounded-lg">キャンセル</button><button type="submit" className="px-4 py-1 bg-indigo-600 text-white rounded-lg">追加</button></div>
+                                  </form>
+                                )}
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {stepTksAll.map((task, taskIndex) => {
+                                    if (!taskFilter[task.status]) return null;
+                                    const d = task.status === 'completed', w = task.status === 'in_progress', na = task.status === 'not_applicable';
+                                    const tkCls = colorClassesMap[deptList.find(dl => dl.key === task.department)?.color || 'slate'] || colorClassesMap.slate;
+                                    const dDays = getDurationDays(task);
                                     return (
-                                      <div key={step.id} className="space-y-1.5 text-left">
-                                        <div className="text-[10px] font-black text-indigo-700 dark:text-indigo-400 border-b border-indigo-100 dark:border-indigo-900/50 pb-1 flex gap-1"><span className="bg-indigo-150 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-300 px-1.5 py-0.5 rounded text-[8px] leading-none">STEP</span>{step.name}</div>
-                                        <div className="space-y-1.5">
-                                          {stepTks.map(task => (
-                                            <button key={task.id} onClick={() => { setShowTaskDropdown(false); setViewMode('board'); if (collapsedSteps[step.id]) setCollapsedSteps(p=>({...p,[step.id]:false})); setCollapsedTasks(p=>({...p,[task.id]:false})); setTimeout(() => document.getElementById(`task-anchor-${task.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} className={`w-full text-left p-2 rounded-xl flex items-start gap-2 border ${task.status === 'in_progress' ? 'bg-blue-50/50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800' : 'bg-white dark:bg-slate-800 border-slate-202 dark:border-slate-700'} group`}>
-                                              <span className="text-[11px] mt-0.5 shrink-0">{task.status === 'in_progress' ? '⚡' : '🔘'}</span>
-                                              <div className="flex-1 min-w-0">
-                                                <div className="text-[11px] font-bold text-slate-750 dark:text-slate-300 leading-tight truncate">{task.isHighPriority && <span className="text-rose-605 mr-1">!</span>}{task.title}</div>
-                                                <div className="text-[9px] text-slate-550 dark:text-slate-455 mt-1"><span className="font-bold">{task.assignee}</span></div>
-                                              </div>
-                                            </button>
-                                          ))}
+                                      <div key={task.id} className={`relative border-4 rounded-3xl p-5 bg-white dark:bg-slate-800 shadow-sm flex flex-col justify-between overflow-hidden min-h-[160px] ${d || na ? 'border-slate-202 opacity-60 bg-slate-55/40 dark:bg-slate-800/40' : task.doToday ? 'border-amber-400 bg-amber-50/10 ring-1 ring-amber-300' : tkCls.borderStrong}`}>
+                                        
+                                        {/* ① 識別ナンバーをカードの左上に配置 */}
+                                        <span className="absolute top-4 left-4 text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold bg-slate-150 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 text-slate-805 dark:text-slate-200 select-none">
+                                          #{index+1}-{taskIndex+1}-<span className="font-black">{task.sequenceId || '?'}</span>
+                                        </span>
+
+                                        {/* 右上のコントロール群 */}
+                                        <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-10" onClick={e => e.stopPropagation()}>
+                                          <button onClick={() => toggleDoToday(task.id)} className={`text-[9px] font-black px-2.5 py-1.5 rounded-xl border ${task.doToday ? 'bg-amber-500 text-white border-amber-600 shadow-md' : 'bg-slate-55 dark:bg-slate-700 text-slate-605 dark:text-slate-300 border-slate-202'}`}>🔥 {task.doToday ? '今日やる中' : '今日やる'}</button>
+                                          <select value={task.status} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className="text-[9px] font-black px-2 py-1 rounded-xl border bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300">
+                                            <option value="pending">🔘 未対応</option><option value="in_progress">⚡ 進行中</option><option value="completed">✅ 完了マーク</option><option value="not_applicable">🚫 対応なし</option>
+                                          </select>
+                                          <button onClick={() => deleteTask(task.id)} className="text-slate-404 hover:text-rose-605 font-bold text-sm ml-1">×</button>
                                         </div>
+
+                                        {/* ② 文字被りを防ぐ mt-10 表示 */}
+                                        <div className="mt-10 space-y-3 flex-1 flex flex-col justify-between">
+                                          <div className="space-y-2">
+                                            <h4 className="font-extrabold text-sm text-slate-805 dark:text-slate-150 select-text cursor-text leading-snug">{task.title}</h4>
+                                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-550 dark:text-slate-404">
+                                              <span className={`px-2 py-0.5 rounded border ${tkCls.badge}`}>{deptList.find(dl => dl.key === task.department)?.label || '未設定'} : {task.assignee}</span>
+                                              <span className="font-mono">⌛ 期日: {task.dueDate}</span>
+                                              {task.startedAt && <span className="font-mono text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-900/40">⏱️ {d ? `${task.startedAt} 〜 ${task.completedAt} (${dDays} 日)` : `${task.startedAt} 着手 (${dDays} 日)`}</span>}
+                                            </div>
+                                          </div>
+
+                                          {/* 直接編集が可能な論点・備考エリア */}
+                                          <div className="relative group/desc space-y-1" onClick={e => e.stopPropagation()}>
+                                            <div className="text-[9.5px] font-bold text-slate-404 flex items-center justify-between"><span><IconInfo className="inline h-3 w-3 mr-0.5" />論点・備考 <span className="text-[8px] font-normal">(クリックで直接編集)</span></span></div>
+                                            {editingDescTaskId === task.id ? (
+                                              <textarea value={tmpDescValue} onChange={e => setTmpDescValue(e.target.value)} onBlur={() => handleSaveDirectDesc(task.id)} className="w-full text-xs bg-white dark:bg-slate-900 border-2 border-indigo-500 rounded-xl p-2 text-slate-805 dark:text-slate-100 min-h-[50px]" autoFocus />
+                                            ) : (
+                                              <p onClick={() => { setEditingDescTaskId(task.id); setTmpDescValue(task.description || ''); }} className={`text-xs p-2.5 border rounded-2xl bg-slate-55 dark:bg-slate-900/40 border-slate-202 dark:border-slate-700 whitespace-pre-wrap cursor-pointer hover:border-indigo-400 ${task.description ? 'text-slate-606 dark:text-slate-300' : 'text-slate-440 italic'}`}>{task.description || '入力なし'}</p>
+                                            )}
+                                          </div>
+                                        </div>
+
                                       </div>
                                     );
                                   })}
                                 </div>
                               </div>
-                            </React.Fragment>
-                          )}
-                        </div>
-                      </div>
-                    )}
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 ) : (
-                  <p className="text-slate-404 dark:text-slate-505 text-xs italic bg-white dark:bg-slate-800 p-6 border dark:border-slate-700 rounded-3xl text-center shadow-xs">案件プロジェクトが未作成、または選択されていません。</p>
+                  <p className="text-slate-404 text-xs italic bg-white p-6 border rounded-3xl text-center shadow-xs">案件プロジェクトが選択されていません。</p>
                 )}
-
-                {activeProject && showAddStepForm && (
-                  <div id="add-step-form" className="flex justify-end">
-                    <form onSubmit={handleAddStep} className="w-full bg-purple-55 dark:bg-purple-900/20 border border-purple-300 dark:border-purple-800 rounded-3xl p-5 space-y-4 text-xs animate-in fade-in">
-                      <div className="flex justify-between items-center pb-3 border-b border-purple-100 dark:border-purple-800">
-                        <span className="font-extrabold text-purple-850 dark:text-purple-300 flex items-center gap-1.5"><IconPlus className="h-3.5 w-3.5" />大ステップの新規作成</span>
-                        <div className="flex items-center gap-2">
-                          <button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-150 dark:bg-slate-800 text-slate-606 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
-                          <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">作成する</button>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">工程名 *</label><input required type="text" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-705 dark:text-slate-150 focus:outline-none focus:border-indigo-500" /></div>
-                        <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">詳細説明</label><input type="text" value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border border-slate-220 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-705 dark:text-slate-150 focus:outline-none focus:border-indigo-500" /></div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">開始予定日</label><input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-705 dark:text-slate-150 font-mono font-bold focus:outline-none focus:border-indigo-500" /></div>
-                        <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">完了予定日</label><input type="date" value={newStepDueDate} onChange={e => setNewStepDueDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-705 dark:text-slate-150 font-mono font-bold focus:outline-none focus:border-indigo-500" /></div>
-                      </div>
-                      <div className="space-y-1">
-                        <span className="block text-slate-605 dark:text-slate-450 font-bold">担当部署</span>
-                        <select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="w-full border border-slate-350 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-705 dark:text-slate-150 text-xs font-bold focus:outline-none focus:border-indigo-500">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select>
-                      </div>
-                      <div className="border-t border-purple-100 dark:border-purple-800/50 pt-3 space-y-2">
-                        <span className="block text-purple-900 dark:text-purple-400 font-extrabold text-xs">🔗 関連リンク</span>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <input type="text" placeholder="リンク名" value={tmpStepLinkLabel} onChange={e => setTmpStepLinkLabel(e.target.value)} className="w-40 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-705 dark:text-slate-150" />
-                          <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-705 dark:text-slate-150" />
-                          <button type="button" onClick={handleAddLinkToNewStep} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
-                        </div>
-                        {newStepLinks.length > 0 && (
-                          <div className="flex flex-wrap gap-2 pt-1">
-                            {newStepLinks.map(lnk => (
-                              <span key={lnk.id} className="inline-flex items-center gap-1.5 text-xs bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-3 py-1 rounded-full font-bold shadow-xs"><IconLink className="h-3 w-3" /><span>{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromNewStep(lnk.id, e)} className="text-purple-450 hover:text-purple-850 dark:hover:text-purple-100 font-extrabold text-xs ml-1">×</button></span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </form>
-                  </div>
-                )}
-
-                <div className="space-y-8">
-                  {activeProject && stepList.map((step, index) => {
-                    const stepTksAll = tasks.filter(t => t.stepId === step.id);
-                    const stpProg = getStepProgress(step.id);
-                    const isCol = !!collapsedSteps[step.id];
-                    const isEd = editingStepId === step.id;
-                    const cClass = colorClassesMap[deptList.find(d => d.key === step.deptKey)?.color || 'slate'] || colorClassesMap.purple;
-
-                    return (
-                      <div key={step.id} id={`step-anchor-${step.id}`} draggable={!isEd} onDragStart={(e) => handleDragStart(index, e)} onDragOver={(e) => handleDragOver(index, e)} onDragEnd={handleDragEnd} className={`bg-white dark:bg-slate-800 rounded-3xl shadow-xs border-4 transition-all ${isCol ? 'border-slate-202 dark:border-slate-705' : cClass.borderStrong} ${draggedStepIndex === index ? 'drag-ghost' : ''}`}>
-                        {isEd ? (
-                          <div onClick={(e) => e.stopPropagation()} className="w-full bg-purple-55 dark:bg-purple-900/20 border-b border-purple-100 dark:border-purple-800 rounded-t-2xl p-5 space-y-4 text-xs animate-in fade-in">
-                            <div className="flex justify-between items-center pb-3 border-b border-purple-100 dark:border-purple-800">
-                              <span className="font-extrabold text-purple-800 dark:text-purple-300">✏️ STEP {index + 1} 編集</span>
-                              <div className="flex items-center gap-2">
-                                <button type="button" onClick={() => setEditingStepId(null)} className="bg-slate-150 dark:bg-slate-800 text-slate-606 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
-                                <button type="button" onClick={(e) => saveStepEdit(step.id, e)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">保存する</button>
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                              <div><label className="block text-slate-605 dark:text-slate-455 font-bold mb-1">工程名 *</label><input required type="text" value={editStepName} onChange={e => setEditStepName(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 shadow-inner text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
-                              <div><label className="block text-slate-605 dark:text-slate-455 font-bold mb-1">詳細説明</label><input type="text" value={editStepDesc} onChange={e => setEditStepDesc(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 shadow-inner text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                              <div><label className="block text-slate-605 dark:text-slate-455 font-bold mb-1">開始予定日</label><input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 font-mono font-bold text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
-                              <div><label className="block text-slate-605 dark:text-slate-455 font-bold mb-1">完了予定日</label><input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 font-mono font-bold text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /></div>
-                            </div>
-                            <div className="space-y-1">
-                              <span className="block text-slate-605 dark:text-slate-455 font-bold">担当部署</span>
-                              <select value={editStepDeptKey} onChange={e => setEditStepDeptKey(e.target.value)} className="w-full border border-purple-200 dark:border-purple-800 rounded-xl p-2 bg-white dark:bg-slate-900 focus:outline-none text-xs font-bold text-slate-705 dark:text-slate-200">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select>
-                            </div>
-                            <div className="border-t border-purple-100 dark:border-purple-800/50 pt-3 space-y-2">
-                              <span className="block text-purple-900 dark:text-purple-400 font-extrabold text-xs">🔗 関連リンクの編集</span>
-                              <div className="flex items-center gap-2">
-                                <input type="text" placeholder="リンク名" value={tmpEditStepLinkLabel} onChange={e => setTmpEditStepLinkLabel(e.target.value)} className="w-32 border border-slate-202 dark:border-slate-75 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-bold focus:outline-none focus:border-purple-500 text-slate-705 dark:text-slate-200" />
-                                <input type="text" placeholder="URL" value={tmpEditStepLinkUrl} onChange={e => setTmpEditStepLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-75 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs focus:outline-none focus:border-purple-500 text-slate-705 dark:text-slate-200" />
-                                <button type="button" onClick={handleAddLinkToEditStep} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
-                              </div>
-                              {editStepLinks.length > 0 && (
-                                <div className="flex flex-wrap gap-2 pt-1">
-                                  {editStepLinks.map(lnk => (
-                                    <span key={lnk.id} className="inline-flex items-center gap-1.5 text-[11px] bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-2.5 py-1 rounded-full font-bold shadow-xs"><IconLink className="h-3 w-3" /><span className="truncate max-w-[120px]">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromEditStep(lnk.id, e)} className="text-purple-450 hover:text-purple-850 dark:hover:text-purple-100 font-extrabold text-xs ml-1">×</button></span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <div onClick={() => toggleStepCollapse(step.id)} className={`sticky top-[114px] z-20 p-4 border-b flex flex-col lg:flex-row justify-between gap-4 cursor-pointer border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-t-[20px] transition-all bg-opacity-95 dark:bg-opacity-95 backdrop-blur-sm ${isCol ? 'bg-white dark:bg-slate-800' : cClass.bg}`}>
-                            <div className="space-y-2 flex-1 min-w-0">
-                              <div className="flex items-center gap-3 flex-wrap">
-                                <div className="p-1 hover:bg-white/80 dark:hover:bg-slate-700/80 rounded-lg cursor-grab active:cursor-grabbing"><IconDragHandle /></div>
-                                <span className={`${cClass.bar} text-white font-black text-[10px] px-2.5 py-0.5 rounded shadow-xs`}>STEP {index + 1}</span>
-                                <h3 
-                                  className="font-black text-sm text-slate-805 dark:text-slate-150 flex items-center gap-1.5 cursor-text select-text"
-                                  onPointerDown={(e) => e.stopPropagation()} 
-                                  onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                                >
-                                  {step.name}
-                                  <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(step.name, 'コピー済！'); }} className="p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-600 text-slate-505 rounded-lg text-[9px] font-bold shrink-0">📋 コピー</button>
-                                  <span className="text-slate-440 dark:text-slate-505 ml-1">{isCol ? <IconChevronRight className="h-4 w-4" /> : <IconChevronDown className="h-4 w-4" />}</span>
-                                </h3>
-                                {renderStepDeadlineBadge(step, stpProg)}
-                                <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                                  <button onClick={(e) => moveStepOrder(index, -1, e)} disabled={index === 0} className={`p-1.5 rounded-lg ${index === 0 ? 'opacity-25' : 'text-slate-505 dark:text-slate-455'}`}><IconArrowUp /></button>
-                                  <button onClick={(e) => moveStepOrder(index, 1, e)} disabled={index === stepList.length - 1} className={`p-1.5 rounded-lg ${index === stepList.length - 1 ? 'opacity-25' : 'text-slate-505 dark:text-slate-455'}`}><IconArrowDown /></button>
-                                  <button onClick={(e) => startEditingStep(step, e)} className="p-1.5 text-slate-404"><IconEdit2 className="h-3.5 w-3.5" /></button>
-                                  <button onClick={(e) => handleDeleteStep(step.id, step.name, e)} className="p-1.5 text-slate-440"><IconTrash2 className="h-3.5 w-3.5" /></button>
-                                </div>
-                              </div>
-                              <div className="flex flex-col gap-2 pl-8">
-                                <p 
-                                  className={`font-bold text-xs cursor-text select-text ${step.desc ? 'text-slate-606 dark:text-slate-350' : 'text-slate-404 dark:text-slate-505 italic'}`}
-                                  onPointerDown={(e) => e.stopPropagation()} 
-                                  onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                                >
-                                  {step.desc || '詳細説明なし'}
-                                </p>
-                                <div className="flex items-center gap-3 flex-wrap">
-                                  {step.startDate && step.dueDate && <div className="flex items-center gap-1.5 text-[10.5px] text-slate-606 dark:text-slate-300 font-mono font-bold bg-white/80 dark:bg-slate-800/80 px-2.5 py-0.5 rounded-lg border dark:border-slate-700"><IconCalendar className="h-3 w-3" /><span>{step.startDate} 〜 {step.dueDate}</span></div>}
-                                  {step.links && step.links.length > 0 && (
-                                    <div className="flex items-center gap-1.5 flex-wrap" onClick={(e) => e.stopPropagation()}>
-                                      {step.links.map(lnk => (
-                                        <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10.5px] bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2.5 py-0.5 rounded-lg transition font-black shadow-xs">
-                                          <IconExternalLink className="h-2.5 w-2.5" /><span>{lnk.label}</span>
-                                        </a>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-
-                            {stepTksAll.length > 0 && (
-                              <div className="flex flex-wrap gap-1.5 items-center px-4 py-2 bg-slate-150/40 dark:bg-slate-900/40 rounded-2xl max-w-xl self-start border dark:border-slate-800" onClick={(e) => e.stopPropagation()}>
-                                <span className="text-[9px] font-black text-slate-440 dark:text-slate-505 uppercase tracking-wider shrink-0 mr-1">タスク:</span>
-                                {stepTksAll.map((t, tIdx) => {
-                                  if (!taskFilter[t.status]) return null;
-                                  const d = t.status === 'completed', w = t.status === 'in_progress', p = t.status === 'pending', na = t.status === 'not_applicable';
-                                  const hw = (w || p) && t.isHighPriority;
-                                  const isDraggingThisBadge = draggedTaskInfo && draggedTaskInfo.stepId === step.id && draggedTaskInfo.index === tIdx;
-                                  return (
-                                    <button 
-                                      key={t.id} 
-                                      draggable={editingTaskId !== t.id}
-                                      onDragStart={(e) => handleTaskDragStart(step.id, tIdx, e)}
-                                      onDragOver={(e) => handleTaskDragOver(step.id, tIdx, e)}
-                                      onDragEnd={handleTaskDragEnd}
-                                      onClick={() => { if(isCol) setCollapsedSteps(pr=>({...pr,[step.id]:false})); setCollapsedTasks(pr=>({...pr,[t.id]:false})); setTimeout(() => document.getElementById(`task-anchor-${t.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} 
-                                      className={`px-2 py-0.5 rounded-lg text-[10px] font-extrabold border flex items-center gap-1.5 shrink-0 cursor-grab active:cursor-grabbing hover:scale-105 active:scale-95 transition-all shadow-xs ${isDraggingThisBadge ? 'opacity-30 border-dashed border-indigo-400 dark:border-indigo-500' : ''} ${d ? 'bg-[#ecfdf5] dark:bg-[#132d24] border-emerald-200 text-emerald-700' : hw ? 'bg-rose-150 border-rose-400 text-rose-700 animate-pulse' : w ? 'bg-blue-50 border-blue-200 text-blue-700 animate-pulse' : na ? 'bg-slate-202 text-slate-505' : 'bg-white dark:bg-slate-800 border-slate-202 text-slate-606 dark:text-slate-300'}`}
-                                    >
-                                      <span>{d ? '✓' : w ? '⚡' : na ? '🚫' : '🔘'} #{index+1}-{tIdx+1}-<span className="font-black">{t.sequenceId || '?'}</span></span><span className="truncate max-w-[80px]">{t.title}</span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            )}
-                            
-                            <div className="flex items-center gap-4 pl-8 lg:pl-0 shrink-0" onClick={(e) => e.stopPropagation()}>
-                              <div className="flex flex-col gap-1.5 items-end">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[10px] text-slate-404 font-extrabold uppercase">進捗</span>
-                                  <div className="h-2 w-20 bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner"><div className="h-full bg-indigo-500" style={{ width: `${stpProg}%` }}></div></div>
-                                  <span className={`text-xs font-black ${cClass.text}`}>{stpProg}%</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-[9px] font-black bg-white/50 dark:bg-slate-900/50 px-2 py-0.5 rounded-lg border border-slate-202/50 dark:border-slate-707/50 shadow-xs">
-                                  <span className="text-slate-555 dark:text-slate-455">未対応 {stepTksAll.filter(t => t.status === 'pending').length}</span>
-                                  <span className="text-blue-600 dark:text-blue-400">進行中 {stepTksAll.filter(t => t.status === 'in_progress').length}</span>
-                                  <span className="text-emerald-600 dark:text-emerald-400">完了 {stepTksAll.filter(t => t.status === 'completed').length}</span>
-                                </div>
-                              </div>
-                              {addingTaskStepId !== step.id && (
-                                <button onClick={(e) => { 
-                                  e.stopPropagation(); 
-                                  setAddingTaskStepId(step.id); 
-                                  setNewTaskTitle(''); 
-                                  setNewTaskDesc(''); 
-                                  setNewTaskImages([]); 
-                                  setNewTaskLinks([]); 
-                                  setTmpTaskLinkLabel(''); 
-                                  setTmpTaskLinkUrl(''); 
-                                  const fb = deptList[0]?.key || 'backoffice'; 
-                                  setNewTaskDept(fb); 
-                                  setNewTaskAssignee(fb === 'backoffice' ? '自分 (事務)' : '担当者'); 
-
-                                  setTimeout(() => {
-                                    const formEl = document.getElementById(`add-task-form-${step.id}`);
-                                    if (formEl) { formEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-                                  }, 150);
-                                }} className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs"><IconPlus /> タスク追加</button>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {!isCol && (
-                          <div className="bg-slate-55/20 dark:bg-slate-900/20">
-                            {addingTaskStepId === step.id && (
-                              <form id={`add-task-form-${step.id}`} onSubmit={(e) => handleAddTask(step.id, e)} className="p-5 bg-purple-55/10 dark:bg-purple-900/10 border-b border-slate-202 dark:border-slate-700/50 space-y-4 text-xs">
-                                <div className="flex justify-between items-center pb-3 border-b border-slate-202 dark:border-slate-700/50">
-                                  <span className="font-black text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5"><IconPlus className="h-4 w-4" />STEP {index + 1} タスク新規作成</span>
-                                  <div className="flex items-center gap-2">
-                                    <button type="button" onClick={() => setAddingTaskStepId(null)} className="bg-slate-150 dark:bg-slate-800 text-slate-605 dark:text-slate-300 px-3 py-1.5 rounded-xl font-bold transition-colors">キャンセル</button>
-                                    <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">作成する</button>
-                                  </div>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                                  <div className="space-y-3">
-                                    <input required type="text" placeholder="タスク名..." value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-900 text-slate-705 dark:text-slate-150 font-bold focus:outline-none" />
-                                    <textarea placeholder="詳細説明文... (画像ペースト / D&D対応)" value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={(e) => handlePasteOnTextInput(e, setNewTaskImages)} onDrop={(e) => handleDropOnTextInput(e, setNewTaskImages)} className="w-full border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-705 dark:text-slate-150 min-h-[120px] focus:outline-none" rows={4} />
-                                    {newTaskImages.length > 0 && (
-                                      <div className="flex flex-wrap gap-2 p-2 bg-slate-150 dark:bg-slate-800 rounded-xl">
-                                        {newTaskImages.map((src, imgIdx) => (
-                                          <div key={`new-img-${imgIdx}`} className="relative w-16 h-16 rounded-lg overflow-hidden border">
-                                            <img src={src} className="w-full h-full object-cover" /><button type="button" onClick={() => setNewTaskImages(p => p.filter((_, idx) => idx !== imgIdx))} className="absolute top-0.5 right-0.5 bg-slate-955/80 text-white rounded-full p-0.5"><IconX className="h-3 w-3" /></button>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-3 self-start">
-                                    <div><label className="block text-slate-440 font-bold mb-1">担当部署</label><select value={newTaskDept} onChange={e => { const dept = e.target.value; const found = deptList.find(d => d.key === dept); setNewTaskDept(dept); setNewTaskAssignee(dept === 'backoffice' ? '自分 (事務)' : (found ? `${found.label}担当` : '担当者')); }} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900 text-slate-705 dark:text-slate-150 font-bold focus:outline-none">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-                                    <div><label className="block text-slate-440 font-bold mb-1">担当個人名</label><input type="text" value={newTaskAssignee} onChange={e => setNewTaskAssignee(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-slate-705 dark:text-slate-150 font-bold focus:outline-none" /></div>
-                                    <div className="col-span-2"><label className="block text-slate-440 font-bold mb-1">完了期日</label><input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-slate-705 dark:text-slate-150 font-mono font-bold focus:outline-none" /></div>
-                                  </div>
-                                  
-                                  {/* タスク追加時の関連リンク (インデントと縮小・デザインブラッシュアップ) */}
-                                  <div className="col-span-1 md:col-span-2 border-t border-slate-202 dark:border-slate-700/50 pt-3 mt-1 space-y-2 pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-1">
-                                    <span className="text-[10px] font-black text-slate-505 dark:text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
-                                      <IconLink className="h-3.5 w-3.5 text-indigo-500" />
-                                      <span>タスク関連リンク (任意)</span>
-                                    </span>
-                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 max-w-lg">
-                                      <input 
-                                        type="text" 
-                                        placeholder="リンク名 (例: 仕様書)" 
-                                        value={tmpTaskLinkLabel} 
-                                        onChange={e => setTmpTaskLinkLabel(e.target.value)} 
-                                        className="w-full sm:w-1/3 border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-150 focus:outline-none focus:border-indigo-500" 
-                                      />
-                                      <div className="flex-1 flex gap-1.5">
-                                        <input 
-                                          type="text" 
-                                          placeholder="URL (https://...)" 
-                                          value={tmpTaskLinkUrl} 
-                                          onChange={e => setTmpTaskLinkUrl(e.target.value)} 
-                                          className="flex-1 border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-150 focus:outline-none focus:border-indigo-500" 
-                                        />
-                                        <button 
-                                          type="button" 
-                                          onClick={handleAddLinkToNewTask} 
-                                          className="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1 shrink-0 shadow-sm"
-                                          title="リンクを追加"
-                                        >
-                                          <IconPlus />
-                                          <span>追加</span>
-                                        </button>
-                                      </div>
-                                    </div>
-                                    {newTaskLinks.length > 0 && (
-                                      <div className="flex flex-wrap gap-1.5 pt-1.5">
-                                        {newTaskLinks.map(lnk => (
-                                          <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-150 dark:bg-slate-800 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold"><IconLink className="h-2.5 w-2.5"/><span className="truncate max-w-[120px] ml-1">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromNewTask(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold text-[10px] ml-1">×</button></span>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </form>
-                            )}
-
-                            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {stepTksAll.map((task, taskIndex) => {
-                                if (!taskFilter[task.status]) return null;
-
-                                const d = task.status === 'completed', w = task.status === 'in_progress', p = task.status === 'pending', na = task.status === 'not_applicable';
-                                const lt = isOverdue(task.dueDate, task.status), hw = (w || p) && task.isHighPriority;
-                                const tkCls = colorClassesMap[deptList.find(dl => dl.key === task.department)?.color || 'slate'] || colorClassesMap.slate;
-                                const logs = task.contextLogs ? [...task.contextLogs].sort((a, b) => b.date.localeCompare(a.date)) : [];
-                                const tCol = collapsedTasks[task.id] !== undefined ? collapsedTasks[task.id] : (d || na);
-                                const dDays = getDurationDays(task);
-                                const isDraggingThisCard = draggedTaskInfo && draggedTaskInfo.stepId === step.id && draggedTaskInfo.index === taskIndex;
-
-                                // 「今日やる」に設定されているかつ「未完了」かつ「期限超過（本日を過ぎている）」かどうかの判定
-                                const isOverdueTodayTask = task.doToday && !d && !na && lt;
-
-                                return (
-                                  <div 
-                                    key={task.id} 
-                                    id={`task-anchor-${task.id}`} 
-                                    draggable={editingTaskId !== task.id} 
-                                    onDragStart={(e) => handleTaskDragStart(step.id, taskIndex, e)} 
-                                    onDragOver={(e) => handleTaskDragOver(step.id, taskIndex, e)} 
-                                    onDragEnd={handleTaskDragEnd} 
-                                    onClick={() => toggleTaskCollapse(task.id)} 
-                                    className={`group/task-card relative border-4 rounded-3xl p-4 flex flex-col justify-between overflow-hidden shadow-xs cursor-pointer ${isDraggingThisCard ? 'drag-ghost' : ''} ${
-                                      d || na 
-                                        ? 'border-slate-202 dark:border-slate-707/50 opacity-60 bg-slate-55/70 dark:bg-slate-800/40' 
-                                        : isOverdueTodayTask
-                                          ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-2 ring-rose-500 animate-pulse'
-                                          : task.doToday
-                                            ? 'border-amber-400 bg-amber-50/10 dark:bg-amber-955/10 ring-1 ring-amber-300'
-                                            : hw 
-                                              ? 'border-rose-500 dark:border-rose-600 bg-rose-55 dark:bg-rose-900/10 ring-2 ring-rose-200' 
-                                              : task.isHighPriority 
-                                                ? 'border-rose-400 bg-gradient-to-br from-rose-55/10 to-white dark:from-rose-900/10 dark:to-slate-800 ring-1 ring-rose-400/5' 
-                                                : `${tkCls.borderStrong} bg-white dark:bg-slate-800`
-                                    }`}
-                                  >
-                                    <div className="absolute top-3.5 right-3.5 flex flex-wrap justify-end items-center gap-1.5 z-10 max-w-[65%]" onClick={(e) => e.stopPropagation()}>
-                                      {(!d && !na) && (
-                                        <div className="flex items-center gap-1 mr-1 bg-white/90 dark:bg-slate-800/90 border border-slate-202 dark:border-slate-700 p-0.5 rounded-lg">
-                                          <button onClick={(e) => { e.stopPropagation(); moveTaskOrder(step.id, taskIndex, -1, e); }} disabled={taskIndex === 0} className={`p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-md transition shadow-xs ${taskIndex === 0 ? 'opacity-25' : 'text-slate-440 hover:text-indigo-600'}`}><IconDragHandle /></button>
-                                          <button onClick={(e) => { e.stopPropagation(); startEditing(task); }} className="p-1 text-slate-440 hover:text-indigo-600 rounded-md"><IconEdit2 className="h-3.5 w-3.5" /></button>
-                                          <button onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }} className="p-1 text-slate-440 hover:text-rose-605 rounded-md"><IconTrash2 className="h-3.5 w-3.5" /></button>
-                                        </div>
-                                      )}
-                                      
-                                      {/* 🔥 今日やるトグルボタン */}
-                                      {(!d && !na) && (
-                                        <button 
-                                          onClick={(e) => { e.stopPropagation(); toggleDoToday(task.id); }} 
-                                          className={`flex items-center gap-0.5 text-[9px] font-black px-2.5 py-1.5 rounded-xl border transition-all ${
-                                            task.doToday 
-                                              ? isOverdueTodayTask 
-                                                ? 'bg-rose-600 text-white border-rose-700 shadow-md animate-bounce' 
-                                                : 'bg-amber-500 text-white border-amber-600 shadow-md' 
-                                              : 'bg-slate-55 dark:bg-slate-800 text-slate-605 dark:text-slate-300 border-slate-202 hover:bg-slate-150'
-                                          }`}
-                                        >
-                                          <span>🔥 {task.doToday ? '今日やる中' : '今日やる'}</span>
-                                        </button>
-                                      )}
-
-                                      <button onClick={(e) => { e.stopPropagation(); toggleTaskPriority(task.id); }} className={`flex items-center gap-0.5 text-[9px] font-black px-2.5 py-1.5 rounded-xl border ${task.isHighPriority ? 'bg-rose-500 text-white border-rose-600 shadow-md shadow-rose-100 dark:shadow-none' : 'bg-rose-55/70 dark:bg-rose-900/30 text-rose-605 dark:text-rose-400 border-rose-200'}`}><IconFlag className="h-2.5 w-2.5" />{task.isHighPriority ? '最優先' : '優先度'}</button>
-                                      <select value={task.status} onClick={(e) => e.stopPropagation()} onChange={(e) => changeTaskStatus(task.id, e.target.value)} className={`text-[9px] font-black px-2.5 py-1.5 rounded-xl border cursor-pointer focus:outline-none ${d ? 'bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-100' : w ? 'bg-blue-500 text-white border-blue-600 shadow-md shadow-blue-100' : na ? 'bg-slate-400 text-white border-slate-500 shadow-md shadow-slate-200' : 'bg-slate-150 dark:bg-slate-700 text-slate-705 dark:text-slate-300 border-slate-202'}`}>
-                                        <option value="pending" className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150">🔘 未対応</option><option value="in_progress" className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150">⚡ 進行中</option><option value="completed" className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150">✅ 完了マーク</option><option value="not_applicable" className="bg-white dark:bg-slate-800 text-slate-805 dark:text-slate-150">🚫 対応なし</option>
-                                      </select>
-                                      {editingTaskId !== task.id && <button onClick={(e) => { e.stopPropagation(); toggleTaskCollapse(task.id); }} className="p-1 text-slate-404 ml-0.5">{tCol ? <IconChevronRight className="h-4 w-4" /> : <IconChevronDown className="h-4 w-4" />}</button>}
-                                    </div>
-
-                                    {editingTaskId === task.id ? (
-                                      <div className="space-y-3.5 text-xs w-full pl-1 pr-4 mt-6 animate-in fade-in" onClick={(e) => e.stopPropagation()}>
-                                        <div className="flex justify-between items-center pb-3 border-b border-slate-202 dark:border-slate-700">
-                                          <span className="font-extrabold text-indigo-600 dark:text-indigo-400 block">✏️ タスク編集 (# {index + 1}-{taskIndex + 1}-{task.sequenceId || '?'})</span>
-                                          <div className="flex items-center gap-2">
-                                            <button onClick={() => setEditingTaskId(null)} className="bg-slate-150 dark:bg-slate-800 text-slate-505 px-3 py-1.5 rounded-xl font-bold">戻る</button>
-                                            <button onClick={() => saveEdit(task.id)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold transition-colors">保存</button>
-                                          </div>
-                                        </div>
-                                        <input type="text" value={editFormData.title} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full font-bold border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 text-slate-705 dark:text-slate-150 focus:outline-none" placeholder="タスク名" />
-                                        <textarea value={editFormData.description} onChange={e => setEditFormData({...editFormData, description: e.target.value})} onPaste={(e) => handlePasteOnTextInput(e, setEditTaskImages)} onDrop={(e) => handleDropOnTextInput(e, setEditTaskImages)} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2.5 min-h-[100px] text-slate-705 dark:text-slate-150 focus:outline-none" rows={3} placeholder="詳細や論点... (画像ペースト対応)" />
-                                        {editTaskImages.length > 0 && (
-                                          <div className="flex flex-wrap gap-2 p-2 bg-slate-55 dark:bg-slate-800 rounded-xl border">
-                                            {editTaskImages.map((src, imgIdx) => (
-                                              <div key={`edit-img-${imgIdx}`} className="relative w-12 h-12 rounded-lg overflow-hidden border">
-                                                <img src={src} className="w-full h-full object-cover" /><button type="button" onClick={() => setEditTaskImages(prev => prev.filter((_, idx) => idx !== imgIdx))} className="absolute top-0.5 right-0.5 bg-slate-955/80 text-white rounded-full p-0.5"><IconX className="h-2.5 w-2.5" /></button>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        )}
-                                        <div className="grid grid-cols-3 gap-2">
-                                          <div><label className="text-[10px] text-slate-440 font-bold block mb-0.5">担当部署</label><select value={editFormData.department} onChange={e => { const dk = e.target.value; const fnd = deptList.find(d => d.key === dk); setEditFormData({ ...editFormData, department: dk, assignee: dk === 'backoffice' ? '自分 (事務)' : (fnd ? `${fnd.label}担当` : '担当者') }); }} className="w-full border border-slate-300 dark:border-slate-600 rounded-xl p-2 text-xs bg-white dark:bg-slate-900 text-slate-705 dark:text-slate-200">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-                                          <div><label className="text-[10px] text-slate-440 font-bold block mb-0.5">担当者名</label><input type="text" value={editFormData.assignee} onChange={e => setEditFormData({...editFormData, assignee: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-200 focus:outline-none" /></div>
-                                          <div><label className="text-[10px] text-slate-440 font-bold block mb-0.5">完了期日</label><input type="date" value={editFormData.dueDate} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-mono text-slate-705 dark:text-slate-200 focus:outline-none" /></div>
-                                        </div>
-
-                                        {/* タスク編集時の関連リンク (インデントと縮小・デザインブラッシュアップ) */}
-                                        <div className="col-span-1 md:col-span-3 border-t border-slate-202 dark:border-slate-700/50 pt-3 mt-1 space-y-2 pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-1">
-                                          <span className="text-[10px] font-black text-slate-606 dark:text-slate-455 flex items-center gap-1.5 uppercase tracking-wider">
-                                            <IconLink className="h-3.5 w-3.5 text-indigo-500" />
-                                            <span>関連リンクの編集</span>
-                                          </span>
-                                          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 max-w-lg">
-                                            <input 
-                                              type="text" 
-                                              placeholder="リンク名" 
-                                              value={tmpEditTaskLinkLabel} 
-                                              onChange={e => setTmpEditTaskLinkLabel(e.target.value)} 
-                                              className="w-full sm:w-1/3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-500" 
-                                            />
-                                            <div className="flex-1 flex gap-1.5">
-                                              <input 
-                                                type="text" 
-                                                placeholder="URL" 
-                                                value={tmpEditTaskLinkUrl} 
-                                                onChange={e => setTmpEditTaskLinkUrl(e.target.value)} 
-                                                className="flex-1 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-500" 
-                                              />
-                                              <button 
-                                                type="button" 
-                                                onClick={handleAddLinkToEditTask} 
-                                                className="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1 shrink-0 shadow-sm"
-                                                title="リンクを追加"
-                                              >
-                                                <IconPlus />
-                                                <span>追加</span>
-                                              </button>
-                                            </div>
-                                          </div>
-                                          {editTaskLinks.length > 0 && (
-                                            <div className="flex flex-wrap gap-1.5 pt-1">
-                                              {editTaskLinks.map(lnk => (
-                                                <span key={lnk.id} className="inline-flex items-center gap-1 text-[10px] bg-slate-150 dark:bg-slate-800 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold"><IconLink className="h-2.5 w-2.5"/><span className="truncate max-w-[120px] ml-1">{lnk.label}</span><button type="button" onClick={(e) => handleRemoveLinkFromEditTask(lnk.id, e)} className="text-slate-404 hover:text-rose-605 font-bold text-[10px] ml-1">×</button></span>
-                                              ))}
-                                            </div>
-                                          )}
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <div className="space-y-3.5 flex-1 flex flex-col justify-between pl-1 mt-10">
-                                        <div className="space-y-2.5">
-                                          
-                                          {/* ① タスクナンバーをカードの左上（top-4 left-4）に絶対配置 */}
-                                          <span className="absolute top-4 left-4 text-[10px] px-2 py-0.5 rounded-lg font-mono font-bold bg-slate-150 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 text-slate-805 dark:text-slate-200 select-none">
-                                            #{index+1}-{taskIndex+1}-<span className="font-black">{task.sequenceId || '?'}</span>
-                                          </span>
-
-                                          {/* ② タスク名は横幅いっぱいに表示（plやprの制限をすべて削除） */}
-                                          <h4 
-                                            className="font-extrabold text-sm text-slate-805 dark:text-slate-150 cursor-text select-text"
-                                            onPointerDown={(e) => e.stopPropagation()} 
-                                            onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                                          >
-                                            {task.title}
-                                          </h4>
-
-                                          <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                                            <span className={`text-[9.5px] font-black px-2.5 py-0.5 rounded-full border ${tkCls.badge}`}>{deptList.find(d => d.key === task.department)?.label || '未設定'} : {task.assignee}</span>
-                                            <div className="flex items-center gap-1 text-[10.5px] text-slate-440 font-mono font-bold"><IconCalendar /><span className={lt ? 'text-rose-605 dark:text-rose-400 font-black animate-pulse' : ''}>{task.dueDate}</span></div>
-                                            {task.startedAt && <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2.5 py-0.5 rounded-lg border ${d ? 'bg-emerald-55 text-emerald-700 border-emerald-200' : na ? 'bg-slate-150 text-slate-505 border-slate-202' : 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse'}`}><IconClock className="h-2.5 w-2.5" /><span>{d ? `${task.startedAt} 〜 ${task.completedAt} (${dDays} 日)` : na ? `${task.startedAt} 〜 ${task.completedAt} (対応なし)` : `${task.startedAt} 着手 (${dDays} 日)`}</span></span>}
-                                          </div>
-                                          
-                                          <div className="relative group/desc space-y-1.5 mt-3" onClick={(e) => e.stopPropagation()}>
-                                            <div className="text-[9.5px] font-bold text-slate-450 dark:text-slate-555 ml-1 flex items-center justify-between select-none">
-                                              <span className="flex items-center gap-1"><IconInfo className="h-3 w-3" /> 論点・備考 <span className="text-[8px] text-slate-440 dark:text-slate-555 font-normal">(クリックで直接編集)</span></span>
-                                              {editingDescTaskId === task.id && (
-                                                <button 
-                                                  onClick={() => handleSaveDirectDesc(task.id)}
-                                                  className="text-[9px] bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-0.5 rounded-lg font-bold"
-                                                >
-                                                  保存
-                                                </button>
-                                              )}
-                                            </div>
-                                            <div className="relative">
-                                              {editingDescTaskId === task.id ? (
-                                                <textarea
-                                                  value={tmpDescValue}
-                                                  onChange={(e) => setTmpDescValue(e.target.value)}
-                                                  onBlur={() => handleSaveDirectDesc(task.id)}
-                                                  onKeyDown={(e) => {
-                                                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                                                      handleSaveDirectDesc(task.id);
-                                                    }
-                                                  }}
-                                                  className="w-full text-[11px] bg-white dark:bg-slate-900 border-2 border-indigo-500 dark:border-indigo-400 rounded-2xl p-3 text-slate-805 dark:text-slate-100 focus:outline-none min-h-[60px]"
-                                                  autoFocus
-                                                  onPointerDown={(e) => e.stopPropagation()}
-                                                  onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                                                />
-                                              ) : (
-                                                <p 
-                                                  className={`text-[11px] whitespace-pre-wrap bg-slate-55 dark:bg-slate-900/50 border border-slate-202 dark:border-slate-700 rounded-2xl p-3 cursor-pointer select-text hover:border-indigo-400 dark:hover:indigo-600 hover:bg-indigo-50/20 dark:hover:bg-indigo-950/20 transition-all ${task.description ? 'text-slate-606 dark:text-slate-300' : 'text-slate-440 dark:text-slate-555 italic'}`}
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setEditingDescTaskId(task.id);
-                                                    setTmpDescValue(task.description || '');
-                                                  }}
-                                                  onPointerDown={(e) => e.stopPropagation()} 
-                                                  onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                                                  title="クリックして直接編集"
-                                                >
-                                                  {task.description || '入力なし'}
-                                                </p>
-                                              )}
-                                              {task.attachedImages && task.attachedImages.length > 0 && (
-                                                <div className="flex flex-wrap gap-2 pt-2 px-1">
-                                                  {task.attachedImages.map((src, imgIdx) => (
-                                                    <div key={`task-img-${task.id}-${imgIdx}`} onClick={() => setLightboxImage(src)} className="relative max-w-[140px] max-h-[100px] rounded-xl overflow-hidden border border-slate-202 cursor-zoom-in hover:brightness-95"><img src={src} alt="preview" className="w-full h-full object-cover" /></div>
-                                                  ))}
-                                                </div>
-                                              )}
-                                              {editingDescTaskId !== task.id && task.description && (
-                                                <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }} className="absolute top-2 right-2 opacity-100 p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-600 text-slate-505 dark:text-slate-450 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors" title="タスクの説明をコピー">📋 コピー</button>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </div>
-
-                                        {task.links && task.links.length > 0 && (
-                                          <div className="flex flex-wrap items-center gap-1.5 mt-2 pt-2 border-t border-slate-150 dark:border-slate-700/50" onClick={(e) => e.stopPropagation()}>
-                                            <span className="text-[9px] font-bold text-slate-440 dark:text-slate-550 flex items-center gap-0.5"><IconLink className="h-2.5 w-2.5"/> 関連リンク:</span>
-                                            {task.links.map(lnk => (
-                                              <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] bg-slate-55 dark:bg-slate-800 hover:bg-slate-150 dark:hover:bg-slate-700 text-slate-606 dark:text-slate-300 border border-slate-202 dark:border-slate-700 px-2 py-0.5 rounded-lg transition font-black shadow-xs">
-                                                <IconExternalLink className="h-2.5 w-2.5" /><span>{lnk.label}</span>
-                                              </a>
-                                            ))}
-                                          </div>
-                                        )}
-                                      </div>
-                                    )}
-
-                                    {!tCol && (
-                                      <div className="space-y-3 pt-2" onClick={(e) => e.stopPropagation()}>
-                                        <div className="bg-slate-55 dark:bg-slate-900/40 border border-slate-202 dark:border-slate-700 rounded-2xl p-3 space-y-2.5 shadow-inner">
-                                          <div className="pb-1.5 border-b border-slate-202 dark:border-slate-700/50 flex flex-col gap-2">
-                                            <span className="text-[9.5px] font-black text-slate-440 dark:text-slate-550 flex items-center gap-1 select-none"><IconClock /> 時系列メモ</span>
-                                            {addingLogTaskId !== task.id && !d && !na && (
-                                              <div className="flex justify-center w-full pb-1">
-                                                <button onClick={(e) => { e.stopPropagation(); setAddingLogTaskId(task.id); setNewLogText(''); setNewLogTo(''); setNewLogDueDate(''); setNewLogLinks([]); setNewLogImages([]); setTmpLinkLabel(''); setTmpLinkUrl(''); }} className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-800/50 px-4 py-1.5 rounded-full transition-colors shadow-xs"><IconPlus className="h-3 w-3"/> メモを追記する</button>
-                                              </div>
-                                            )}
-                                          </div>
-                                          {addingLogTaskId === task.id && (
-                                            <div className="bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-800/50 rounded-2xl p-3 space-y-3 text-xs shadow-md animate-in zoom-in-95">
-                                              <div className="flex justify-between items-center pb-2 border-b border-slate-150 dark:border-slate-700">
-                                                <span className="font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5"><IconPlus className="h-3.5 w-3.5"/> メモの新規追記</span>
-                                                <div className="flex items-center gap-2">
-                                                  <button onClick={() => setAddingLogTaskId(null)} className="text-[9px] text-slate-440 dark:text-slate-550 hover:bg-slate-55 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-lg font-bold transition-colors">キャンセル</button>
-                                                  <button onClick={() => addLog(task.id)} disabled={!newLogText.trim() && newLogImages.length === 0} className="text-[9px] bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-lg font-black disabled:bg-slate-150 dark:disabled:bg-slate-700 disabled:text-slate-404 dark:disabled:text-slate-555 disabled:cursor-not-allowed transition-colors">保存する</button>
-                                                </div>
-                                              </div>
-                                              <textarea value={newLogText} onChange={e => setNewLogText(e.target.value)} onPaste={(e) => handlePasteOnTextInput(e, setNewLogImages)} onDrop={(e) => handleDropOnTextInput(e, setNewLogImages)} placeholder="状況メモ... (画像対応)" className="w-full bg-slate-55 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-705 dark:text-slate-150 font-bold focus:outline-none focus:border-indigo-400 min-h-[80px]" rows={2.5} />
-                                              {newLogImages.length > 0 && (
-                                                <div className="flex flex-wrap gap-1.5 p-2 bg-slate-150 dark:bg-slate-900/50 rounded-xl border">
-                                                  {newLogImages.map((src, imgIdx) => (
-                                                    <div key={`new-log-img-${imgIdx}`} className="relative w-12 h-12 rounded-lg overflow-hidden border"><img src={src} className="w-full h-full object-cover" /><button type="button" onClick={() => setNewLogImages(p => p.filter((_, idx) => idx !== imgIdx))} className="absolute top-0.5 right-0.5 bg-slate-955/80 text-white rounded-full p-0.5"><IconX className="h-2.5 w-2.5" /></button></div>
-                                                  ))}
-                                                </div>
-                                              )}
-                                              <div className="grid grid-cols-2 gap-2 text-[10px]">
-                                                <div><label className="block text-slate-440 dark:text-slate-555 font-bold mb-0.5">TO</label><select value={newLogTo} onChange={e=>setNewLogTo(e.target.value)} className="w-full border border-slate-202 dark:border-slate-700 rounded-lg p-1.5 bg-white dark:bg-slate-900 font-bold text-slate-555 dark:text-slate-300 focus:outline-none"><option value="">指定なし</option>{deptList.map(dl => <option key={dl.key} value={dl.label}>{dl.label}</option>)}<option value="全員">全員</option></select></div>
-                                                <div><label className="block text-slate-440 dark:text-slate-555 font-bold mb-0.5">期限日</label><input type="date" value={newLogDueDate} onChange={e=>setNewLogDueDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg p-1 font-mono font-bold text-slate-705 dark:text-slate-200 focus:outline-none" /></div>
-                                              </div>
-                                              <div className="border-t border-slate-150 dark:border-slate-700 pt-2 space-y-2">
-                                                <span className="text-[9px] font-bold text-slate-440 dark:text-slate-555 block uppercase">🔗 関連リンク</span>
-                                                <div className="flex items-center gap-1">
-                                                  <IconLink className="text-slate-440" /><input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-755 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><button onClick={handleAddLinkToNewLog} className="bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-600 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0 transition-colors">開く</button>
-                                                </div>
-                                                {newLogLinks.length > 0 && (
-                                                  <div className="flex flex-wrap gap-1.5 pt-1">
-                                                    {newLogLinks.map(lnk => (
-                                                      <span key={lnk.id} className="inline-flex items-center gap-1 text-[9px] bg-slate-150 dark:bg-slate-800 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg font-bold"><span className="truncate max-w-[85px]">{lnk.label}</span><button onClick={(e) => handleRemoveLinkFromNewLog(lnk.id, e)} className="text-slate-404 hover:text-rose-605 dark:hover:text-rose-400 font-bold text-[10px]">×</button></span>
-                                                    ))}
-                                                  </div>
-                                                )}
-                                              </div>
-                                            </div>
-                                          )}
-                                          <div className="space-y-2 max-h-[170px] overflow-y-auto pr-1 scrollbar-thin">
-                                            {logs.length > 0 ? logs.map(log => {
-                                              const isEdLog = editingLogId === log.id;
-                                              return (
-                                                <div key={log.id} className={`group/log relative border rounded-xl p-3 shadow-xs flex flex-col gap-1.5 ${log.completed ? 'opacity-50 bg-emerald-55/50 dark:bg-emerald-900/20 border-emerald-100' : log.isHighlighted ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-300 ring-1 ring-amber-300' : 'bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700'}`}>
-                                                  {isEdLog ? (
-                                                    <div className="space-y-2.5 text-xs w-full bg-slate-55 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-202 dark:border-slate-700">
-                                                      <span className="font-bold text-[10px] text-indigo-600 block">✏️ インライン編集</span>
-                                                      <textarea value={editLogText} onChange={e => setEditLogText(e.target.value)} onPaste={(e) => handlePasteOnTextInput(e, setEditLogImages)} onDrop={(e) => handleDropOnTextInput(e, setEditLogImages)} className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-200 font-bold min-h-[60px]" rows={2} />
-                                                      <div className="flex justify-end gap-1.5 pt-1.5 border-t border-slate-202 dark:border-slate-700">
-                                                        <button onClick={() => setEditingLogId(null)} className="text-[9px] text-slate-550 px-2 py-0.5">キャンセル</button>
-                                                        <button onClick={() => saveLogEdit(task.id, log.id)} disabled={!editLogText.trim() && editLogImages.length === 0} className="text-[9px] bg-indigo-600 text-white px-3 py-1 rounded font-bold">更新</button>
-                                                      </div>
-                                                    </div>
-                                                  ) : (
-                                                    <React.Fragment>
-                                                      <div className="flex justify-between items-center border-b border-slate-150 dark:border-slate-707/50 pb-1">
-                                                        <span className="text-[8px] font-mono text-slate-404 font-bold flex items-center gap-0.5"><IconClock /> {log.date}{log.isHighlighted && <span className="ml-1.5 bg-amber-100 text-amber-800 text-[7.5px] px-1.5 py-0.5 rounded font-bold">📌 重要</span>}</span>
-                                                        <div className="flex items-center gap-1.5 bg-white/95 dark:bg-slate-800/95 border border-slate-202 dark:border-slate-700 rounded-lg p-0.5 absolute top-2 right-2">
-                                                          <button onClick={() => startEditingLog(log)} className="p-1 text-slate-404 hover:text-indigo-600"><IconEdit2 className="h-3 w-3" /></button>
-                                                          <button onClick={() => toggleLogHighlight(task.id, log.id)} className={`p-1 ${log.isHighlighted ? 'text-amber-500 bg-amber-50' : 'text-slate-404 hover:text-amber-500'}`}><IconPin className="h-3 w-3" /></button>
-                                                          <button onClick={() => toggleLogComplete(task.id, log.id)} className={`p-1 ${log.completed ? 'text-emerald-500' : 'text-slate-404 hover:text-emerald-600'}`}><IconCheck className="h-3 w-3" /></button>
-                                                          <button onClick={() => deleteLog(task.id, log.id)} className="p-1 text-slate-404 hover:text-rose-605"><IconTrash2 className="h-3 w-3" /></button>
-                                                        </div>
-                                                      </div>
-                                                      <div className="w-full pr-14 space-y-2">
-                                                        <p 
-                                                          className={`text-[11px] font-bold whitespace-pre-wrap cursor-text select-text ${log.completed ? 'line-through text-slate-404' : ''}`}
-                                                          onPointerDown={(e) => e.stopPropagation()} 
-                                                          onDragStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                                                        >
-                                                          {log.text}
-                                                        </p>
-                                                        {log.attachedImages && log.attachedImages.length > 0 && (
-                                                          <div className="flex flex-wrap gap-1.5 pt-1.5">
-                                                            {log.attachedImages.map((src, imgIdx) => (
-                                                              <div key={`log-img-${log.id}-${imgIdx}`} onClick={() => setLightboxImage(src)} className="relative max-w-[120px] max-h-[80px] rounded-lg overflow-hidden border border-slate-202 cursor-zoom-in"><img src={src} className="w-full h-full object-cover" /></div>
-                                                            ))}
-                                                          </div>
-                                                        )}
-                                                      </div>
-                                                      <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                                                        {log.to && (<span className="inline-flex items-center gap-1 text-[9px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-lg font-black">TO: {log.to}</span>)}
-                                                        {log.dueDate && (<span className="inline-flex items-center gap-1 text-[9px] bg-rose-55 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 px-2 py-0.5 rounded-lg font-mono font-bold">期日: {log.dueDate}</span>)}
-                                                        {log.links && log.links.map(lnk => (
-                                                          <a key={lnk.id} href={lnk.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1 text-[9px] bg-slate-150 dark:bg-slate-800 hover:bg-slate-202 dark:hover:bg-slate-700 border border-slate-202 dark:border-slate-700 text-slate-605 dark:text-slate-300 px-2 py-0.5 rounded-lg transition">
-                                                            <IconExternalLink className="h-2.5 w-2.5" /> <span className="font-bold">{lnk.label}</span>
-                                                            {!log.completed && (<button onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeSingleLinkFromLog(task.id, log.id, lnk.id); }} className="text-slate-404 dark:text-slate-550 hover:text-rose-605 dark:hover:text-rose-400 font-bold text-[10px] ml-1" title="リンクのみ削除">×</button>)}
-                                                          </a>
-                                                        ))}
-                                                      </div>
-                                                    </React.Fragment>
-                                                  )}
-                                                </div>
-                                              );
-                                            }) : (<p className="text-[10px] text-slate-404 text-center py-4 bg-white dark:bg-slate-800 border border-dashed rounded-xl">履歴はありません</p>)}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
               </React.Fragment>
             )}
 
-            {/* --- DBビュー --- */}
+            {/* ============================== */}
+            {/* 2. 🗃️ データベースビュー       */}
+            {/* ============================== */}
             {viewMode === 'database' && (
               <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl shadow-xs overflow-hidden p-6 space-y-5 animate-in fade-in transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-202 dark:border-slate-700">
@@ -2095,14 +1407,14 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                   <button onClick={() => { setNewProjFolderId(selectedFolderId); setShowAddProjectModal(true); }} className="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs px-4.5 py-3 rounded-2xl flex items-center gap-1.5"><IconPlus /> 新規案件を起票</button>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 pt-1">
-                  <select value={dbFilterFolderId} onChange={(e) => setDbFilterFolderId(e.target.value)} className="border border-slate-202 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-605 dark:text-slate-300 bg-slate-55 dark:bg-slate-900 focus:outline-none focus:border-indigo-400">
+                  <select value={dbFilterFolderId} onChange={(e) => setDbFilterFolderId(e.target.value)} className="border border-slate-202 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-605 dark:text-slate-300 bg-slate-55 dark:bg-slate-900 focus:outline-none">
                     <option value="all">📁 すべてのフォルダ</option>{folders.map(f => (<option key={f.id} value={f.id}>📁 {f.name}</option>))}
                   </select>
-                  <select value={dbFilterStatus} onChange={(e) => setDbFilterStatus(e.target.value)} className="border border-slate-202 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-605 dark:text-slate-300 bg-slate-55 dark:bg-slate-900 focus:outline-none focus:border-indigo-400">
-                    <option value="all">🚥 すべての進捗状況</option><option value="pending">未着手</option><option value="in_progress">進行中</option><option value="completed">完了</option><option value="not_applicable">対応なし</option>
+                  <select value={dbFilterStatus} onChange={(e) => setDbFilterStatus(e.target.value)} className="border border-slate-202 dark:border-slate-700 rounded-xl p-2.5 text-xs font-bold text-slate-605 dark:text-slate-300 bg-slate-55 dark:bg-slate-900 focus:outline-none">
+                    <option value="all">🚥 すべての進捗状況</option><option value="pending">未着手</option><option value="in_progress">進行中</option><option value="completed">完了</option>
                   </select>
                   <div className="flex-1 relative">
-                    <input type="text" placeholder="案件名やコードでリアルタイム検索..." value={dbFilterText} onChange={(e) => setDbFilterText(e.target.value)} className="w-full border border-slate-202 dark:border-slate-705 text-slate-705 dark:text-slate-200 font-bold bg-white dark:bg-slate-900 focus:outline-none focus:border-indigo-400" />
+                    <input type="text" placeholder="案件名やコードでリアルタイム検索..." value={dbFilterText} onChange={(e) => setDbFilterText(e.target.value)} className="w-full border border-slate-202 dark:border-slate-755 text-slate-705 dark:text-slate-200 font-bold bg-white dark:bg-slate-900 focus:outline-none" />
                   </div>
                 </div>
                 <div className="overflow-x-auto rounded-2xl border border-slate-202 dark:border-slate-700">
@@ -2113,7 +1425,7 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-202 dark:divide-slate-700">
-                      {filteredDbProjects.length > 0 ? filteredDbProjects.map(proj => {
+                      {filteredDbProjects.map(proj => {
                         const prog = calculateProjectProgressById(proj), lates = countLateTasksByProject(proj);
                         const folderName = folders.find(f => f.id === proj.folderId)?.name || '未分類';
                         const { completed, inProgress, notStarted, notApplicable } = countTaskStatus(proj);
@@ -2121,72 +1433,72 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                         return (
                           <tr key={proj.id} className="hover:bg-slate-55/50 dark:hover:bg-slate-700/30 transition-colors">
                             <td className="py-3.5 px-4 border border-slate-202 dark:border-slate-700 text-center"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-xl font-black text-[9.5px] border shadow-xs ${statusObj?.className}`}>{statusObj?.label}</span></td>
-                            <td className="py-3.5 px-4 border border-slate-202 dark:border-slate-700 font-black text-slate-550 dark:text-slate-455"><span className="inline-flex items-center gap-1"><IconFolder className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />{folderName}</span></td>
+                            <td className="py-3.5 px-4 border border-slate-202 dark:border-slate-700 font-black text-slate-550 dark:text-slate-455"><span>{folderName}</span></td>
                             <td className="py-3.5 px-4 border border-slate-202 dark:border-slate-700 font-black text-slate-955 dark:text-slate-100 text-sm max-w-xs truncate">{proj.name}</td>
                             <td className="py-3.5 px-4 border border-slate-202 dark:border-slate-700 font-mono text-slate-505 dark:text-slate-455 font-bold uppercase tracking-wider">{proj.code}</td>
                             <td className="py-3.5 px-4 border border-slate-202 dark:border-slate-700 font-mono text-slate-505 dark:text-slate-455 font-bold">{proj.startDate} 〜 {proj.endDate}</td>
                             <td className="py-2 px-4 border border-slate-202 dark:border-slate-700 align-middle">
                               <div className="flex flex-col gap-0.5 text-[9.5px] w-24 mx-auto font-mono font-bold leading-none">
-                                <div className="flex justify-between items-center text-slate-505 dark:text-slate-455 bg-slate-55 dark:bg-slate-800 px-1 py-0.5 rounded border border-slate-150 dark:border-slate-700"><span>未着手</span><span>{notStarted}</span></div>
-                                <div className="flex justify-between items-center text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-1 py-0.5 rounded border border-blue-100 dark:border-blue-800"><span>進行中</span><span>{inProgress}</span></div>
-                                <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400 bg-emerald-55 dark:bg-emerald-900/30 px-1 py-0.5 rounded border border-emerald-100 dark:border-emerald-800"><span>完了</span><span>{completed}</span></div>
-                                {notApplicable > 0 && (<div className="flex justify-between items-center text-slate-505 dark:text-slate-455 bg-slate-150 dark:bg-slate-700 px-1 py-0.5 rounded border border-slate-202 dark:border-slate-600"><span>対応なし</span><span>{notApplicable}</span></div>)}
+                                <div className="flex justify-between items-center text-slate-505 bg-slate-55 dark:bg-slate-800 px-1 py-0.5 rounded border border-slate-150"><span>未着手</span><span>{notStarted}</span></div>
+                                <div className="flex justify-between items-center text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-1 py-0.5 rounded border border-blue-100"><span>進行中</span><span>{inProgress}</span></div>
+                                <div className="flex justify-between items-center text-emerald-600 bg-emerald-55 dark:bg-emerald-900/30 px-1 py-0.5 rounded border border-emerald-100"><span>完了</span><span>{completed}</span></div>
                               </div>
                             </td>
                             <td className="py-3.5 px-4 border border-slate-202 dark:border-slate-700">
-                              <div className="flex items-center gap-2 min-w-[120px]"><div className="h-2 flex-1 bg-slate-150 dark:bg-slate-700 border border-slate-202 dark:border-slate-600 rounded-full overflow-hidden shadow-inner"><div className="h-full bg-indigo-500 bg-gradient-to-r from-indigo-500 to-purple-500" style={{ width: `${prog}%` }} /></div><span className="font-black font-mono text-indigo-600 dark:text-indigo-400 w-8 text-right text-xs">{prog}%</span></div>
+                              <div className="flex items-center gap-2 min-w-[120px]"><div className="h-2 flex-1 bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner"><div className="h-full bg-indigo-500" style={{ width: `${prog}%` }} /></div><span className="font-black font-mono text-indigo-600 dark:text-indigo-400 w-8 text-right text-xs">{prog}%</span></div>
                             </td>
                             <td className="py-3.5 px-4 border border-slate-202 dark:border-slate-700">
-                              {lates > 0 ? <span className="inline-flex items-center gap-1 bg-rose-55 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 font-black text-[9.5px] px-2.5 py-0.5 rounded-full shadow-sm animate-pulse">⚠️ 遅延 {lates}件</span> : <span className="inline-flex items-center gap-1 bg-emerald-55 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 font-black text-[9.5px] px-2.5 py-0.5 rounded-full shadow-xs">✅ 順調</span>}
+                              {lates > 0 ? <span className="inline-flex items-center gap-1 bg-rose-55 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 border border-rose-200 font-black text-[9.5px] px-2.5 py-0.5 rounded-full shadow-sm animate-pulse">⚠️ 遅延 {lates}件</span> : <span className="inline-flex items-center gap-1 bg-emerald-55 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 font-black text-[9.5px] px-2.5 py-0.5 rounded-full shadow-xs">✅ 順調</span>}
                             </td>
                             <td className="py-3.5 px-4 border border-slate-202 dark:border-slate-700 text-center">
                               <div className="flex items-center justify-center gap-1.5">
-                                <button onClick={() => handleOpenProjectFromDb(proj)} className="flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-black px-2.5 py-1.5 rounded-xl shadow-xs text-[11px]"><IconEye className="h-3.5 w-3.5" /><span>開く</span></button>
-                                <button onClick={(e) => handleCopyProjectUrl(proj.id, e)} className="flex items-center gap-1 bg-white dark:bg-slate-800 hover:bg-slate-150 dark:hover:bg-slate-700 text-slate-606 dark:text-slate-300 border border-slate-300 dark:border-slate-600 font-bold px-2 py-1.5 rounded-xl shadow-xs"><IconLink className="h-3.5 w-3.5 text-slate-404 dark:text-slate-505" /></button>
-                                <button onClick={(e) => handleDeleteProjectByList(proj.id, e)} className="text-slate-404 dark:text-slate-505 hover:text-rose-605 dark:hover:text-rose-400 p-1.5 hover:bg-rose-55 dark:hover:bg-rose-900/30 border border-transparent hover:border-rose-100 dark:hover:border-rose-800 rounded-xl transition-all"><IconTrash2 className="h-4 w-4" /></button>
+                                <button onClick={() => handleOpenProjectFromDb(proj)} className="flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-black px-2.5 py-1.5 rounded-xl shadow-xs text-[11px]"><IconEye /><span>開く</span></button>
+                                <button onClick={(e) => handleDeleteProjectByList(proj.id, e)} className="text-slate-404 hover:text-rose-605 p-1.5 rounded-xl transition-all"><IconTrash2 className="h-4 w-4" /></button>
                               </div>
                             </td>
                           </tr>
                         );
-                      }) : (<tr><td colSpan="9" className="py-12 text-center text-slate-404 dark:text-slate-505 font-bold">条件に一致する調整案件がありません。</td></tr>)}
+                      })}
                     </tbody>
                   </table>
                 </div>
               </div>
             )}
 
-            {/* ============================== */}
-            {/* 3. アナリティクス（分析）ビュー */}
-            {/* ============================== */}
+            {/* ========================================================== */}
+            {/* 3. 📊 アナリティクスビュー                             */}
+            {/* ========================================================== */}
             {viewMode === 'analytics' && (
-              <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in transition-colors">
-                <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm space-y-6">
-                  <div>
-                    <h2 className="text-xl font-black text-slate-805 dark:text-white flex items-center gap-2"><IconChart className="text-indigo-600 dark:text-indigo-400" /> プロジェクト横断分析ダッシュボード</h2>
-                    <p className="text-sm text-slate-505 dark:text-slate-400 mt-1">案件に紐づくタスクデータをリアルタイムに集計し、ボトルネックやリソース負荷を可視化します。</p>
-                  </div>
-                  
-                  <div className="flex gap-2 border-b border-slate-202 dark:border-slate-700 pb-px">
-                    {[
-                      { id: 'resource', icon: '👥', label: 'リソース・負荷状況' },
-                      { id: 'leadtime', icon: '⏱️', label: 'リードタイム分析' },
-                      { id: 'risk', icon: '🚨', label: 'リスク・放置タスク検知' },
-                    ].map(tab => (
-                      <button
-                        key={tab.id}
-                        onClick={() => setAnalyticsTab(tab.id)}
-                        className={`px-5 py-2.5 rounded-t-xl text-sm font-bold transition-all ${analyticsTab === tab.id ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-505 dark:text-slate-400 hover:bg-slate-150 dark:hover:bg-slate-700/50'}`}
-                      >
-                        {tab.icon} {tab.label}
-                      </button>
-                    ))}
+              <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in transition-colors">
+                
+                {/* 案件選択のヘッダーパネル */}
+                <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <h2 className="text-base font-black text-slate-805 dark:text-white flex items-center gap-2"><IconChart className="text-indigo-600 dark:text-indigo-400" />組織・案件推進状況アナリティクス</h2>
+                    <p className="text-xs text-slate-505 dark:text-slate-440">実データに基づき、ボトルネックやリソース負荷状況をリアルタイム評価します。</p>
                   </div>
                 </div>
 
+                {/* 分析サブナビゲーション */}
+                <div className="flex gap-2 border-b border-slate-202 dark:border-slate-700 pb-px">
+                  {[
+                    { id: 'resource', icon: '👥', label: 'リソース負荷 & 個人別処理力' },
+                    { id: 'leadtime', icon: '⏱️', label: 'ステップ実消費営業日' },
+                    { id: 'risk', icon: '🚨', label: '放置・難航アラート検知' },
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setAnalyticsTab(tab.id)}
+                      className={`px-5 py-2.5 rounded-t-xl text-sm font-bold transition-all ${analyticsTab === tab.id ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-550 dark:text-slate-400 hover:bg-slate-150 dark:hover:bg-slate-700/50'}`}
+                    >
+                      {tab.icon} {tab.label}
+                    </button>
+                  ))}
+                </div>
+
                 <div className="animate-in slide-in-from-bottom-2 fade-in duration-300">
-<div className="animate-in slide-in-from-bottom-2 fade-in duration-300">
                   
-                  {/* 👥 ここから置き換え：1. リソース・負荷状況 */}
+                  {/* 1. リソース・負荷状況 */}
                   {analyticsTab === 'resource' && (
                     <div className="space-y-6 animate-in fade-in">
                       {/* 部署別の簡易状況 */}
@@ -2227,9 +1539,8 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                       </div>
                     </div>
                   )}
-                  {/* 👥 ここまで置き換え */}
 
-                  {/* 2. リードタイム分析（安全な横棒グラフUI） */}
+                  {/* 2. リードタイム分析 */}
                   {analyticsTab === 'leadtime' && (
                     <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm space-y-6 animate-in fade-in">
                       <div className="flex justify-between items-center">
@@ -2270,82 +1581,6 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                   {analyticsTab === 'risk' && (
                     <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm text-center text-xs text-slate-440">
                       リスク検知機能はステップ3で実装します。
-                    </div>
-                  )}
-                </div>
-                  {/* 2. リードタイム分析 */}
-                  {analyticsTab === 'leadtime' && (
-                    <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm space-y-6">
-                      <div className="flex justify-between items-center">
-                        <h3 className="font-black text-slate-805 dark:text-white">ステップ別 平均消化日数</h3>
-                        <span className="text-xs bg-slate-150 dark:bg-slate-700 text-slate-605 dark:text-slate-300 px-3 py-1 rounded-lg font-bold">全 {projects.length} プロジェクト実績</span>
-                      </div>
-                      <div className="space-y-4">
-                        {analyticsLeadTimeData.length > 0 ? analyticsLeadTimeData.map(d => {
-                          const isOver = d.avg > d.target;
-                          return (
-                            <div key={d.step} className="flex items-center gap-4">
-                              <div className="w-32 text-xs font-bold text-slate-605 dark:text-slate-300 truncate" title={d.step}>{d.step}</div>
-                              <div className="flex-1 h-4 bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden relative border border-slate-202 dark:border-slate-600">
-                                {/* 目標ラインのマーカー */}
-                                <div className="absolute top-0 bottom-0 border-r-2 border-slate-805 dark:border-white z-10" style={{ left: `${(d.target / 15) * 100}%` }}></div>
-                                {/* 実績バー */}
-                                <div className={`h-full ${isOver ? 'bg-rose-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min((d.avg / 15) * 100, 100)}%` }}></div>
-                              </div>
-                              <div className="w-48 text-xs font-bold flex gap-3 text-right">
-                                <span className={isOver ? 'text-rose-605 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}>実績: {d.avg}日</span>
-                                <span className="text-slate-440 dark:text-slate-400">(目安: {d.target}日)</span>
-                              </div>
-                            </div>
-                          );
-                        }) : (
-                          <div className="py-8 text-center text-slate-404 dark:text-slate-500 font-bold border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl">
-                            完了したタスクのデータが蓄積されていません。
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-505 dark:text-slate-400 italic">💡 縦線（マーカー）は目安となる目標日数（初期値5日）を表しています。これを超過しているステップはボトルネックの可能性があります。</p>
-                    </div>
-                  )}
-
-                  {/* 3. リスク・放置タスク */}
-                  {analyticsTab === 'risk' && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="col-span-1 md:col-span-2 space-y-3">
-                        <h3 className="font-black text-slate-805 dark:text-white text-sm mb-4">⚠️ 要確認タスク一覧</h3>
-                        {analyticsRiskTasks.length > 0 ? analyticsRiskTasks.map((t, i) => (
-                          <div key={`${t.id}-${i}`} onClick={() => { setViewMode('board'); setCurrentProjectId(projects.find(p => p.name === t.proj)?.id); }} className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer shadow-sm">
-                            <div className="space-y-1.5">
-                              <div className="flex items-center gap-2">
-                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg ${t.badge}`}>{t.type}</span>
-                                <span className="text-xs text-slate-505 dark:text-slate-400 font-bold">{t.proj}</span>
-                              </div>
-                              <h4 className="text-sm font-black text-slate-805 dark:text-slate-100">{t.title}</h4>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-xs font-bold text-slate-605 dark:text-slate-400 bg-slate-55 dark:bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-202 dark:border-slate-700">{t.desc}</span>
-                            </div>
-                          </div>
-                        )) : (
-                          <div className="py-12 text-center text-slate-404 dark:text-slate-500 font-bold border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl">
-                            現在、放置・遅延・炎上予兆のタスクはありません。素晴らしい！🎉
-                          </div>
-                        )}
-                      </div>
-                      <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-5 space-y-4 shadow-sm h-fit sticky top-24">
-                        <h3 className="font-black text-slate-805 dark:text-white text-sm">💡 リスクサマリー</h3>
-                        <ul className="text-xs text-slate-605 dark:text-slate-300 space-y-3 font-bold">
-                          <li className="flex justify-between items-center bg-slate-55 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-202 dark:border-slate-700">
-                            <span>放置リスク (7日超)</span><span className="text-slate-606 dark:text-slate-300 text-sm">{analyticsRiskTasks.filter(r => r.type === '放置').length} 件</span>
-                          </li>
-                          <li className="flex justify-between items-center bg-slate-55 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-202 dark:border-slate-700">
-                            <span>炎上予兆 (メモ多数/重要)</span><span className="text-rose-605 dark:text-rose-400 text-sm">{analyticsRiskTasks.filter(r => r.type === '炎上予兆').length} 件</span>
-                          </li>
-                          <li className="flex justify-between items-center bg-slate-55 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-202 dark:border-slate-700">
-                            <span>期限超過</span><span className="text-amber-600 dark:text-amber-400 text-sm">{analyticsRiskTasks.filter(r => r.type === '期限超過').length} 件</span>
-                          </li>
-                        </ul>
-                      </div>
                     </div>
                   )}
                 </div>
