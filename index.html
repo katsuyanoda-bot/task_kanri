@@ -2149,44 +2149,65 @@ const countLateTasksByProject = (proj) => (proj.tasks || []).filter(t => isOverd
                 </div>
 
                 <div className="animate-in slide-in-from-bottom-2 fade-in duration-300">
-                  {/* 1. リソース・負荷状況 */}
+<div className="animate-in slide-in-from-bottom-2 fade-in duration-300">
+                  
+                  {/* 👥 ここから置き換え：1. リソース・負荷状況 */}
                   {analyticsTab === 'resource' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      {analyticsResourceData.map(d => (
-                        <div key={d.deptKey} className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-2xl p-5 shadow-sm space-y-4 relative overflow-hidden">
-                          <div className={`absolute top-0 left-0 w-full h-1 ${d.colorClass}`}></div>
-                          <div className="flex justify-between items-start">
-                            <h3 className="font-black text-slate-805 dark:text-white">{d.deptLabel}</h3>
-                            <span className="text-2xl font-black text-slate-805 dark:text-white">{d.active}<span className="text-xs text-slate-404 dark:text-slate-400 ml-1">件</span></span>
+                    <div className="space-y-6 animate-in fade-in">
+                      {/* 部署別の簡易状況 */}
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                        {analyticsResourceData.deptStats?.map(d => (
+                          <div key={d.deptLabel} className="bg-white dark:bg-slate-800 p-4 rounded-2xl border dark:border-slate-700 shadow-sm">
+                            <div className="text-xs font-bold text-slate-404">{d.deptLabel}の未完了</div>
+                            <div className="text-xl font-black text-slate-805 dark:text-white mt-1 font-mono">{d.active} 件</div>
                           </div>
-                          <div className="bg-rose-55 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50 rounded-lg p-2 flex justify-between items-center text-xs">
-                            <span className="text-rose-605 dark:text-rose-400 font-bold">最優先タスク</span>
-                            <span className="text-rose-605 dark:text-rose-400 font-black">{d.urgent} 件</span>
-                          </div>
-                          <div className="space-y-2 pt-2 border-t border-slate-150 dark:border-slate-700">
-                            <p className="text-[10px] text-slate-440 dark:text-slate-400 font-bold uppercase tracking-wide">担当者別 内訳</p>
-                            {d.members.map(m => (
-                              <div key={m.name} className="space-y-1">
-                                <div className="flex justify-between text-xs font-bold text-slate-605 dark:text-slate-300">
-                                  <span>{m.name}</span>
-                                  <span>{m.tasks}件</span>
-                                </div>
-                                <div className="h-1.5 w-full bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden">
-                                  <div className={`h-full ${d.colorClass} opacity-80`} style={{ width: `${(m.tasks / d.active) * 100}%` }}></div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                        ))}
+                      </div>
+
+                      {/* 個人別のシンプル実績表 */}
+                      <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-5 shadow-sm space-y-4">
+                        <h3 className="font-black text-slate-805 dark:text-white text-sm">👥 メンバー別のタスク処理実績</h3>
+                        <div className="overflow-x-auto rounded-xl border dark:border-slate-700">
+                          <table className="w-full text-xs text-left border-collapse">
+                            <thead>
+                              <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 text-slate-550 dark:text-slate-404 font-black text-[10px] uppercase tracking-wide">
+                                <th className="py-2.5 px-4">担当者</th>
+                                <th className="py-2.5 px-4 text-center">対応合計</th>
+                                <th className="py-2.5 px-4 text-center text-emerald-600 dark:text-emerald-404">完了済</th>
+                                <th className="py-2.5 px-4 text-center text-amber-600 dark:text-amber-404">未完了（手持ち）</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y dark:divide-slate-700 font-bold">
+                              {analyticsResourceData.memberStats?.map(m => (
+                                <tr key={m.name} className="hover:bg-slate-55/60 dark:hover:bg-slate-750 transition-colors">
+                                  <td className="py-3 px-4 text-slate-805 dark:text-slate-200">{m.name}</td>
+                                  <td className="py-3 px-4 text-center font-mono text-slate-705 dark:text-slate-300">{m.total}</td>
+                                  <td className="py-3 px-4 text-center font-mono text-emerald-600 dark:text-emerald-400">{m.completed}</td>
+                                  <td className="py-3 px-4 text-center font-mono text-amber-600 dark:text-amber-400">{m.uncompleted}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
-                      ))}
-                      {analyticsResourceData.length === 0 && (
-                        <div className="col-span-full py-12 text-center text-slate-404 dark:text-slate-500 font-bold border border-dashed border-slate-300 dark:border-slate-700 rounded-3xl">
-                          現在進行中のタスクがありません。
-                        </div>
-                      )}
+                      </div>
+                    </div>
+                  )}
+                  {/* 👥 ここまで置き換え */}
+
+                  {/* 2. リードタイム分析 (ステップ2用：触らずそのまま残す) */}
+                  {analyticsTab === 'leadtime' && (
+                    <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm text-center text-xs text-slate-440">
+                      リードタイム分析はステップ2で実装します。
                     </div>
                   )}
 
+                  {/* 3. リスク・放置タスク (ステップ3用：触らずそのまま残す) */}
+                  {analyticsTab === 'risk' && (
+                    <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm text-center text-xs text-slate-440">
+                      リスク検知機能はステップ3で実装します。
+                    </div>
+                  )}
+                </div>
                   {/* 2. リードタイム分析 */}
                   {analyticsTab === 'leadtime' && (
                     <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-3xl p-6 shadow-sm space-y-6">
