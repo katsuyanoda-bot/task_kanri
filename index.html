@@ -206,6 +206,7 @@
 
     function App() {
       // 💡 【バグ修復】viewModeのState定義を完全回復
+      const [showAddFolderModal, setShowAddFolderModal] = useState(false);
       const [viewMode, setViewMode] = useState('board');
       
       const [isDarkMode, setIsDarkMode] = useState(() => {
