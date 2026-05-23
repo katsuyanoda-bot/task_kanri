@@ -99,7 +99,13 @@
   <!-- React JSXコード (Firebase ESM対応) -->
   <script type="text/babel" data-type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const { useState, useMemo, useEffect } = React;
@@ -132,6 +138,16 @@
     const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
     const IconMoon = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>;
 
+    // Google カラーロゴ
+    const IconGoogle = () => (
+      <svg className="h-5 w-5 mr-3" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-.114 2.78-1.41 3.65v3.04h2.28c5.44-5 8.18-12.4 8.18-13.54z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.04-2.36c-1.07.72-2.44 1.16-4.89 1.16-3.75 0-6.93-2.53-8.07-5.93H1.57v3.12C3.55 22 7.53 24 12 24z"/>
+        <path fill="#FBBC05" d="M3.93 13.96c-.29-.87-.45-1.8-.45-2.76s.16-1.89.45-2.76V5.32H1.57C.57 7.32 0 9.53 0 11.2s.57 3.88 1.57 5.88l2.36-3.12z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.93 1.19 15.24 0 12 0 7.53 0 3.55 2 1.57 5.32l3.93 3.12c1.14-3.4 4.32-5.93 8.5-5.93z"/>
+      </svg>
+    );
+
     // --- カラー定義マップ ---
     const colorClassesMap = {
       purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#25183a]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-55 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 border-purple-200 dark:border-purple-800', bar: 'bg-purple-600 dark:bg-purple-500', accentBar: 'bg-purple-500 dark:bg-purple-400' },
@@ -162,7 +178,7 @@
       { value: 'pending', label: '未着手', className: 'bg-slate-150 dark:bg-slate-805 text-slate-606 dark:text-slate-350 border-slate-202 dark:border-slate-705' },
       { value: 'in_progress', label: '進行中', className: 'bg-blue-50 dark:bg-blue-900/40 text-blue-606 dark:text-blue-300 border-blue-202 dark:border-blue-800' },
       { value: 'completed', label: '完了', className: 'bg-emerald-50 dark:bg-emerald-900/40 text-emerald-606 dark:text-emerald-300 border-emerald-202 dark:border-emerald-800' },
-      { value: 'not_applicable', label: '対応なし', className: 'bg-slate-202 dark:bg-slate-705 text-slate-505 dark:text-slate-450 border-slate-350 dark:border-slate-650' }
+      { value: 'not_applicable', label: '対応なし', className: 'bg-slate-202 dark:bg-slate-705 text-slate-505 dark:text-slate-455 border-slate-350 dark:border-slate-650' }
     ];
 
     // 初期プロジェクト
@@ -254,6 +270,9 @@
       const [lightboxImage, setLightboxImage] = useState(null);
       const [user, setUser] = useState(null);
       const [showTaskDropdown, setShowTaskDropdown] = useState(false);
+      
+      // ドメイン不認可エラーやiFrameの認証エラーを明示的にハンドルするためのダイアログステート
+      const [unauthorizedError, setUnauthorizedError] = useState(null);
 
       const [tmpGistToken, setTmpGistToken] = useState(localStorage.getItem('pl_gist_token') || '');
       const [tmpGistId, setTmpGistId] = useState(localStorage.getItem('pl_gist_id') || '');
@@ -274,9 +293,74 @@
         not_applicable: false
       });
 
+      // --- 認可企業ドメインのチェック用 ---
+      const allowedDomains = ['sansan.com', 'sansan.co.jp'];
+      
+      const isSansanUser = useMemo(() => {
+        if (!user) return false;
+        if (!user.email) return false;
+        const domain = user.email.split('@')[1]?.toLowerCase();
+        return allowedDomains.includes(domain);
+      }, [user]);
+
       const showAlert = (msg) => { setAlertMessage(msg); setTimeout(() => setAlertMessage(null), 4000); };
       const triggerConfirm = (title, message, onConfirmAction) => setConfirmModal({ isOpen: true, title, message, onConfirm: () => { onConfirmAction(); closeConfirm(); } });
       const closeConfirm = () => setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null });
+
+      // --- ログイン・ログアウトアクション ---
+      const handleGoogleLogin = async () => {
+        if (!useFirebase) {
+          showAlert('💡 デモ用の自動ログインを選択してください。');
+          return;
+        }
+        const provider = new GoogleAuthProvider();
+        try {
+          await signInWithPopup(auth, provider);
+          setUnauthorizedError(null);
+          showAlert('🔑 Google認証に成功しました。');
+        } catch (e) {
+          console.error("Firebase Login Error Details:", e);
+          
+          // ドメイン不認可エラー（auth/unauthorized-domain）やiFrame内認証エラーをキャッチ
+          if (e.code === 'auth/unauthorized-domain' || (e.message && e.message.includes('unauthorized-domain')) || (e.message && e.message.includes('auth/unauthorized-domain'))) {
+            setUnauthorizedError({
+              title: "ドメイン不認可エラー (auth/unauthorized-domain)",
+              message: "現在のプレビュー表示URLが、Firebaseコンソール上で「承認済みドメイン (Authorized Domain)」として登録されていません。\n\n【対処方法】:\n1. Firebase コンソール > Authentication > Settings に移動します。\n2. 「承認済みドメイン」に、現在ブラウザのアドレスバーに表示されているドメインを追加してください。\n\n※この評価環境上では、承認ドメイン不要な「検証・評価用アカウント」をクリックすることですぐに動作確認が可能です。"
+            });
+          } else {
+            showAlert('⚠️ Googleログインに失敗しました: ' + e.message);
+          }
+        }
+      };
+
+      const handleMockLogin = (email) => {
+        const mockUser = {
+          uid: 'mock_user_' + Date.now(),
+          email: email,
+          displayName: email.split('@')[0] + ' (Sansanデモ)'
+        };
+        localStorage.setItem('pl_mock_user', JSON.stringify(mockUser));
+        setUser(mockUser);
+        setUnauthorizedError(null);
+        showAlert(`🔑 模擬ユーザー (${email}) としてログインしました。`);
+      };
+
+      const handleLogout = async () => {
+        if (!useFirebase) {
+          localStorage.removeItem('pl_mock_user');
+          setUser(null);
+          setUnauthorizedError(null);
+          showAlert('🚪 ログアウトしました。');
+          return;
+        }
+        try {
+          await signOut(auth);
+          setUnauthorizedError(null);
+          showAlert('🚪 ログアウトしました。');
+        } catch (e) {
+          showAlert('⚠️ ログアウトに失敗しました');
+        }
+      };
 
       const syncToGist = async (filename, data) => {
         if (!gistToken || !gistId) return;
@@ -294,6 +378,7 @@
       };
 
       const updateData = (key, nextData) => {
+        if (!isSansanUser) return;
         if (key === 'projects') setProjects(nextData);
         if (key === 'folders') setFolders(nextData);
         if (key === 'depts') setDeptList(nextData);
@@ -328,21 +413,33 @@
         else showAlert('Gist同期を解除しました。');
       };
 
+      // --- Auth状態監視の初期化 ---
       useEffect(() => {
-        if (!useFirebase) { setUser({ uid: "local-user" }); return; }
-        const initAuth = async () => {
-          try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
-            else await signInAnonymously(auth);
-          } catch (e) { setUser({ uid: "local-fallback" }); }
-        };
-        initAuth();
-        const unsubscribe = onAuthStateChanged(auth, setUser);
+        if (!useFirebase) {
+          const savedMockUser = localStorage.getItem('pl_mock_user');
+          if (savedMockUser) {
+            setUser(JSON.parse(savedMockUser));
+          }
+          return;
+        }
+        const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+          setUser(authUser);
+        }, (error) => {
+          // Firebase Auth内部での検証起源エラー（unauthorized-domain等）によるクラッシュをハンドリング
+          console.warn("Firebase Auth state listener error caught:", error);
+          if (error.code === 'auth/unauthorized-domain' || error.message.includes('unauthorized-domain')) {
+            setUnauthorizedError({
+              title: "ドメイン不認可制限 (Firebase Auth 設定)",
+              message: "Firebase Authの起動に失敗しました。現在のプロキシ/プレビューアドレスが、Firebaseコンソール上の「承認済みドメイン」にありません。\n\nお手数ですが、開発を続ける場合は下記の「検証・評価用アカウント」を選択してモック環境でテストを行ってください。"
+            });
+          }
+        });
         return () => unsubscribe();
       }, []);
 
+      // --- データ読み込み（Sansanドメイン所属時のみ） ---
       useEffect(() => {
-        if (!user) return;
+        if (!user || !isSansanUser) return;
         if (gistToken && gistId) { loadFromGist(gistToken, gistId); return; }
         if (!useFirebase) {
           const localFolders = localStorage.getItem('pl_folders');
@@ -358,18 +455,21 @@
         const unsubF = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'folders'), snap => {
           const list = snap.docs.map(d => d.data());
           if(list.length===0) initialFolders.forEach(f => setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'folders', f.id), f)); else setFolders(list);
-        });
+        }, err => console.error("Firestore folders loading failed:", err));
+
         const unsubD = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'departments'), snap => {
           const list = snap.docs.map(d => d.data());
           if(list.length===0) initialDepts.forEach(d => setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'departments', d.key), d)); 
           else { list.sort((a,b)=>a.order-b.order); setDeptList(list); }
-        });
+        }, err => console.error("Firestore departments loading failed:", err));
+
         const unsubP = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => {
           const list = snap.docs.map(d => d.data());
           if(list.length===0) initialProjects.forEach(p => setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', p.id), p)); else setProjects(list);
-        });
+        }, err => console.error("Firestore projects loading failed:", err));
+
         return () => { unsubF(); unsubD(); unsubP(); };
-      }, [user]);
+      }, [user, isSansanUser]);
 
       useEffect(() => {
         if (projects.length > 0) {
@@ -387,7 +487,7 @@
       }, [projects]);
 
       const saveProjectToFirestore = async (updatedProj) => {
-        if (!updatedProj) return;
+        if (!updatedProj || !isSansanUser) return;
         if (!useFirebase || (gistToken && gistId)) { updateData('projects', projects.map(p => p.id === updatedProj.id ? updatedProj : p)); return; }
         if (!user) return;
         try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', updatedProj.id), updatedProj); } 
@@ -445,13 +545,14 @@
       useEffect(() => { if (showAddProjectModal && selectedFolderId) setNewProjFolderId(selectedFolderId); }, [showAddProjectModal, selectedFolderId]);
 
       const saveProjectEdit = () => {
-        if (!activeProject) return;
+        if (!activeProject || !isSansanUser) return;
         saveProjectToFirestore({ ...activeProject, name: projectForm.name, code: projectForm.code, status: projectForm.status, startDate: projectForm.startDate, endDate: projectForm.endDate, folderId: projectForm.folderId, links: [...editProjLinks] });
         setEditingProject(false); showAlert('更新しました。');
       };
 
       // 直接（インライン）編集された論点・備考を保存する
       const handleSaveDirectDesc = (taskId) => {
+        if (!isSansanUser) return;
         const updatedTasks = tasks.map(t => t.id === taskId ? { ...t, description: tmpDescValue } : t);
         saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
         setEditingDescTaskId(null);
@@ -464,7 +565,7 @@
       const [showSettingsModal, setShowSettingsModal] = useState(false);
 
       const stepList = activeProject ? (activeProject.stepList || []) : [];
-      const setStepList = (newSteps) => { if (!activeProject) return; saveProjectToFirestore({ ...activeProject, stepList: typeof newSteps === 'function' ? newSteps(activeProject.stepList) : newSteps }); };
+      const setStepList = (newSteps) => { if (!activeProject || !isSansanUser) return; saveProjectToFirestore({ ...activeProject, stepList: typeof newSteps === 'function' ? newSteps(activeProject.stepList) : newSteps }); };
 
       const [editingStepId, setEditingStepId] = useState(null);
       const [editStepName, setEditStepName] = useState('');
@@ -490,7 +591,7 @@
       const [draggedTaskInfo, setDraggedTaskInfo] = useState(null);
 
       const tasks = activeProject ? (activeProject.tasks || []) : [];
-      const setTasks = (newTasks) => { if (!activeProject) return; saveProjectToFirestore({ ...activeProject, tasks: typeof newTasks === 'function' ? newTasks(activeProject.tasks) : newTasks }); };
+      const setTasks = (newTasks) => { if (!activeProject || !isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: typeof newTasks === 'function' ? newTasks(activeProject.tasks) : newTasks }); };
 
       const [collapsedSteps, setCollapsedSteps] = useState({});
       const [collapsedTasks, setCollapsedTasks] = useState({});
@@ -698,6 +799,7 @@
       const saveLogEdit = (tId, lId) => { saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === tId ? { ...t, contextLogs: (t.contextLogs || []).map(l => l.id === lId ? { ...l, text: editLogText.trim()||"📸", to: editLogTo.trim()||null, dueDate: editLogDueDate||null, links: [...editLogLinks], attachedImages: [...editLogImages] } : l) } : t) }); setEditingLogId(null); showAlert('更新しました'); };
 
       const changeTaskStatus = (taskId, newStatus) => {
+        if (!isSansanUser) return;
         saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => {
           if (t.id !== taskId) return t;
           const now = new Date(); const dStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -710,11 +812,14 @@
         })});
       };
       
-      const toggleTaskPriority = (taskId) => saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, isHighPriority: !t.isHighPriority } : t) });
+      const toggleTaskPriority = (taskId) => {
+        if (!isSansanUser) return;
+        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, isHighPriority: !t.isHighPriority } : t) });
+      };
       
       const handleAddTask = (stepId, e) => { 
         e.preventDefault(); 
-        if (!newTaskTitle.trim()) return; 
+        if (!newTaskTitle.trim() || !isSansanUser) return; 
         const todayStr = new Date().toISOString().split('T')[0];
         const currentSeq = activeProject.taskSequence || tasks.length;
         const nextSeq = currentSeq + 1;
@@ -744,8 +849,8 @@
       };
       
       const startEditing = (task) => { setEditingTaskId(task.id); setEditTaskImages(task.attachedImages ? [...task.attachedImages] : []); setEditTaskLinks(task.links ? [...task.links] : []); setEditFormData({ title: task.title, description: task.description || '', assignee: task.assignee, department: task.department, dueDate: task.dueDate }); };
-      const saveEdit = (taskId) => { saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, attachedImages: [...editTaskImages], links: [...editTaskLinks] } : t) }); setEditingTaskId(null); showAlert('保存しました'); };
-      const deleteTask = (taskId) => triggerConfirm('削除', '削除しますか？', () => { saveProjectToFirestore({ ...activeProject, tasks: tasks.filter(t => t.id !== taskId) }); showAlert('削除完了'); });
+      const saveEdit = (taskId) => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, attachedImages: [...editTaskImages], links: [...editTaskLinks] } : t) }); setEditingTaskId(null); showAlert('保存しました'); };
+      const deleteTask = (taskId) => triggerConfirm('削除', '削除しますか？', () => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.filter(t => t.id !== taskId) }); showAlert('削除完了'); });
 
       const handleCopyToClipboard = (text, msg) => {
         const fb = () => { const t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); showAlert(msg); } catch(e){} document.body.removeChild(t); };
@@ -754,25 +859,156 @@
       const handleCopyProjectUrl = (pid, e) => { if(e) e.stopPropagation(); const u = new URL(window.location.href); u.searchParams.set('pid', pid); handleCopyToClipboard(u.toString(), 'URLコピー完了'); };
 
       const handleCreateDept = async (e) => {
-        e.preventDefault(); if (!newDeptLabel.trim()) return;
+        e.preventDefault(); if (!newDeptLabel.trim() || !isSansanUser) return;
         const newKey = `dept_${Date.now()}`, newDept = { key: newKey, label: newDeptLabel.trim(), color: newDeptColor, order: deptList.length };
         if (!useFirebase || (gistToken && gistId)) { updateData('depts', [...deptList, newDept]); setNewDeptLabel(''); showAlert('追加完了'); return; }
         try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'departments', newKey), newDept); setNewDeptLabel(''); showAlert('追加完了'); } catch (err) { showAlert('エラー'); }
       };
       const handleDeleteDept = (key) => {
         if(deptList.length<=1) return showAlert('1つは必要');
+        if(!isSansanUser) return;
         triggerConfirm('削除','削除しますか？', async () => {
           const rem = deptList.filter(d=>d.key!==key), fb = rem[0].key;
           if(!useFirebase || (gistToken && gistId)){ updateData('depts',rem); updateData('projects',projects.map(p=>({...p, tasks:(p.tasks||[]).map(t=>t.department===key?{...t,department:fb}:t), stepList:(p.stepList||[]).map(s=>s.deptKey===key?{...s,deptKey:fb}:s)}))); showAlert('削除完了'); return; }
           try{ await deleteDoc(doc(db,'artifacts',appId,'public','data','departments',key)); for(const p of projects){ let mod=false; const ts=p.tasks.map(t=>{if(t.department===key){mod=true;return{...t,department:fb}}return t;}); const ss=p.stepList.map(s=>{if(s.deptKey===key){mod=true;return{...s,deptKey:fb}}return s;}); if(mod) await setDoc(doc(db,'artifacts',appId,'public','data','projects',p.id),{...p,tasks:ts,stepList:ss}); } showAlert('削除完了'); }catch(e){showAlert('エラー');}
         });
       };
-      const updateDeptColorSetting = async (k, c) => { const f=deptList.find(d=>d.key===k); if(!f)return; if(!useFirebase||(gistToken&&gistId)){ updateData('depts',deptList.map(d=>d.key===k?{...d,color:c}:d)); return; } try{await setDoc(doc(db,'artifacts',appId,'public','data','departments',k),{...f,color:c});}catch(e){} };
-      const handleRenameDeptChange = (k, n) => setDeptList(p=>p.map(d=>d.key===k?{...d,label:n}:d));
-      const handleRenameDeptSave = async (k) => { const f=deptList.find(d=>d.key===k); if(!f)return; if(!useFirebase||(gistToken&&gistId)){ updateData('depts',deptList); return; } try{await setDoc(doc(db,'artifacts',appId,'public','data','departments',k),f);}catch(e){} };
-      const moveDeptOrder = async (i, dir) => { const t=i+dir; if(t<0||t>=deptList.length)return; const l=[...deptList]; [l[i],l[t]]=[l[t],l[i]]; const o=l.map((d,idx)=>({...d,order:idx})); if(!useFirebase||(gistToken&&gistId)){updateData('depts',o);return;} setDeptList(o); try{await Promise.all(o.map(d=>setDoc(doc(db,'artifacts',appId,'public','data','departments',d.key),d)));}catch(e){} };
+      const updateDeptColorSetting = async (k, c) => { if (!isSansanUser) return; const f=deptList.find(d=>d.key===k); if(!f)return; if(!useFirebase||(gistToken&&gistId)){ updateData('depts',deptList.map(d=>d.key===k?{...d,color:c}:d)); return; } try{await setDoc(doc(db,'artifacts',appId,'public','data','departments',k),{...f,color:c});}catch(e){} };
+      const handleRenameDeptChange = (k, n) => { if (!isSansanUser) return; setDeptList(p=>p.map(d=>d.key===k?{...d,label:n}:d)); };
+      const handleRenameDeptSave = async (k) => { if (!isSansanUser) return; const f=deptList.find(d=>d.key===k); if(!f)return; if(!useFirebase||(gistToken&&gistId)){ updateData('depts',deptList); return; } try{await setDoc(doc(db,'artifacts',appId,'public','data','departments',k),f);}catch(e){} };
+      const moveDeptOrder = async (i, dir) => { if (!isSansanUser) return; const t=i+dir; if(t<0||t>=deptList.length)return; const l=[...deptList]; [l[i],l[t]]=[l[t],l[i]]; const o=l.map((d,idx)=>({...d,order:idx})); if(!useFirebase||(gistToken&&gistId)){updateData('depts',o);return;} setDeptList(o); try{await Promise.all(o.map(d=>setDoc(doc(db,'artifacts',appId,'public','data','departments',d.key),d)));}catch(e){} };
       const handleOpenProjectFromDb = (proj) => { setSelectedFolderId(proj.folderId); setCurrentProjectId(proj.id); setViewMode('board'); };
 
+      // ==========================================
+      // ログイン未済 / 非認可画面の描画
+      // ==========================================
+
+      // 1. 未ログイン時の画面
+      if (!user) {
+        return (
+          <div className="min-h-screen bg-slate-100 dark:bg-slate-955 flex flex-col items-center justify-center p-6 transition-colors duration-200">
+            <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-202 dark:border-slate-800 p-8 shadow-2xl text-center space-y-6 relative overflow-hidden">
+              
+              {/* ロゴ風グラフィック */}
+              <div className="mx-auto bg-indigo-600 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center shadow-lg">
+                PL
+              </div>
+              
+              <div className="space-y-2">
+                <h1 className="text-xl font-black text-slate-905 dark:text-white leading-snug">Project Loom</h1>
+                <p className="text-xs text-slate-505 dark:text-slate-400 font-bold">Sansanグループ案件推進専用ダッシュボード</p>
+              </div>
+
+              <hr className="border-slate-150 dark:border-slate-800" />
+
+              {/* ドメイン不認可エラー（auth/unauthorized-domain）時のインライン通知 */}
+              {unauthorizedError ? (
+                <div className="bg-rose-55 dark:bg-rose-950/30 border border-rose-300 dark:border-rose-900 rounded-2xl p-4 text-left space-y-3 animate-in fade-in zoom-in-95">
+                  <div className="flex items-center gap-2 text-rose-605 dark:text-rose-400 font-black text-xs leading-none">
+                    <IconWarning className="h-4 w-4 shrink-0" />
+                    <span>{unauthorizedError.title}</span>
+                  </div>
+                  <p className="text-[11px] text-rose-700 dark:text-rose-350 leading-relaxed whitespace-pre-wrap">
+                    {unauthorizedError.message}
+                  </p>
+                  <button 
+                    onClick={() => setUnauthorizedError(null)} 
+                    className="w-full py-1.5 bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-300 rounded-xl font-bold text-[10px] hover:bg-rose-200 dark:hover:bg-rose-800 transition-colors"
+                  >
+                    案内を閉じる
+                  </button>
+                </div>
+              ) : (
+                <div className="bg-slate-55 dark:bg-slate-955/50 border border-slate-150 dark:border-slate-800 p-4 rounded-2xl text-left">
+                  <p className="text-xs text-slate-605 dark:text-slate-300 font-bold leading-relaxed">
+                    本システムはSansan株式会社のセキュリティ統制下にある専用プロトタイプです。アクセスおよび閲覧には、認証情報が必要です。
+                  </p>
+                </div>
+              )}
+
+              {/* ログインボタンエリア */}
+              <div className="space-y-3">
+                <button 
+                  onClick={handleGoogleLogin}
+                  className="w-full py-3.5 px-4 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-805 dark:text-white border border-slate-350 dark:border-slate-700 rounded-2xl font-bold text-xs flex items-center justify-center shadow-sm hover:shadow transition-all"
+                >
+                  <IconGoogle />
+                  <span>Google アカウントでログイン</span>
+                </button>
+                <p className="text-[10px] text-slate-404 dark:text-slate-505 font-bold leading-normal">
+                  ※ Google認可時、<span className="text-indigo-600 dark:text-indigo-400 font-extrabold">sansan.com</span> または <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">sansan.co.jp</span> のドメイン以外のサインインは制限されます。
+                </p>
+              </div>
+
+              {/* モック/検証用 簡易ログイン・アコーディオン */}
+              <div className="pt-4 border-t border-slate-150 dark:border-slate-800 text-left">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-black text-slate-404 dark:text-slate-505 uppercase block">検証・評価用アカウント選択</span>
+                  <span className="text-[9px] text-emerald-600 dark:text-emerald-400 bg-emerald-55 dark:bg-emerald-950/30 font-black px-1.5 py-0.5 rounded leading-none">ドメインエラー回避用</span>
+                </div>
+                <div className="grid grid-cols-1 gap-2 text-xs">
+                  <button 
+                    onClick={() => handleMockLogin('employee@sansan.com')}
+                    className="w-full text-left p-2.5 bg-indigo-50/50 dark:bg-indigo-950/30 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 border border-indigo-150 dark:border-indigo-900 rounded-xl text-indigo-700 dark:text-indigo-300 font-bold flex justify-between items-center transition-all"
+                  >
+                    <span>Sansan社員アカウントで確認</span>
+                    <span className="text-[9px] bg-indigo-100 dark:bg-indigo-900 px-2 py-0.5 rounded font-black">@sansan.com</span>
+                  </button>
+                  <button 
+                    onClick={() => handleMockLogin('guest_partner@gmail.com')}
+                    className="w-full text-left p-2.5 bg-rose-55 dark:bg-rose-955/30 hover:bg-rose-150/10 dark:hover:bg-rose-950/50 border border-rose-150 dark:border-rose-900 rounded-xl text-rose-700 dark:text-rose-400 font-bold flex justify-between items-center transition-all"
+                  >
+                    <span>外部ゲスト(一般アカウント)で確認</span>
+                    <span className="text-[9px] bg-rose-150 dark:bg-rose-900 px-2 py-0.5 rounded font-black">@gmail.com</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        );
+      }
+
+      // 2. ログイン済みだがSansanドメイン所属でない場合（アクセス拒否）
+      if (!isSansanUser) {
+        return (
+          <div className="min-h-screen bg-slate-100 dark:bg-slate-955 flex flex-col items-center justify-center p-6 transition-colors duration-200">
+            <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-rose-200 dark:border-rose-950 p-8 shadow-2xl text-center space-y-6 animate-in zoom-in-95">
+              
+              <div className="mx-auto p-4 bg-rose-55 dark:bg-rose-950/40 border border-rose-150 dark:border-rose-900/50 rounded-full w-20 h-20 flex items-center justify-center text-rose-605">
+                <IconWarning className="h-10 w-10 text-rose-605" />
+              </div>
+
+              <div className="space-y-2">
+                <h1 className="text-lg font-black text-rose-605 dark:text-rose-400 leading-tight">アクセス権限がありません</h1>
+                <p className="text-xs text-slate-505 dark:text-slate-400 font-bold">Sansanグループのアカウント専用サービスです</p>
+              </div>
+
+              <hr className="border-slate-150 dark:border-slate-800" />
+
+              <div className="bg-slate-55 dark:bg-slate-955/50 border border-slate-150 dark:border-slate-800 p-4 rounded-2xl text-left space-y-2">
+                <div className="text-[10px] text-slate-404 dark:text-slate-505 font-bold uppercase">現在ログイン中のアカウント</div>
+                <div className="font-mono text-xs font-black text-slate-805 dark:text-white bg-white dark:bg-slate-900 px-2 py-1.5 rounded-lg border border-slate-150 dark:border-slate-800 truncate select-all">{user.email}</div>
+                <p className="text-[10.5px] text-slate-605 dark:text-slate-350 font-bold leading-relaxed pt-1">
+                  閲覧が制限されています。Sansan株式会社のメールアドレス（<span className="font-extrabold text-indigo-600 dark:text-indigo-400">@sansan.com</span> または <span className="font-extrabold text-indigo-600 dark:text-indigo-400">@sansan.co.jp</span>）を用いてサインインし直してください。
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <button 
+                  onClick={handleLogout}
+                  className="flex-1 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-xs shadow-md transition-all"
+                >
+                  別のアカウントでサインイン
+                </button>
+              </div>
+
+            </div>
+          </div>
+        );
+      }
+
+      // 3. ログインに成功し、かつSansanドメイン所属である場合はメインUIを通常表示
       return (
         <div className="min-h-screen bg-slate-55 dark:bg-slate-955 text-slate-805 dark:text-slate-150 font-sans antialiased pb-16 transition-colors duration-200">
           
@@ -790,7 +1026,7 @@
                   <div className="p-2 bg-rose-55 dark:bg-rose-900/30 rounded-2xl"><IconWarning className="h-6 w-6 text-rose-605 dark:text-rose-400" /></div>
                   <h3 className="font-extrabold text-sm text-slate-955 dark:text-white leading-tight">{confirmModal.title}</h3>
                 </div>
-                <p className="text-xs text-slate-505 dark:text-slate-450 whitespace-pre-line leading-relaxed">{confirmModal.message}</p>
+                <p className="text-xs text-slate-505 dark:text-slate-455 whitespace-pre-line leading-relaxed">{confirmModal.message}</p>
                 <div className="flex justify-end gap-2 px-1 pt-3 border-t border-slate-150 dark:border-slate-700 text-xs">
                   <button type="button" onClick={closeConfirm} className="bg-slate-150 dark:bg-slate-700 hover:bg-slate-202 dark:hover:bg-slate-600 text-slate-605 dark:text-slate-300 px-4 py-2.5 rounded-2xl font-bold transition-all">キャンセル</button>
                   <button type="button" onClick={confirmModal.onConfirm} className="bg-rose-605 hover:bg-rose-700 text-white px-5 py-2.5 rounded-2xl font-extrabold shadow-md transition-all">実行</button>
@@ -841,10 +1077,10 @@
                     </div>
                     
                     <div className="border-t border-slate-150 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
-                      <span className="text-[10px] font-bold text-slate-605 dark:text-slate-450 flex items-center gap-1"><IconLink className="h-3 w-3"/> プロジェクト関連リンク</span>
+                      <span className="text-[10px] font-bold text-slate-605 dark:text-slate-455 flex items-center gap-1"><IconLink className="h-3 w-3"/> プロジェクト関連リンク</span>
                       <div className="flex items-center gap-2">
                         <input type="text" placeholder="リンク名 (例: 要件定義書)" value={tmpProjLinkLabel} onChange={e => setTmpProjLinkLabel(e.target.value)} className="w-32 border border-slate-350 dark:border-slate-600 bg-white dark:bg-slate-955 rounded-xl p-2.5 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
-                        <input type="text" placeholder="URL (https://...)" value={tmpProjLinkUrl} onChange={e => setTmpProjLinkUrl(e.target.value)} className="flex-1 border border-slate-350 dark:border-slate-600 bg-white dark:bg-slate-955 rounded-xl p-2.5 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
+                        <input type="text" placeholder="URL (https://...)" value={tmpProjLinkUrl} onChange={e => setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-350 dark:border-slate-600 bg-white dark:bg-slate-955 rounded-xl p-2.5 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
                         <button type="button" onClick={handleAddLinkToNewProj} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                       </div>
                       {newProjLinks.length > 0 && (
@@ -872,8 +1108,8 @@
                 <div className="bg-indigo-600 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white p-2.5 rounded-2xl font-black text-sm leading-none">PL</div>
                 <div>
                   <h1 className="text-xs font-black text-slate-955 dark:text-white leading-tight">Project Loom</h1>
-                  <p className="text-[9px] text-slate-404 dark:text-slate-505 font-extrabold uppercase tracking-wider">
-                    ECDダッシュボード 
+                  <p className="text-[9px] text-slate-440 dark:text-slate-505 font-extrabold uppercase tracking-wider">
+                    Sansan専用ダッシュボード 
                     {(!useFirebase || (gistToken && gistId)) && <span className="ml-1 text-emerald-600 dark:text-emerald-400 bg-emerald-55 dark:bg-emerald-900/30 px-1 py-0.5 rounded font-black text-[7.5px]">{(gistToken && gistId) ? 'GIST-SYNC' : 'LOCAL-STORE'}</span>}
                   </p>
                 </div>
@@ -885,6 +1121,25 @@
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
+                
+                {/* ログイン・ユーザープロフィールインジケータ */}
+                <div className="flex items-center gap-2 bg-slate-150 dark:bg-slate-800 pl-2 pr-3 py-1 rounded-2xl border border-slate-202 dark:border-slate-700">
+                  <div className="h-6 w-6 rounded-full bg-indigo-500 text-white font-bold flex items-center justify-center text-[10px]">
+                    {user.displayName ? user.displayName.charAt(0) : 'U'}
+                  </div>
+                  <div className="text-left shrink-0">
+                    <div className="text-[9px] font-black text-slate-805 dark:text-white truncate max-w-[80px]" title={user.email}>
+                      {user.displayName || 'Sansan メンバー'}
+                    </div>
+                    <button 
+                      onClick={handleLogout}
+                      className="text-[8px] font-black text-rose-605 dark:text-rose-400 block leading-none hover:underline"
+                    >
+                      ログアウト
+                    </button>
+                  </div>
+                </div>
+
                 <button onClick={toggleDarkMode} className="p-2 rounded-xl border border-slate-202 dark:border-slate-700 bg-slate-55 dark:bg-slate-800 text-slate-605 dark:text-slate-300 hover:bg-slate-150 dark:hover:bg-slate-700 transition-colors shadow-xs">
                   {isDarkMode ? <IconSun className="h-4 w-4 text-amber-400" /> : <IconMoon className="h-4 w-4 text-indigo-500" />}
                 </button>
@@ -892,7 +1147,7 @@
                 <div className="flex items-center gap-2.5 bg-slate-55 dark:bg-slate-800 px-2.5 py-1.5 rounded-xl border border-slate-202 dark:border-slate-700 text-xs">
                   <div className="text-right leading-none">
                     <span className="text-[8px] text-slate-440 dark:text-slate-505 font-extrabold block mb-0.5 uppercase tracking-wide">完了率</span>
-                    <span className="text-[9px] font-black text-slate-550 dark:text-slate-450 font-mono">{activeProject ? activeProject.code : '---'}</span>
+                    <span className="text-[9px] font-black text-slate-550 dark:text-slate-455 font-mono">{activeProject ? activeProject.code : '---'}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="h-1.5 w-16 bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner">
@@ -917,7 +1172,7 @@
                   </div>
                 </div>
                 <IconChevronRight className="h-3 w-3 text-slate-404 dark:text-slate-505 shrink-0" />
-                <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-xl px-2.5 py-1 shadow-xs transition-colors">
+                <div className="flex items-center gap-1.5 bg-white/95 dark:bg-slate-800 border border-slate-202 dark:border-slate-700 rounded-xl px-2.5 py-1 shadow-xs transition-colors">
                   <span className="text-[10px] shrink-0 leading-none">📄</span>
                   <select value={currentProjectId} onChange={(e) => { setCurrentProjectId(e.target.value); setEditingProject(false); }} className="bg-transparent text-xs font-black text-indigo-800 dark:text-indigo-300 focus:outline-none cursor-pointer pr-1 leading-none" disabled={filteredProjects.length === 0}>
                     {filteredProjects.length > 0 ? filteredProjects.map(p => <option key={p.id} value={p.id} className="dark:bg-slate-800">{p.name}</option>) : <option value="">(案件なし)</option>}
@@ -964,7 +1219,7 @@
                           <div className="flex justify-between items-center pb-3 border-b border-slate-202 dark:border-slate-700">
                             <span className="font-extrabold text-indigo-600 dark:text-indigo-400 block mb-1">✏️ 案件変更</span>
                             <div className="flex items-center gap-2">
-                              <button type="button" onClick={() => setEditingProject(false)} className="text-[10px] text-slate-505 dark:text-slate-450 px-3 py-1.5 bg-slate-150 dark:bg-slate-900 rounded-xl font-bold">戻る</button>
+                              <button type="button" onClick={() => setEditingProject(false)} className="text-[10px] text-slate-505 dark:text-slate-455 px-3 py-1.5 bg-slate-150 dark:bg-slate-900 rounded-xl font-bold">戻る</button>
                               <button type="button" onClick={saveProjectEdit} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl font-bold">適用</button>
                             </div>
                           </div>
@@ -992,7 +1247,7 @@
                           </div>
                           
                           <div className="col-span-2 border-t border-slate-202 dark:border-slate-700 pt-3 mt-1 space-y-2">
-                            <span className="text-[10px] font-bold text-slate-605 dark:text-slate-450 flex items-center gap-1"><IconLink className="h-3 w-3"/> 関連リンクの編集</span>
+                            <span className="text-[10px] font-bold text-slate-605 dark:text-slate-455 flex items-center gap-1"><IconLink className="h-3 w-3"/> 関連リンクの編集</span>
                             <div className="flex items-center gap-2">
                               <input type="text" placeholder="リンク名" value={tmpEditProjLinkLabel} onChange={e => setTmpEditProjLinkLabel(e.target.value)} className="w-28 border border-slate-350 dark:border-slate-600 bg-white dark:bg-slate-955 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
                               <input type="text" placeholder="URL (https://...)" value={tmpEditProjLinkUrl} onChange={e => setTmpEditProjLinkUrl(e.target.value)} className="flex-1 border border-slate-350 dark:border-slate-600 bg-white dark:bg-slate-955 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
@@ -1016,7 +1271,7 @@
                           </div>
                           <div className="flex items-center gap-2 mt-1.5 flex-wrap group/project-title">
                             <h2 className="text-base font-black text-slate-805 dark:text-white leading-tight">{activeProject.name}</h2>
-                            <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(activeProject.name, '案件名をコピー！'); }} className="p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 text-slate-555 dark:text-slate-450 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 transition-colors">📋 コピー</button>
+                            <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(activeProject.name, '案件名をコピー！'); }} className="p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-700 text-slate-555 dark:text-slate-455 rounded-lg text-[9px] font-bold shrink-0 ml-1.5 transition-colors">📋 コピー</button>
                             <button onClick={handleDeleteProject} className="text-slate-350 dark:text-slate-655 hover:text-rose-605 dark:hover:text-rose-500 p-1 rounded-xl transition-all ml-1"><IconTrash2 className="h-4 w-4" /></button>
                           </div>
                           {activeProject.links && activeProject.links.length > 0 && (
@@ -1058,7 +1313,7 @@
                           <button onClick={() => { setShowAddStepForm(true); setNewStepName(''); setNewStepDesc(''); setNewStepStartDate(activeProject.startDate); setNewStepDueDate(activeProject.endDate); setNewStepLinks([]); setTmpStepLinkLabel(''); setTmpStepLinkUrl(''); setTimeout(() => document.getElementById('add-step-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150); }} className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white font-black flex items-center gap-1 px-3 py-2 rounded-xl"><IconPlus className="h-3 w-3" /> STEP追加</button>
                         </div>
                         <div className="relative w-full text-right">
-                          <button onClick={() => setShowTaskDropdown(!showTaskDropdown)} className="text-[10px] text-slate-705 dark:text-slate-300 font-black flex items-center justify-between w-full bg-slate-55 dark:bg-slate-800 border border-slate-202 dark:border-slate-700 px-3 py-2 rounded-xl">
+                          <button onClick={() => setShowTaskDropdown(!showTaskDropdown)} className="text-[10px] text-slate-750 dark:text-slate-300 font-black flex items-center justify-between w-full bg-slate-55 dark:bg-slate-800 border border-slate-202 dark:border-slate-700 px-3 py-2 rounded-xl">
                             <div className="flex items-center gap-1.5"><IconList className="h-3.5 w-3.5" /> <span>未完了タスク</span></div>
                             {tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length > 0 && <span className="bg-rose-605 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black ml-2">{tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length}</span>}
                           </button>
@@ -1115,7 +1370,7 @@
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">工程名 *</label><input required type="text" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-705 dark:text-slate-150 focus:outline-none focus:border-indigo-500" /></div>
-                        <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">詳細説明</label><input type="text" value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-705 dark:text-slate-150 focus:outline-none focus:border-indigo-500" /></div>
+                        <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">詳細説明</label><input type="text" value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border border-slate-220 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-705 dark:text-slate-150 focus:outline-none focus:border-indigo-500" /></div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div><label className="block text-slate-605 dark:text-slate-450 font-bold mb-1">開始予定日</label><input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border border-slate-202 dark:border-slate-600 rounded-xl p-2.5 bg-white dark:bg-slate-800 text-slate-705 dark:text-slate-150 font-mono font-bold focus:outline-none focus:border-indigo-500" /></div>
@@ -1129,7 +1384,7 @@
                         <span className="block text-purple-900 dark:text-purple-400 font-extrabold text-xs">🔗 関連リンク</span>
                         <div className="flex flex-wrap items-center gap-2">
                           <input type="text" placeholder="リンク名" value={tmpStepLinkLabel} onChange={e => setTmpStepLinkLabel(e.target.value)} className="w-40 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-705 dark:text-slate-150" />
-                          <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpStepLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-705 dark:text-slate-150" />
+                          <input type="text" placeholder="URL" value={tmpStepLinkUrl} onChange={e => setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-2 focus:outline-none focus:border-indigo-500 text-slate-705 dark:text-slate-150" />
                           <button type="button" onClick={handleAddLinkToNewStep} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                         </div>
                         {newStepLinks.length > 0 && (
@@ -1178,8 +1433,8 @@
                             <div className="border-t border-purple-100 dark:border-purple-800/50 pt-3 space-y-2">
                               <span className="block text-purple-900 dark:text-purple-400 font-extrabold text-xs">🔗 関連リンクの編集</span>
                               <div className="flex items-center gap-2">
-                                <input type="text" placeholder="リンク名" value={tmpEditStepLinkLabel} onChange={e => setTmpEditStepLinkLabel(e.target.value)} className="w-32 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-bold focus:outline-none focus:border-purple-500 text-slate-705 dark:text-slate-200" />
-                                <input type="text" placeholder="URL" value={tmpEditStepLinkUrl} onChange={e => setTmpEditStepLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs focus:outline-none focus:border-purple-500 text-slate-705 dark:text-slate-200" />
+                                <input type="text" placeholder="リンク名" value={tmpEditStepLinkLabel} onChange={e => setTmpEditStepLinkLabel(e.target.value)} className="w-32 border border-slate-202 dark:border-slate-75 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs font-bold focus:outline-none focus:border-purple-500 text-slate-705 dark:text-slate-200" />
+                                <input type="text" placeholder="URL" value={tmpEditStepLinkUrl} onChange={e => setTmpEditStepLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-75 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs focus:outline-none focus:border-purple-500 text-slate-705 dark:text-slate-200" />
                                 <button type="button" onClick={handleAddLinkToEditStep} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                               </div>
                               {editStepLinks.length > 0 && (
@@ -1331,10 +1586,10 @@
                                   </div>
                                   
                                   <div className="col-span-1 md:col-span-2 border-t border-slate-202 dark:border-slate-700/50 pt-3 mt-1 space-y-2">
-                                    <span className="text-[10px] font-bold text-slate-605 dark:text-slate-450 flex items-center gap-1"><IconLink className="h-3 w-3"/> 関連リンク</span>
+                                    <span className="text-[10px] font-bold text-slate-605 dark:text-slate-455 flex items-center gap-1"><IconLink className="h-3 w-3"/> 関連リンク</span>
                                     <div className="flex items-center gap-2">
                                       <input type="text" placeholder="リンク名 (例: 仕様書)" value={tmpTaskLinkLabel} onChange={e => setTmpTaskLinkLabel(e.target.value)} className="w-32 border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
-                                      <input type="text" placeholder="URL (https://...)" value={tmpTaskLinkUrl} onChange={e => setTmpTaskLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
+                                      <input type="text" placeholder="URL (https://...)" value={tmpTaskLinkUrl} onChange={e => setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-xl p-2 text-xs text-slate-705 dark:text-slate-150 focus:outline-none" />
                                       <button type="button" onClick={handleAddLinkToNewTask} className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors">追加</button>
                                     </div>
                                     {newTaskLinks.length > 0 && (
@@ -1497,7 +1752,7 @@
                                                 </div>
                                               )}
                                               {editingDescTaskId !== task.id && task.description && (
-                                                <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }} className="absolute top-2 right-2 opacity-100 p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-600 text-slate-505 dark:text-slate-450 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors" title="タスクの説明をコピー">📋 コピー</button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleCopyToClipboard(task.description, 'タスク詳細説明をコピーしました！'); }} className="absolute top-2 right-2 opacity-100 p-1 bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-600 text-slate-505 dark:text-slate-455 rounded-lg text-[9px] font-bold shadow-xs select-none transition-colors" title="タスクの説明をコピー">📋 コピー</button>
                                               )}
                                             </div>
                                           </div>
@@ -1551,7 +1806,7 @@
                                               <div className="border-t border-slate-150 dark:border-slate-700 pt-2 space-y-2">
                                                 <span className="text-[9px] font-bold text-slate-440 dark:text-slate-550 block uppercase">🔗 関連リンク</span>
                                                 <div className="flex items-center gap-1">
-                                                  <IconLink className="text-slate-440" /><input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><button onClick={handleAddLinkToNewLog} className="bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-600 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0 transition-colors">追加</button>
+                                                  <IconLink className="text-slate-440" /><input type="text" placeholder="リンク名" value={tmpLinkLabel} onChange={e=>setTmpLinkLabel(e.target.value)} className="w-24 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] font-bold text-slate-750 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><input type="text" placeholder="URL" value={tmpLinkUrl} onChange={e=>setTmpLinkUrl(e.target.value)} className="flex-1 border border-slate-202 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-[9px] text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-400" /><button onClick={handleAddLinkToNewLog} className="bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-600 px-2.5 py-1 rounded-lg text-[9px] font-black shrink-0 transition-colors">追加</button>
                                                 </div>
                                                 {newLogLinks.length > 0 && (
                                                   <div className="flex flex-wrap gap-1.5 pt-1">
