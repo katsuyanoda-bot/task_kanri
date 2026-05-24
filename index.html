@@ -111,7 +111,7 @@
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-[#f0fdf4] dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
       amber: { text: 'text-amber-850 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
       rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-purple-404' },
-      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
+      slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-650', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
     };
 
     const initialDepts = [
@@ -849,7 +849,7 @@
 
           {showAddProjectModal && (
             <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-              <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
+              <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-xl w-full shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="flex justify-between items-center mb-4 border-b pb-3 dark:border-slate-700">
                   <h2 className="text-base font-black flex items-center gap-2">📂 新規プロジェクトの起票</h2>
                   <button onClick={() => setShowAddProjectModal(false)} className="text-slate-404"><IconX className="h-5 w-5" /></button>
@@ -887,6 +887,7 @@
             </div>
           )}
 
+          {/* 💡 修正1層目：トップ全体ヘッダー (常に固定) */}
           <header className="bg-white/95 dark:bg-slate-955/95 border-b sticky top-0 z-50 shadow-sm backdrop-blur-lg divide-y dark:border-slate-700 divide-slate-150 dark:divide-slate-800">
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -933,7 +934,6 @@
                     <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: `${projectProgress}%` }} />
                   </div>
                 </div>
-
               </div>
             </div>
 
@@ -981,7 +981,8 @@
                         </div>
                       </div>
                     ) : (
-                      <div className="bg-white dark:bg-slate-800 border rounded-3xl p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shadow-sm group">
+                      /* 💡 修正2層目：案件ヘッダーカードも「sticky」でスクロール追従するよう大改修 */
+                      <div className="bg-white dark:bg-slate-800 border rounded-3xl p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shadow-sm group sticky top-[102px] z-40 backdrop-blur-lg">
                         <div className="space-y-1.5 flex-1 w-full">
                           <div className="text-[10px] font-bold text-slate-404">期間: {activeProject.startDate} 〜 {activeProject.endDate}</div>
                           <div className="flex flex-wrap items-center gap-4">
@@ -1021,7 +1022,7 @@
                     )}
 
                     {showUncompletedInline && activeProject && (
-                      <div className="bg-white dark:bg-slate-800 border-4 border-amber-400 rounded-3xl p-5 shadow-inner space-y-3 animate-in slide-in-from-top duration-200">
+                      <div className="bg-white dark:bg-slate-800 border-4 border-amber-400 rounded-3xl p-5 shadow-inner space-y-3 animate-in slide-in-from-top duration-200 sticky top-[185px] z-40 shadow-xl">
                         <div className="text-xs font-black text-slate-805 dark:text-white flex items-center justify-between border-b pb-2 dark:border-slate-700">
                           <span className="flex items-center gap-1.5">📄 リアルタイム未完了タスク・ボール保持状況</span>
                           <span className="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 px-2 py-0.5 rounded-lg">カウント: {tasks.filter(t => t.status !== 'completed' && t.status !== 'not_applicable').length}件</span>
@@ -1062,28 +1063,14 @@
                       </div>
                     )}
 
-                    {showAddStepForm && (
-                      <form onSubmit={handleAddStep} className="bg-purple-55 dark:bg-purple-900/10 border border-purple-200 rounded-3xl p-5 space-y-4 text-xs font-bold animate-in fade-in">
-                        <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="text-sm font-black text-purple-800 dark:text-purple-300">📂 新規Stepの起票</span><div className="flex gap-2"><button type="button" onClick={() => setShowAddStepForm(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-3 py-1.5 rounded-xl">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl shadow-sm">追加する</button></div></div>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                          <div className="md:col-span-2"><label className="block text-[10px] text-slate-404 mb-1">Step名 *</label><input required type="text" value={newStepName} onChange={e => setNewStepName(e.target.value)} className="w-full border p-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white" placeholder="例: 法務へ書類のレビュー依頼" /></div>
-                          <div><label className="block text-[10px] text-slate-404 mb-1">主担当部署</label><select value={newStepDeptKey} onChange={e => setNewStepDeptKey(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-                          <div><label className="block text-[10px] text-slate-404 mb-1">Stepリーダー名</label><input type="text" value={newStepLeader} onChange={e => setNewStepLeader(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-805 dark:text-white" placeholder="担当者名..." /></div>
-                          <div><label className="block text-[10px] text-slate-404 mb-1">開始予定日</label><input type="date" value={newStepStartDate} onChange={e => setNewStepStartDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono text-slate-805 dark:text-white" /></div>
-                          <div><label className="block text-[10px] text-slate-404 mb-1">目標完了日</label><input type="date" value={newStepDueDate} onChange={e => setNewStepDueDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono text-slate-805 dark:text-white" /></div>
-                          <div className="md:col-span-4"><label className="block text-[10px] text-slate-404 mb-1">Step概要説明</label><textarea value={newStepDesc} onChange={e => setNewStepDesc(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 h-14 text-slate-805 dark:text-white" placeholder="詳細メモ..." /></div>
-                        </div>
-                      </form>
-                    )}
-
-                    <div className="space-y-6">
+                    <div className="space-y-6 pt-2">
                       {stepList.map((step, index) => {
                         const stepTksAll = tasks.filter(t => t.stepId === step.id); const stpProg = getStepProgress(step.id);
                         const isCol = !!collapsedSteps[step.id]; const isEd = editingStepId === step.id;
                         const cClass = colorClassesMap[deptList.find(d => d.key === step.deptKey)?.color || 'slate'] || colorClassesMap.purple;
 
                         return (
-                          <div key={step.id} id={`step-anchor-${step.id}`} className={`bg-white dark:bg-slate-800 rounded-3xl shadow-sm border-4 overflow-hidden ${isCol ? 'border-slate-202 dark:border-slate-700' : cClass.borderStrong}`} draggable={!isEd} onDragStart={(e) => handleDragStart(index, e)} onDragOver={(e) => handleDragOver(index, e)} onDragEnd={handleDragEnd}>
+                          <div key={step.id} id={`step-anchor-${step.id}`} className={`bg-white dark:bg-slate-800 rounded-3xl shadow-sm border-4 overflow-hidden transition-all ${isCol ? 'border-slate-202 dark:border-slate-700' : cClass.borderStrong}`}>
                             {isEd ? (
                               <div className="p-5 bg-purple-55 dark:bg-purple-900/10 text-xs font-bold space-y-4">
                                 <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700"><span className="font-black text-purple-800 dark:text-purple-300">✏️ STEP {index + 1} のStep情報編集</span><div className="flex gap-2"><button type="button" onClick={() => setEditingStepId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-3 py-1 rounded-xl">キャンセル</button><button type="button" onClick={(e) => saveStepEdit(step.id, e)} className="bg-indigo-600 text-white px-4 py-1 rounded-xl">保存</button></div></div>
@@ -1097,10 +1084,10 @@
                                 </div>
                               </div>
                             ) : (
-                              /* 💡 修正：ヘッダーを「sticky」化させ、どこをクリックしても開閉できる仕様に大改修 */
+                              /* 💡 修正3層目：精密計算された段々重ね用の「sticky」配置。ヘッダーのどこをクリックしても開閉トグルが効く仕様へ */
                               <div 
                                 onClick={() => toggleStepCollapse(step.id)}
-                                className={`p-4 border-b dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-150 select-none cursor-pointer sticky top-[104px] z-30 shadow-md ${cClass.bg}`}
+                                className={`p-4 border-b dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 select-none cursor-pointer sticky top-[172px] z-30 shadow-md ${cClass.bg}`}
                               >
                                 <div className="flex flex-wrap items-center gap-3">
                                   <span className="text-slate-404" onClick={e => e.stopPropagation()}><IconDragHandle /></span>
@@ -1108,12 +1095,12 @@
                                   <h3 className="font-black text-sm text-slate-805 dark:text-slate-150">{step.name}</h3>
                                   
                                   <span className="text-[10px] font-bold text-slate-550 dark:text-slate-400 font-mono border-l pl-2 dark:border-slate-600">📅 {step.startDate || '未定'} 〜 {step.dueDate || '未定'}</span>
-                                  <span className={`text-[10px] font-black border px-2 py-0.5 rounded-md ${cClass.badge}`}>🏢 {deptList.find(d => d.key === step.deptKey)?.label || '未設定'} (枠: {step.leader || '未設定'})</span>
+                                  <span className={`text-[10px] font-black border px-2 py-0.5 rounded-md ${cClass.badge}`}>🏢 {deptList.find(d => d.key === step.deptKey)?.label || '未設定'}</span>
                                   
                                   {renderStepDeadlineBadge(step, stpProg)}
                                 </div>
 
-                                {/* 💡 新設：ヘッダー中央部のタスクボタン簡易レーン（フィルター連動＆ドラッグ並び替え対応） */}
+                                {/* フィルター連動のミニタスクボタン一覧 */}
                                 {!isCol && (
                                   <div className="flex flex-wrap gap-1 max-w-xs md:max-w-md mx-auto" onClick={e => e.stopPropagation()}>
                                     {stepTksAll.map((t, tIdx) => {
@@ -1139,72 +1126,16 @@
 
                                 <div className="flex items-center gap-4 shrink-0 font-bold" onClick={e => e.stopPropagation()}>
                                   <div className="text-xs font-black text-slate-705 dark:text-slate-300">Step進捗: {stpProg}%</div>
-                                  <button onClick={(e) => startEditingStep(step, e)} className="p-1 text-slate-404 hover:text-indigo-600"><IconEdit2 className="h-4 w-4" /></button>
-                                  <button onClick={(e) => handleDeleteStep(step.id, step.name, e)} className="p-1 text-slate-404 hover:text-rose-605"><IconTrash2 className="h-4 w-4" /></button>
-                                  <button onClick={() => { setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); setNewTaskImages([]); }} className="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-xl font-black shadow-xs">＋ タスク起票</button>
-                                  <button onClick={() => toggleStepCollapse(step.id)} className="text-slate-404 font-black p-1 text-xs">{isCol ? '▼ 開く' : '▲ 閉じる'}</button>
+                                  <button onClick={(e) => { e.stopPropagation(); startEditingStep(step, e); }} className="p-1 text-slate-404 hover:text-indigo-600"><IconEdit2 className="h-4 w-4" /></button>
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteStep(step.id, step.name, e); }} className="p-1 text-slate-404 hover:text-rose-605"><IconTrash2 className="h-4 w-4" /></button>
+                                  {/* 💡 修正：「タスク起票」から「タスク追加」へ文言統一 */}
+                                  <button onClick={(e) => { e.stopPropagation(); setAddingTaskStepId(step.id); setNewTaskTitle(''); setNewTaskDesc(''); setNewTaskImages([]); }} className="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-xl font-black shadow-xs">＋ タスク追加</button>
                                 </div>
                               </div>
                             )}
 
                             {!isCol && (
-                              <div className="bg-slate-55/10 dark:bg-slate-900/10 p-4 space-y-4">
-                                {addingTaskStepId === step.id && (
-                                  /* 💡 修正：新規タスク追加画面をベタ塗りフォームから「空のタスクカード形状」へ全面刷新 */
-                                  <form onSubmit={(e) => handleAddTask(step.id, e)} className="relative border-4 border-dashed border-indigo-500/80 rounded-3xl bg-white dark:bg-slate-800 p-5 space-y-4 text-xs font-bold shadow-md animate-in zoom-in-95">
-                                    <div className="flex justify-between items-center pb-2 border-b dark:border-slate-700">
-                                      <span className="font-extrabold text-indigo-600 dark:text-indigo-404">➕ Step内への新規タスクアサインカード</span>
-                                      <div className="flex gap-2">
-                                        <button type="button" onClick={() => { setAddingTaskStepId(null); setNewTaskImages([]); }} className="bg-slate-150 dark:bg-slate-700 px-3 py-1 rounded-xl">キャンセル</button>
-                                        <button type="submit" className="bg-indigo-600 text-white px-4 py-1 rounded-xl shadow-md">カードを追加</button>
-                                      </div>
-                                    </div>
-                                    <div className="space-y-3">
-                                      {/* 1行目：タイトルインプット */}
-                                      <div>
-                                        <label className="block text-[10px] text-slate-404 mb-1">タスク推進名 *</label>
-                                        <input required type="text" placeholder="例: 見積書のたたき作成" value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold bg-white dark:bg-slate-900 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
-                                      </div>
-                                      
-                                      {/* 2行目：画像と完全一致の4分割横並びパラメータ */}
-                                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                                        <div>
-                                          <label className="block text-[10px] text-slate-404 mb-1">ボール保持部署</label>
-                                          <select value={newTaskDept} onChange={e => handleAddFormDeptChange(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent bg-white dark:bg-slate-900 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700">
-                                            {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
-                                          </select>
-                                        </div>
-                                        <div>
-                                          <label className="block text-[10px] text-slate-404 mb-1">やり取り相手 (To / 自由入力可)</label>
-                                          <input type="text" list={`suggest-new-${step.id}`} placeholder="名前..." value={newTaskInteractor} onChange={e => setNewTaskInteractor(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-bold bg-white dark:bg-slate-900 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
-                                          <datalist id={`suggest-new-${step.id}`}>
-                                            <option value={user?.displayName || '自分'} />
-                                            <option value="上司・決裁者" />
-                                          </datalist>
-                                        </div>
-                                        <div>
-                                          <label className="block text-[10px] text-slate-404 mb-1">期日</label>
-                                          <input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-transparent font-mono bg-white dark:bg-slate-900 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
-                                        </div>
-                                        <div>
-                                          <label className="block text-[10px] text-slate-404 mb-1">難易度ウエイト</label>
-                                          <select value={newTaskLevel} onChange={e => setNewTaskLevel(Number(e.target.value))} className="w-full p-2.5 border rounded-xl bg-transparent text-xs bg-white dark:bg-slate-900 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700">
-                                            <option value="1">🟢 セルフ完結型 (1pt)</option>
-                                            <option value="2">🟡 スポット他部署型 (2pt)</option>
-                                            <option value="4">🔴 マルチ他部署型 (4pt)</option>
-                                          </select>
-                                        </div>
-                                      </div>
-
-                                      {/* 3行目：論点・備考 */}
-                                      <div>
-                                        <label className="block text-[10px] text-slate-404 mb-1">論点・備考</label>
-                                        <textarea placeholder="詳細論点・メモを入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} onPaste={e => handlePasteOnTextInput(e, setNewTaskImages)} className="w-full p-2.5 border rounded-xl bg-transparent h-16 bg-white dark:bg-slate-900 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
-                                      </div>
-                                    </div>
-                                  </form>
-                                )}
-
+                              <div className="bg-slate-55/10 dark:bg-slate-900/10 p-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   {stepTksAll.map((task, taskIndex) => {
                                     if (!taskFilter[task.status]) return null;
@@ -1218,7 +1149,7 @@
                                         {isEditingTask ? (
                                           <div className="p-4 space-y-3 text-xs font-bold w-full animate-in fade-in" onClick={e => e.stopPropagation()}>
                                             <div className="flex justify-between items-center pb-1 border-b dark:border-slate-700">
-                                              <span className="font-black text-indigo-600 dark:text-indigo-404">✏️ タスクマスタの編集</span>
+                                              <span className="font-black text-indigo-600 dark:text-indigo-404">✏️ タスクの編集</span>
                                               <div className="flex gap-1.5 text-[11px]">
                                                 <button type="button" onClick={() => setEditingTaskId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-2.5 py-0.5 rounded-lg">戻る</button>
                                                 <button type="button" onClick={() => saveEdit(task.id)} className="bg-indigo-600 text-white px-3 py-0.5 rounded-lg shadow-sm">保存</button>
@@ -1238,7 +1169,7 @@
                                                   </select>
                                                 </div>
                                                 <div>
-                                                  <label className="block text-[9px] text-slate-404 mb-0.5">やり取り相手 (To / 自由入力可)</label>
+                                                  <label className="block text-[9px] text-slate-404 mb-0.5">やり取り相手 (To)</label>
                                                   <input type="text" list={`suggest-edit-${task.id}`} value={editFormData.interactor || ''} onChange={e => setEditFormData({...editFormData, interactor: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white border-slate-202 dark:border-slate-707" />
                                                   <datalist id={`suggest-edit-${task.id}`}><option value={user?.displayName || '自分'} /><option value="上司・決裁者" /></datalist>
                                                 </div>
@@ -1350,7 +1281,7 @@
                                                             <div className="flex justify-between text-[8.5px] text-slate-404 font-mono font-bold"><span>{log.isSystem?'🤖 システム':'👤 履歴ログ'}</span><span>{log.date}</span></div>
                                                             <p className="whitespace-pre-wrap font-medium leading-normal mt-0.5">{renderLogTextWithLinks(log.text)}</p>
                                                           </div>
-                                                          {/* 💡 新設：進捗ログの横から一発でステータスを完了に変えられるダイレクト完了ボタン */}
+                                                          {/* 💡 修正：履歴ログの真横から一発でタスクを完了に切り替えるダイレクト完了ボタン */}
                                                           {!log.isSystem && task.status !== 'completed' && task.status !== 'not_applicable' && (
                                                             <button 
                                                               type="button"
@@ -1376,6 +1307,66 @@
                                       </div>
                                     );
                                   })}
+
+                                  {/* 💡 修正：タスク追加画面。既存カードと同じ「50%幅」のグリッド最後尾へ、本物のカードと完全同幅で出現するよう再構成 */}
+                                  {addingTaskStepId === step.id && (
+                                    <form onSubmit={(e) => handleAddTask(step.id, e)} className="relative border-4 border-dashed border-indigo-500 rounded-3xl bg-white dark:bg-slate-800 p-4 space-y-3 text-xs font-bold shadow-md animate-in zoom-in-95">
+                                      <div className="flex justify-between items-center pb-1 border-b dark:border-slate-700">
+                                        <span className="font-extrabold text-indigo-600 dark:text-indigo-404">➕ 新規タスク追加カード</span>
+                                        <div className="flex gap-1.5 text-[11px]">
+                                          <button type="button" onClick={() => { setAddingTaskStepId(null); setNewTaskImages([]); }} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-2 py-0.5 rounded-lg">キャンセル</button>
+                                          <button type="submit" className="bg-indigo-600 text-white px-3 py-0.5 rounded-lg shadow-sm">追加</button>
+                                        </div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        {/* 1行目：タスク名入力 */}
+                                        <div>
+                                          <label className="block text-[9px] text-slate-404 mb-0.5">タスク推進名 *</label>
+                                          <input required type="text" placeholder="例: 見積書のたたき作成" value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
+                                        </div>
+                                        
+                                        {/* 2行目：4分割パラメータ */}
+                                        <div className="grid grid-cols-1 gap-2">
+                                          <div className="grid grid-cols-2 gap-2">
+                                            <div>
+                                              <label className="block text-[9px] text-slate-404 mb-0.5">保持部署</label>
+                                              <select value={newTaskDept} onChange={e => handleAddFormDeptChange(e.target.value)} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white border-slate-202 dark:border-slate-700">
+                                                {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+                                              </select>
+                                            </div>
+                                            <div>
+                                              <label className="block text-[9px] text-slate-404 mb-0.5">相手 (To)</label>
+                                              <input type="text" list={`suggest-new-${step.id}`} placeholder="名前..." value={newTaskInteractor} onChange={e => setNewTaskInteractor(e.target.value)} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
+                                              <datalist id={`suggest-new-${step.id}`}>
+                                                <option value={user?.displayName || '自分'} />
+                                                <option value="上司・決裁者" />
+                                              </datalist>
+                                            </div>
+                                          </div>
+                                          <div className="grid grid-cols-2 gap-2">
+                                            <div>
+                                              <label className="block text-[9px] text-slate-404 mb-0.5">期日</label>
+                                              <input type="date" value={newTaskDueDate} onChange={e => setNewTaskDueDate(e.target.value)} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-mono text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
+                                            </div>
+                                            <div>
+                                              <label className="block text-[9px] text-slate-404 mb-0.5">難易度</label>
+                                              <select value={newTaskLevel} onChange={e => setNewTaskLevel(Number(e.target.value))} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white border-slate-202 dark:border-slate-700">
+                                                <option value="1">🟢 1ポイント</option>
+                                                <option value="2">🟡 2ポイント</option>
+                                                <option value="4">🔴 4ポイント</option>
+                                              </select>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        {/* 3行目：備考 */}
+                                        <div>
+                                          <label className="block text-[9px] text-slate-404 mb-0.5">論点・備考</label>
+                                          <textarea placeholder="詳細論点・メモを入力..." value={newTaskDesc} onChange={e => setNewTaskDesc(e.target.value)} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 h-12 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
+                                        </div>
+                                      </div>
+                                    </form>
+                                  )}
                                 </div>
                               </div>
                             )}
