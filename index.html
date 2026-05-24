@@ -78,7 +78,43 @@
 
     const TODAY_STR = '2026-05-24';
 
-    // 🛡️ 最下層：現場担当のタスクカード（状態を局所化し、stopPropagationシールドを配備）
+    // ⛽ 復活：最上位スコープに安全配置された初期デモマスターデータ群
+    const initialDepts = [
+      { key: 'sales', label: '営業', color: 'blue', order: 0 },
+      { key: 'finance', label: '経理', color: 'amber', order: 1 },
+      { key: 'legal', label: '法務', color: 'emerald', order: 2 },
+      { key: 'backoffice', label: '推進（事務）', color: 'rose', order: 3 },
+      { key: 'system', label: 'システム', color: 'slate', order: 4 }
+    ];
+
+    const initialFolders = [
+      { id: 'f1', name: '新商品設計（ECD）' },
+      { id: 'f2', name: '社内事務・システム改善' }
+    ];
+
+    const initialProjects = [
+      {
+        id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2',
+        status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25',
+        taskSequence: 2,
+        stepList: [
+          { 
+            id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0,
+            tasks: [
+              { id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [], level: 1, isBlocked: false }
+            ]
+          },
+          { 
+            id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1,
+            tasks: [
+              { id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false }
+            ]
+          }
+        }
+      }
+    ];
+
+    // 🛡️ 最下層：現場担当のタスクカード（状態を局所化し、stopPropagationシールドを完備）
     function TaskCard({ task, onUpdateTask, onDeleteTask, deptList }) {
       const [isEditing, setIsEditing] = useState(false);
       const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -119,7 +155,7 @@
 
       if (isEditing) {
         return (
-          <div className="p-4 bg-slate-50 dark:bg-slate-900 border-4 border-indigo-500 rounded-3xl text-xs font-bold space-y-3" onClick={e => e.stopPropagation()}>
+          <div className="p-4 bg-slate-55 dark:bg-slate-900 border-4 border-indigo-500 rounded-3xl text-xs font-bold space-y-3" onClick={e => e.stopPropagation()}>
             <div><label className="text-[10px] text-slate-404">タスク名 *</label><input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
             <div className="grid grid-cols-2 gap-2">
               <div><label className="text-[10px] text-slate-404">主担当部署</label><select value={editDept} onChange={e => setEditDept(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
@@ -170,8 +206,8 @@
                 <textarea 
                   value={editDesc} 
                   onChange={e => setEditDesc(e.target.value)}
-                  onBlur={() => onUpdateTask(task.id, p => ({ ...prev, description: editDesc }))}
-                  className="w-full text-xs bg-slate-55 dark:bg-slate-900 p-2 border rounded-xl text-slate-805 dark:text-white focus:outline-none" 
+                  onBlur={() => onUpdateTask(task.id, p => ({ ...p, description: editDesc }))}
+                  className="w-full text-xs bg-slate-55 dark:bg-slate-900 p-2 border rounded-xl text-slate-805 dark:text-white focus:outline-none min-h-[50px]" 
                   placeholder="論点や決定事項をメモ..."
                 />
               </div>
@@ -193,7 +229,7 @@
                         <p className="whitespace-pre-wrap mt-0.5 leading-relaxed font-semibold text-slate-700 dark:text-slate-200">{log.text}</p>
                       </div>
                       {!log.isSystem && task.status !== 'completed' && (
-                        <button onClick={(e) => { e.stopPropagation(); onUpdateTask(task.id, p => ({ ...p, status: 'completed' })); }} className="bg-emerald-600 text-white font-black text-[9px] px-2 py-0.5 rounded shrink-0">完了</button>
+                        <button onClick={(e) => { e.stopPropagation(); onUpdateTask(task.id, p => ({ ...p, status: 'completed' })); }} className="bg-emerald-600 text-white font-black text-[9px] px-2 py-0.5 rounded shadow-sm shrink-0">完了</button>
                       )}
                     </div>
                   ))}
@@ -259,7 +295,7 @@
       return (
         <div className={`bg-white dark:bg-slate-900 rounded-3xl shadow-sm border-4 overflow-hidden transition-all ${isCollapsed ? 'border-slate-202 dark:border-slate-800' : cClass?.borderStrong || 'border-slate-350'}`}>
           
-          {/* Step帯ヘッダー（バブリング完全防御） */}
+          {/* Step帯ヘッダー */}
           <div 
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="p-4 border-b dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 select-none cursor-pointer bg-slate-55 dark:bg-slate-850"
@@ -332,7 +368,7 @@
                       <span className="text-indigo-500 font-extrabold">➕ 新規タスク追加カード</span>
                       <div className="flex gap-1.5">
                         <button type="button" onClick={() => setIsAddingTask(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-2.5 py-0.5 rounded-lg">キャンセル</button>
-                        <button type="submit" className="bg-indigo-600 text-white px-3 py-0.5 rounded-lg">追加</button>
+                        <button type="submit" className="bg-indigo-600 text-white px-3 py-0.5 rounded-lg shadow-sm">追加</button>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -354,7 +390,6 @@
 
     // 👑 総支配人：アプリケーション最上位コア（データの保存・入出力を一元集中管理）
     function App() {
-      const allowedDomains = ['sansan.com', 'sansan.co.jp'];
       const headerWrapperRef = useRef(null);
       const fileInputRef = useRef(null);
 
@@ -366,7 +401,7 @@
       const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
       const [user, setUser] = useState(null);
 
-      // アプリケーションコアState
+      // アプリケーションコアState（定義を上部に退避させたため、安全に初期起動）
       const [folders, setFolders] = useState(initialFolders);
       const [deptList, setDeptList] = useState(initialDepts);
       const [projects, setProjects] = useState(initialProjects);
@@ -382,7 +417,12 @@
       const [dbFilterFolderId, setDbFilterFolderId] = useState('all');
       const [dbFilterText, setDbFilterText] = useState('');
 
-      // 計算Stateの算出（手動JOINコードを完全撲滅）
+      // 計算Stateの算出
+      const isSansanUser = useMemo(() => {
+        if (!user?.email) return false;
+        return allowedDomains.includes(user.email.split('@')[1]?.toLowerCase());
+      }, [user]);
+
       const filteredProjects = useMemo(() => projects?.filter(p => p.folderId === selectedFolderId) || [], [projects, selectedFolderId]);
       const activeProject = useMemo(() => projects?.find(p => p.id === currentProjectId) || filteredProjects[0] || projects[0] || null, [projects, currentProjectId, filteredProjects]);
       const stepList = useMemo(() => {
@@ -390,7 +430,6 @@
         return [...activeProject.stepList].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
       }, [activeProject]);
 
-      // プロジェクト全体の総合進捗率
       const projectProgress = useMemo(() => {
         if (!activeProject?.stepList) return 0;
         let allTasks = [];
@@ -400,7 +439,7 @@
         return valid.length === 0 ? 100 : Math.round((valid.filter(t => t.status === 'completed').length / valid.length) * 100);
       }, [activeProject]);
 
-      // 🛡️ 原因④解決：手動保存を全廃し、ステート監視型の単一パイプラインに一本化（レースコンディション完全消滅）
+      // 🛡️ 原因④解決：手動保存を全廃し、ステート監視型の単一パイプラインに一本化
       useEffect(() => {
         if (projects !== initialProjects || deptList !== initialDepts || folders !== initialFolders) {
           localStorage.setItem('pl_projects', JSON.stringify(projects));
@@ -467,7 +506,7 @@
         setCurrentProjectId(newId); setShowAddProjectModal(false); setNewProjName(''); setNewProjCode(''); showAlert('新規プロジェクトを起票しました');
       };
 
-      // 📥 データの強固な保護：JSON物理エクスポート（バックアップ）
+      // 📥 JSON物理エクスポート（バックアップ）
       const exportBackup = () => {
         const backupData = { folders, depts: deptList, projects };
         const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
@@ -480,7 +519,7 @@
         showAlert('物理バックアップをダウンロードしました。');
       };
 
-      // 📤 データの完全復元：JSONインポート（型崩れ完全防衛）
+      // 📤 JSONインポート（型崩れ完全防衛）
       const importBackup = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -525,6 +564,11 @@
         const localProjects = localStorage.getItem('pl_projects'); if (localProjects) setProjects(JSON.parse(localProjects));
       }, []);
 
+      useEffect(() => {
+        if (isDarkMode) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+      }, [isDarkMode]);
+
       if (!user) {
         return (
           <div className="min-h-screen bg-slate-100 dark:bg-slate-955 flex flex-col items-center justify-center p-6 duration-200">
@@ -561,8 +605,8 @@
             </div>
           )}
 
-          {/* 🧱 固定天井エリア */}
-          <div ref={headerWrapperRef} className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-sm">
+          {/* 🧱 固定不透明天井コンテナ */}
+          <div ref={headerWrapperRef} className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-md">
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
               <div className="flex items-center gap-3">
                 <div className="bg-indigo-600 text-white p-2 rounded-2xl font-black text-sm">PL</div>
@@ -574,8 +618,8 @@
                 <button onClick={() => setViewMode('analytics')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='analytics'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconCalendar /><span>分析力</span></button>
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={exportBackup} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] rounded-xl font-bold border border-slate-202 text-slate-605">📥 バックアップ</button>
-                <button onClick={() => fileInputRef.current.click()} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] rounded-xl font-bold border border-slate-202 text-slate-605">📤 復元</button>
+                <button onClick={exportBackup} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] rounded-xl font-bold border border-slate-202 text-slate-605 shadow-2xs">📥 バックアップ</button>
+                <button onClick={() => fileInputRef.current.click()} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] rounded-xl font-bold border border-slate-202 text-slate-605 shadow-2xs">📤 復元</button>
                 <button onClick={toggleDarkMode} className="p-2 border rounded-xl bg-slate-55 dark:bg-slate-800 text-slate-605 font-bold text-xs">🌗 外観切替</button>
                 <button onClick={() => setShowSettingsModal(true)} className="p-2 border rounded-xl bg-slate-55 dark:bg-slate-800 text-slate-605 font-bold text-xs">設定</button>
                 <div className="text-xs font-mono font-black text-indigo-600 dark:text-indigo-404">進捗 {projectProgress}%</div>
@@ -608,7 +652,7 @@
             )}
           </div>
 
-          {/* メインエリア */}
+          {/* メイン独立スクロールエリア */}
           <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
             {viewMode === 'board' && activeProject && (
               <div className="space-y-8">
@@ -681,7 +725,7 @@
                 <div className="flex-1 overflow-y-auto space-y-5 text-xs font-bold scrollbar-thin">
                   <div className="bg-slate-55 dark:bg-slate-900 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 flex justify-between items-center gap-4">
                     <p className="text-[10px] text-slate-404 leading-normal">ローカルデータを全消去し、新設計の入れ子構造データに完全初期化します。</p>
-                    <button type="button" onClick={() => { triggerConfirm('データ再生成', '初期データに上書きします。よろしいですか？', () => { setFolders(initialFolders); setDeptList(initialDepts); setProjects(initialProjects); localStorage.clear(); showAlert('データを完全初期化しました'); setShowSettingsModal(false); }); }} className="bg-purple-600 text-white px-4 py-2 rounded-xl font-black shadow-sm shrink-0">工場出荷状態に戻す</button>
+                    <button type="button" onClick={() => { triggerConfirm('データ再生成', '初期状態データに戻します。よろしいですか？', () => { setFolders(initialFolders); setDeptList(initialDepts); setProjects(initialProjects); localStorage.clear(); showAlert('データを工場出荷状態に初期化しました。'); setShowSettingsModal(false); }); }} className="bg-purple-600 text-white px-4 py-2 rounded-xl font-black shadow-sm shrink-0">工場出荷状態に戻す</button>
                   </div>
                 </div>
                 <div className="pt-4 border-t dark:border-slate-700 flex justify-end">
