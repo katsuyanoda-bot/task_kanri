@@ -54,7 +54,7 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
     
-    /* 固定天井レイアウト用の画面高さ・スクロール制御 */
+    /* 最初から微動だにしない完全固定天井レイアウトのための高さ・スクロール制御 */
     html, body, #root { height: 100%; overflow: hidden; }
   </style>
 </head>
@@ -100,7 +100,6 @@
     const IconDragHandle = () => <svg className="h-4 w-4 text-slate-404 dark:text-slate-505 cursor-grab active:cursor-grabbing" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line></svg>;
     const IconDatabase = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>;
     const IconChart = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>;
-    const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
 
     // 6色統合カラースケール
     const colorClassesMap = {
@@ -251,6 +250,14 @@
       const activeTodayTasks = todayTasks;
       const isOverdue = (dueDate, status) => { if (status === 'completed' || status === 'not_applicable') return false; return new Date(dueDate) < new Date(TODAY_STR); };
 
+      // 💡 復活：消失してクラッシュ原因になっていたStep進捗計算マスタ関数
+      const getStepProgress = (stepId) => {
+        const stepTasks = tasks.filter(t => t.stepId === stepId);
+        if (stepTasks.length === 0) return 0;
+        const valid = stepTasks.filter(t => t.status !== 'not_applicable');
+        return valid.length === 0 ? 100 : Math.round((valid.filter(t => t.status === 'completed').length / valid.length) * 100);
+      };
+
       const projectProgress = useMemo(() => {
         if (tasks.length === 0) return 0;
         const valid = tasks.filter(t => t.status !== 'not_applicable');
@@ -342,77 +349,6 @@
       };
       
       const saveStepEdit = (stepId, e) => { e.preventDefault(); e.stopPropagation(); saveProjectToFirestore({ ...activeProject, stepList: (activeProject.stepList || []).map(s => s.id === stepId ? { ...s, name: editStepName.trim(), desc: editStepDesc.trim(), deptKey: editStepDeptKey, startDate: editStepStartDate, dueDate: editStepDueDate, leader: editStepLeader.trim() } : s) }); setEditingStepId(null); showAlert('Step情報を更新しました'); };
-      const handleAddStep = (e) => { e.preventDefault(); if (!newStepName.trim()) return; const rawSteps = activeProject.stepList || []; saveProjectToFirestore({ ...activeProject, stepList: [...rawSteps, { id: rawSteps.length > 0 ? Math.max(...rawSteps.map(s => s.id)) + 1 : 1, name: newStepName.trim(), desc: newStepDesc.trim(), deptKey: newStepDeptKey, startDate: newStepStartDate, dueDate: newStepDueDate, leader: newStepLeader.trim(), links: [], order: rawSteps.length }] }); setShowAddStepForm(false); showAlert('Stepを追加しました'); };
-      const handleDeleteStep = (stepId, stepName, e) => { e.stopPropagation(); triggerConfirm('Step削除', `このStepと紐づくタスクを全消去しますか？`, () => { saveProjectToFirestore({ ...activeProject, stepList: (activeProject.stepList || []).filter(s => s.id !== stepId), tasks: tasks.filter(t => t.stepId !== stepId) }); showAlert('削除完了'); }); };
-
-      const changeTaskStatus = (taskId, newStatus) => {
-        if (!isSansanUser) return;
-        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => {
-          if (t.id !== taskId) return t;
-          const dStr = getJSTDateTimeString(); const dOnly = dStr.split(' ')[0];
-          let upd = { ...t, status: newStatus };
-          if (newStatus === 'pending') {
-            upd.startedAt = null; upd.completedAt = null; upd.isBlocked = false; upd.blockedStartedAt = null;
-            upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: '⚪ 未対応へリセット', isSystem: true }, ...(t.contextLogs || [])];
-          } else if (newStatus === 'in_progress') {
-            if (!t.startedAt) upd.startedAt = dOnly; upd.completedAt = null;
-            upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: '🔵 進行中へステータス変更', isSystem: true }, ...(t.contextLogs || [])];
-          } else if (newStatus === 'completed' || newStatus === 'not_applicable') {
-            upd.completedAt = dOnly; if (!t.startedAt) upd.startedAt = dOnly;
-            if (t.isBlocked && t.blockedStartedAt) {
-              const bDays = Math.max(0, Math.round((Date.now() - Number(t.blockedStartedAt)) / (1000 * 60 * 60 * 24)));
-              upd.blockedDays = (t.blockedDays || 0) + bDays;
-            }
-            upd.isBlocked = false; upd.blockedStartedAt = null;
-            upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: newStatus === 'completed' ? '🟢 タスク完了' : '⚪ 対応なし確定', isSystem: true }, ...(t.contextLogs || [])];
-          }
-          return upd;
-        })});
-      };
-
-      const toggleDoToday = (taskId) => {
-        if (!isSansanUser) return;
-        const nextTasks = tasks.map(t => t.id === taskId ? { ...t, doToday: !t.doToday } : t);
-        saveProjectToFirestore({ ...activeProject, tasks: nextTasks });
-        const t = tasks.find(x => x.id === taskId);
-        showAlert(t && !t.doToday ? '🟠 今日やるタスクに設定しました' : '⚪ 今日やるから除外しました');
-      };
-
-      // 💡 修正：Babelの解釈エラーを完全にシャットアウトした正常なコログマスタ
-      const toggleTaskBlocked = (taskId) => {
-        if (!isSansanUser) return;
-        const dStr = getJSTDateTimeString();
-        const updatedTasks = tasks.map(t => {
-          if (t.id !== taskId) return t;
-          const nextBlocked = !t.isBlocked;
-          let logText = ''; let newBlockedDays = t.blockedDays || 0; let nextStartedAt = t.blockedStartedAt;
-          if (nextBlocked) {
-            logText = '🟡 連絡待ち(保留)に突入'; nextStartedAt = String(Date.now());
-          } else {
-            logText = '🔵 連絡待ち(保留)を解除';
-            if (nextStartedAt) {
-              const diff = Math.max(0, Math.round((Date.now() - Number(nextStartedAt)) / (1000 * 60 * 60 * 24)));
-              newBlockedDays += diff;
-            }
-            nextStartedAt = null;
-          }
-          return { ...t, isBlocked: nextBlocked, hasBeenBlocked: true, blockedStartedAt: nextStartedAt, blockedDays: newBlockedDays, contextLogs: [{ id: `b_log_${Date.now()}`, date: dStr, text: logText, isSystem: true }, ...(t.contextLogs || [])] };
-        });
-        saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
-        showAlert('連絡待ち状態を切り替えました');
-      };
-
-      const handleTaskEditDeptChange = (deptKey) => {
-        let finalInteractor = editFormData.interactor || '';
-        if (deptKey === 'backoffice') {
-          finalInteractor = user?.displayName || '自分';
-        } else {
-          const dName = deptList.find(d => d.key === deptKey)?.label || '他部署';
-          finalInteractor = `${dName} 担当者`;
-        }
-        setEditFormData(p => ({ ...p, department: deptKey, interactor: finalInteractor }));
-      };
-
       const handleAddTask = (stepId, e) => {
         e.preventDefault(); if (!newTaskTitle.trim() || !isSansanUser) return;
         const todayStr = getJSTDateString(); const currentSeq = activeProject.taskSequence || tasks.length; const nextSeq = currentSeq + 1;
@@ -425,7 +361,7 @@
 
         const newTask = { id: newId, stepId, sequenceId: nextSeq, title: newTaskTitle.trim(), description: newTaskDesc.trim(), assignee: finalInteractor, department: newTaskDept, interactor: finalInteractor, dueDate: newTaskDueDate || todayStr, status: 'pending', isHighPriority: false, doToday: false, startedAt: null, completedAt: null, attachedImages: [], contextLogs: [], links: [], level: Number(newTaskLevel), isBlocked: false, hasBeenBlocked: false, blockedDays: 0 };
         saveProjectToFirestore({ ...activeProject, taskSequence: nextSeq, tasks: [...tasks, newTask] });
-        setAddingTaskStepId(null); setNewTaskTitle(''); setNewTaskDesc(''); setNewTaskImages([]);
+        setAddingTaskStepId(null); setNewTaskTitle(''); setNewTaskDesc('');
         showAlert('タスクを追加しました');
       };
 
@@ -443,22 +379,8 @@
       
       const deleteTask = (taskId) => triggerConfirm('削除', '削除しますか？', () => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.filter(t => t.id !== taskId) }); showAlert('削除完了'); });
 
-      const handleCreateDept = async (e) => {
-        e.preventDefault(); if (!newDeptLabel.trim() || !isSansanUser) return;
-        const newKey = `dept_${Date.now()}`, newDept = { key: newKey, label: newDeptLabel.trim(), color: newDeptColor, order: deptList.length };
-        updateData('depts', [...deptList, newDept]); setNewDeptLabel(''); showAlert('追加完了');
-      };
-
-      const handleDeleteDept = (key) => {
-        if(deptList.length<=1) return showAlert('最低1要素必要'); if(!isSansanUser) return;
-        triggerConfirm('部署マスタ削除','マスタから削除しますか？', async () => {
-          updateData('depts', deptList.filter(d=>d.key!==key)); showAlert('削除完了');
-        });
-      };
-      const updateDeptColorSetting = async (k, c) => { if (!isSansanUser) return; updateData('depts',deptList.map(d=>d.key===k?{...d,color:c}:d)); };
       const handleRenameDeptChange = (k, n) => { if (!isSansanUser) return; setDeptList(p=>p.map(d=>d.key===k?{...d,label:n}:d)); };
       const handleRenameDeptSave = async (k) => { if (!isSansanUser) return; updateData('depts',deptList); };
-      const moveDeptOrder = async (i, dir) => { if (!isSansanUser) return; const t=i+dir; if(t<0||t>=deptList.length)return; const l=[...deptList]; [l[i],l[t]]=[l[t],l[i]]; const o=l.map((d,idx)=>({...d,order:idx})); setDeptList(o); updateData('depts',o); };
       
       const handleOpenProjectFromDb = (proj) => { 
         if (!proj) return;
@@ -542,7 +464,7 @@
             </div>
           )}
 
-          {/* 🧱 最初から1ミリも動かない完全固定された「3層スタック不透明天井天井コンテナ」 */}
+          {/* 🧱 最初から1ミリも動かない完全固定された「3層スタック不透明天井コンテナ」 */}
           <div ref={headerWrapperRef} className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-md">
             {/* 1層目：アプリケーション基本バー */}
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
@@ -760,7 +682,7 @@
                                               {task.contextLogs?.map(log => (
                                                 <div key={log.id} className="p-1.5 rounded-lg border text-[11px] bg-slate-55 dark:bg-slate-900/40 border-slate-202 dark:border-slate-700 flex justify-between items-center gap-2 shadow-2xs">
                                                   <div className="flex-1 min-w-0">
-                                                    <div className="text-[8.5px] text-slate-404 flex justify-between font-mono"><span>{log.isSystem ? 'SYSTEM' : 'LOG'}</span><span>{log.date}</span></div>
+                                                    <div className="text-[8.5px] text-slate-4404 flex justify-between font-mono"><span>{log.isSystem ? 'SYSTEM' : 'LOG'}</span><span>{log.date}</span></div>
                                                     <p className="whitespace-pre-wrap mt-0.5 leading-relaxed font-semibold text-slate-700 dark:text-slate-200">{log.text}</p>
                                                   </div>
                                                   {!log.isSystem && task.status !== 'completed' && (
@@ -879,12 +801,12 @@
             <div className="fixed inset-0 bg-slate-955/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in" onClick={() => setShowSettingsModal(false)}>
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[85vh] relative" onClick={e => e.stopPropagation()}>
                 <div className="absolute top-4 right-4">
-                  <button onClick={() => setShowSettingsModal(false)} className="text-slate-400 font-bold text-xl hover:text-slate-805 dark:text-slate-200 dark:hover:text-white transition-colors">×</button>
+                  <button onClick={() => setShowSettingsModal(false)} className="text-slate-400 font-bold text-xl hover:text-slate-850 dark:text-slate-200 dark:hover:text-white transition-colors">×</button>
                 </div>
                 <h2 className="text-base font-black mb-4 text-slate-850 dark:text-white">システム環境マスタ設定</h2>
                 <div className="flex-1 overflow-y-auto pr-2 space-y-4 text-xs font-bold text-slate-705 dark:text-slate-300 scrollbar-thin">
                   <div className="bg-slate-55 dark:bg-slate-900 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 flex justify-between items-center gap-4">
-                    <p className="text-[10px] text-slate-404 leading-normal">現在保持しているローカルマスタを一度破棄し、実例ECD新商品設計デモ用シミュレーションデータを再投入します。</p>
+                    <p className="text-[10px] text-slate-404 leading-normal">現在保持しているローカルマスタを一度破棄し、実例ECD新商品設計デモ用シミュレーションデータを再注入します。</p>
                     <button type="button" onClick={() => { triggerConfirm('デモデータ投入', 'データが上書きされます。よろしいですか？', () => { setFolders(initialFolders); setDeptList(initialDepts); setProjects(initialProjects); localStorage.setItem('pl_folders', JSON.stringify(initialFolders)); localStorage.setItem('pl_depts', JSON.stringify(initialDepts)); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); showAlert('シミュレーションデータを再投入しました。'); setShowSettingsModal(false); }); }} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl shrink-0 font-black shadow-sm">データ初期化生成</button>
                   </div>
                   <div className="space-y-2">
