@@ -66,14 +66,26 @@
   <script type="text/babel" data-type="module">
     const { useState, useMemo, useEffect, useRef } = React;
 
-    // 🎨 グローバル安全カラー定義
+    // 🎨 グローバル安全カラー定義（🔑 祝・PURPLEを正式追加実装）
     const colorClassesMap = {
       slate: { text: 'text-slate-700 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-650', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350' },
       blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200' },
       emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200' },
       amber: { text: 'text-amber-850 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200' },
       rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200' },
+      purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#2b1b3d]', border: 'border-purple-200 dark:border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-50 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200' },
       orange: { text: 'text-orange-700 dark:text-orange-300', bg: 'bg-[#fff7ed] dark:bg-[#431407]/40', border: 'border-orange-200 dark:border-orange-800', borderStrong: 'border-orange-300 dark:border-orange-600', badge: 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 dark:text-orange-200' }
+    };
+
+    // 🛠️ 視覚化ハック：英語カラーを直感的な日本語ラベルにマッピングする辞書（🔑 purple追記）
+    const colorLabels = {
+      slate: '⚫ グレー (システム等)',
+      blue: '🔵 ブルー (営業・顧客面面)',
+      emerald: '🟢 グリーン (法務・リーガル)',
+      amber: '🟡 イエロー (経理・財務)',
+      rose: '🔴 ローズ (推進事務・コア)',
+      purple: '🟣 パープル (開発・クリエイティブ)',
+      orange: '🟠 オレンジ (重要アラート)'
     };
 
     const TODAY_STR = '2026-05-24';
@@ -121,7 +133,7 @@
           title: editTitle, 
           description: editDesc, 
           department: editDept,
-          deptLabel: targetDept.label, // 部署変更時にフチ色とバッジラベルを一撃連動
+          deptLabel: targetDept.label, 
           deptColor: targetDept.color,
           dueDate: editDueDate, 
           level: Number(editLevel)
@@ -151,7 +163,10 @@
             <div>
               <label className="text-[10px] text-slate-404">主担当部署</label>
               <select value={editDept} onChange={e => setEditDept(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white">
-                {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+                {deptList.map(d => {
+                  const labelDetail = colorLabels[d.color] ? ` (${colorLabels[d.color].split(' ')[0]})` : '';
+                  return <option key={d.key} value={d.key}>{d.label}</option>;
+                })}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -195,7 +210,6 @@
               <h4 className="font-extrabold text-sm text-slate-850 dark:text-slate-150 leading-tight break-all">{task.title}</h4>
               <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-bold mt-1.5 text-slate-404">
                 <span className={`px-1.5 py-0.5 border rounded ${tkCls?.badge || 'bg-slate-202'}`}>{task.deptLabel || '他部署'}</span>
-                {/* 🛠️ クレンジング：「To:自分」などの不要なテキストを完全消去してスッキリ化 */}
                 <span className={`font-mono ${isOver ? 'text-rose-605 font-black' : ''}`}>期日: {task.dueDate}</span>
               </div>
             </div>
@@ -263,7 +277,6 @@
       const [newTitle, setNewTitle] = useState('');
       const [newDept, setNewDept] = useState('backoffice');
       const [newDueDate, setNewDueDate] = useState('2026-06-10');
-      const [newLevel, setNewLevel] = useState(1);
 
       const stepTksAll = step.tasks || [];
       const stpProg = useMemo(() => {
@@ -288,7 +301,7 @@
         const newTask = {
           id: `t_${Date.now()}`, title: newTitle.trim(), description: '', assignee: '自分', department: newDept,
           deptLabel: targetDept.label, deptColor: targetDept.color, interactor: '自分', dueDate: newDueDate,
-          status: 'pending', doToday: false, startedAt: null, completedAt: null, contextLogs: [], level: Number(newLevel), isBlocked: false
+          status: 'pending', doToday: false, startedAt: null, completedAt: null, contextLogs: [], level: 1, isBlocked: false
         };
         onAddTask(step.id, newTask);
         setNewTitle('');
@@ -299,7 +312,7 @@
         <div className={`bg-white dark:bg-slate-900 rounded-3xl shadow-sm border-4 overflow-hidden transition-all ${isCollapsed ? 'border-slate-202 dark:border-slate-800' : cClass?.borderStrong || 'border-slate-350'}`}>
           <div 
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-4 border-b dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 select-none cursor-pointer bg-slate-55 dark:bg-slate-850"
+            className="p-4 border-b dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 select-none cursor-pointer bg-slate-55 dark:bg-slate-855"
           >
             <div className="flex flex-wrap items-center gap-3">
               <span className="bg-slate-600 text-white font-black text-[10px] px-2 py-0.5 rounded shadow-2xs">STEP {index + 1}</span>
@@ -380,7 +393,7 @@
       );
     }
 
-    // 👑 総支配人：アプリケーション最上位コア（部署マスタの編集ロジック完全実装）
+    // 👑 総支配人：アプリケーション最上位コア
     function App() {
       const fileInputRef = useRef(null);
       const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -398,7 +411,6 @@
       const [currentProjectId, setCurrentProjectId] = useState('p1');
       const [taskFilter, setTaskFilter] = useState({ pending: true, in_progress: true, completed: false, not_applicable: false });
 
-      // 部署追加用の一時State
       const [newDeptLabel, setNewDeptLabel] = useState('');
       const [newDeptColor, setNewDeptColor] = useState('slate');
 
@@ -426,7 +438,6 @@
         localStorage.setItem('pl_folders', JSON.stringify(folders));
       }, [projects, deptList, folders]);
 
-      // 🛠️ 部署マスタの新規追加
       const handleAddDeptMaster = (e) => {
         e.preventDefault();
         if (!newDeptLabel.trim()) return;
@@ -442,14 +453,12 @@
         showAlert(`部署「${newDeptObj.label}」を新設しました。`);
       };
 
-      // 🛠️ 部署マスタのリネーム・カラー変更変更処理
       const handleUpdateDeptMaster = (key, fields) => {
         setDeptList(prev => prev.map(d => d.key === key ? { ...d, ...fields } : d));
       };
 
-      // 🛠️ 部署マスタの削除処理
       const handleDeleteDeptMaster = (key, label) => {
-        triggerConfirm('部署マスタの削除', `部署「${label}」を削除しますか？ (既存のタスクに焼き付けられた文字は維持されます)`, () => {
+        triggerConfirm('部署マスタの削除', `部署「${label}」を削除しますか？`, () => {
           setDeptList(prev => prev.filter(d => d.key !== key));
           showAlert('部署をマスタから削除しました。');
         });
@@ -733,7 +742,7 @@
             )}
           </div>
 
-          {/* 🛠️ 大幅強化：システム環境マスタ設定（部署の追加・編集・カラー選択機能を完全搭載） */}
+          {/* 設定モーダル */}
           {showSettingsModal && (
             <div className="fixed inset-0 bg-slate-955/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={() => setShowSettingsModal(false)}>
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[85vh] relative" onClick={e => e.stopPropagation()}>
@@ -745,39 +754,36 @@
                   <form onSubmit={handleAddDeptMaster} className="bg-slate-55 dark:bg-slate-900/60 border border-slate-202 dark:border-slate-700 p-4 rounded-2xl space-y-3">
                     <span className="text-indigo-500 font-extrabold block text-[11px]">🏢 組織内・新しい保持部署の新設</span>
                     <div className="flex flex-wrap sm:flex-nowrap gap-2 items-end">
-                      <div className="flex-1 min-w-[150px]"><label className="block text-[10px] text-slate-404 mb-1">部署名</label><input required type="text" placeholder="例: 広報、人事" value={newDeptLabel} onChange={e => setNewDeptLabel(e.target.value)} className="w-full border p-2 rounded-xl dark:bg-slate-800 border-slate-202 text-slate-805 dark:text-white font-bold" /></div>
+                      <div className="flex-1 min-w-[150px]"><label className="block text-[10px] text-slate-404 mb-1">部署名</label><input required type="text" placeholder="例: 開発、デザイン" value={newDeptLabel} onChange={e => setNewDeptLabel(e.target.value)} className="w-full border p-2 rounded-xl dark:bg-slate-800 border-slate-202 text-slate-805 dark:text-white font-bold" /></div>
                       <div>
                         <label className="block text-[10px] text-slate-404 mb-1">テーマカラー</label>
                         <select value={newDeptColor} onChange={e => setNewDeptColor(e.target.value)} className="border p-2 rounded-xl dark:bg-slate-800 border-slate-202 text-slate-805 dark:text-white font-bold bg-white">
-                          {Object.keys(colorClassesMap).map(c => <option key={c} value={c}>{c}カラー</option>)}
+                          {Object.keys(colorClassesMap).map(c => <option key={c} value={c}>{colorLabels[c] || c}</option>)}
                         </select>
                       </div>
                       <button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded-xl font-black shadow-md hover:bg-indigo-700 shrink-0">部署を新設</button>
                     </div>
                   </form>
 
-                  {/* ✏️ 既存部署マスタのインライン一覧・編集・削除 */}
+                  {/* 既存部署マスタの一覧 */}
                   <div className="space-y-2">
                     <span className="text-slate-705 dark:text-slate-300 font-extrabold block text-[11px] border-b pb-1 dark:border-slate-700">📋 現在の登録部署マスタ一覧・カラーカスタム</span>
                     <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1">
                       {deptList.map((dept) => (
                         <div key={dept.key} className="flex items-center gap-2 bg-slate-55 border p-2.5 rounded-xl dark:bg-slate-900/40 dark:border-slate-700 border-slate-202 text-slate-805 dark:text-white shadow-2xs">
-                          {/* 部署ラベル編集 */}
                           <input 
                             type="text" 
                             value={dept.label} 
                             onChange={(e) => handleUpdateDeptMaster(dept.key, { label: e.target.value })}
                             className="flex-1 border p-1.5 rounded-xl bg-white dark:bg-slate-800 border-slate-202 font-extrabold text-xs" 
                           />
-                          {/* テーマカラーインライン選択 */}
                           <select 
                             value={dept.color} 
                             onChange={(e) => handleUpdateDeptMaster(dept.key, { color: e.target.value })}
                             className="p-1.5 border rounded-xl bg-white dark:bg-slate-800 text-xs font-bold"
                           >
-                            {Object.keys(colorClassesMap).map(c => <option key={c} value={c}>{c}</option>)}
+                            {Object.keys(colorClassesMap).map(c => <option key={c} value={c}>{colorLabels[c] || c}</option>)}
                           </select>
-                          {/* マスタ削除ボタン */}
                           <button 
                             type="button" 
                             onClick={() => handleDeleteDeptMaster(dept.key, dept.label)}
