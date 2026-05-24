@@ -162,7 +162,7 @@
         } else if (daysDiff <= 3) {
           return <span className="text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-955/40 border border-amber-200 dark:border-amber-900/60 px-1.5 py-0.5 rounded">⏳ あと{daysDiff}日</span>;
         } else {
-          return <span className="text-slate-500 dark:text-slate-400 font-semibold bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">あと{daysDiff}日</span>;
+          return <span className="text-slate-500 dark:text-slate-404 font-semibold bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">あと{daysDiff}日</span>;
         }
       }, [daysDiff]);
 
@@ -249,8 +249,9 @@
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-              <div><label className="text-[10px] text-slate-404">期日</label><input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
-              <div><label className="text-[10px] text-slate-404">ウエイト</label><select value={editLevel} onChange={setEditLevel(Number(e.target.value))} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white"><option value="1">🟢 1P</option><option value="2">🟡 2P</option><option value="4">🔴 4P</option></select></div>
+              <div><label className="block text-[10px] text-slate-404 mb-0.5">期日</label><input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white font-mono" /></div>
+              {/* 🛠️ バグ修正完了：onChange={e => setEditLevel(...)} として引数 e を正確に配備！ */}
+              <div><label className="text-[10px] text-slate-404">ウエイト</label><select value={editLevel} onChange={e => setEditLevel(Number(e.target.value))} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white"><option value="1">🟢 1P</option><option value="2">🟡 2P</option><option value="4">🔴 4P</option></select></div>
             </div>
             <div className="flex justify-end gap-2 pt-2"><button onClick={(e) => { e.stopPropagation(); setIsEditing(false); }} className="bg-slate-202 dark:bg-slate-700 px-3 py-1.5 rounded-xl">戻る</button><button onClick={handleSave} className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl">保存</button></div>
           </div>
@@ -314,7 +315,6 @@
 
           {isDetailsOpen && (
             <div className="px-5 pb-4 space-y-3 animate-in fade-in duration-100" onClick={e => e.stopPropagation()}>
-              
               {normalizedUrls.length > 0 && (
                 <div className="text-left border-t border-dashed dark:border-slate-700 pt-3">
                   <span className="text-[9.5px] font-bold text-slate-404 block mb-1">関連リソースリンク集</span>
@@ -381,7 +381,7 @@
       );
     }
 
-    // 🧱 中堅レイヤー：STEP工程コンポーネント（🔑 新規起票の期日バグを完全根絶）
+    // 🧱 中堅レイヤー：STEP工程コンポーネント（🛠️ 新機能：KPI傾斜ポイント進捗計算を配備）
     function StepSection({ step, index, taskFilter, deptList, onUpdateStep, onDeleteStep, onAddTask, onUpdateTask, onDeleteTask, onMoveTask }) {
       const [isCollapsed, setIsCollapsed] = useState(false);
       const [isAddingTask, setIsAddingTask] = useState(false);
@@ -394,15 +394,21 @@
 
       const [newTitle, setNewTitle] = useState('');
       const [newDept, setNewDept] = useState('backoffice');
-      
-      // 🛠️ カイゼン：新規タスク追加フォームの期日デフォルトを「今日（2026-05-24）」へ最速同期
       const [newDueDate, setNewDueDate] = useState(TODAY_STR);
 
       const stepTksAll = step.tasks || [];
+
+      // 🛠️ 新機能：この工程(STEP)内の進捗率を件数ではなく「タスクのウエイト合計」で傾斜再計算
       const stpProg = useMemo(() => {
         if (stepTksAll.length === 0) return 0;
         const valid = stepTksAll.filter(t => t.status !== 'not_applicable');
-        return valid.length === 0 ? 100 : Math.round((valid.filter(t => t.status === 'completed').length / valid.length) * 100);
+        if (valid.length === 0) return 100;
+
+        // 総ポイント数と完了ポイント数の集計
+        const totalPoints = valid.reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+        const completedPoints = valid.filter(t => t.status === 'completed').reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+        
+        return Math.round((completedPoints / totalPoints) * 100);
       }, [stepTksAll]);
 
       const cClass = colorClassesMap[step.deptColor] || colorClassesMap.slate;
@@ -421,13 +427,13 @@
         
         const newTask = {
           id: `t_${Date.now()}`, title: newTitle.trim(), description: '', assignee: '自分', department: newDept,
-          deptLabel: targetDept.label, deptColor: targetDept.color, interactor: '自分', dueDate: newDueDate, // 選択された期日を正確に焼き付け
+          deptLabel: targetDept.label, deptColor: targetDept.color, interactor: '自分', dueDate: newDueDate,
           status: 'pending', doToday: false, startedAt: null, completedAt: null, contextLogs: [], level: 1, isBlocked: false,
           urls: [], nextAction: ''
         };
         onAddTask(step.id, newTask);
         setNewTitle('');
-        setNewDueDate(TODAY_STR); // 🔑 次回起票のためにデフォルトを「今日」にリセット
+        setNewDueDate(TODAY_STR);
         setIsAddingTask(false);
       };
 
@@ -508,7 +514,6 @@
                       <div><label className="block text-[10px] text-slate-404 mb-0.5">タスク名 *</label><input required type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full p-1.5 border rounded-xl dark:bg-slate-900 border-slate-202 text-slate-805 dark:text-white" /></div>
                       <div className="grid grid-cols-2 gap-2">
                         <div><label className="block text-[10px] text-slate-404 mb-0.5">保持部署</label><select value={newDept} onChange={e => setNewDept(e.target.value)} className="w-full p-1.5 border rounded-xl dark:bg-slate-900 border-slate-202 text-slate-805 dark:text-white">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-                        {/* 🛠️ バグ修正：onChange内を e.target.value に書き換え、自由なカレンダー指定を一撃開通！ */}
                         <div><label className="block text-[10px] text-slate-404 mb-0.5">期日</label><input type="date" value={newDueDate} onChange={e => setNewDueDate(e.target.value)} className="w-full p-1.5 border rounded-xl dark:bg-slate-900 border-slate-202 text-slate-805 dark:text-white font-mono" /></div>
                       </div>
                     </div>
@@ -521,7 +526,7 @@
       );
     }
 
-    // 👑 総支配人：アプリケーション最上位コア
+    // 👑 総支配人：アプリケーション最上位コア（🛠️ 新機能：案件全体のKPI傾斜進捗計算を配備）
     function App() {
       const fileInputRef = useRef(null);
       const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -583,13 +588,21 @@
         return { overdue, upcoming };
       }, [activeProject]);
 
+      // 🛠️ 新機能：ヘッダー右上の全体進捗率（％）をタスク件数ではなく「タスクポイント合計」で傾斜再計算
       const projectProgress = useMemo(() => {
         if (!activeProject?.stepList) return 0;
         let allTasks = [];
         activeProject.stepList.forEach(s => { if (s.tasks) allTasks = [...allTasks, ...s.tasks]; });
         if (allTasks.length === 0) return 0;
+
         const valid = allTasks.filter(t => t.status !== 'not_applicable');
-        return valid.length === 0 ? 100 : Math.round((valid.filter(t => t.status === 'completed').length / valid.length) * 100);
+        if (valid.length === 0) return 100;
+
+        // 全体の総ポイントと完了ポイントを傾斜集計（4Pタスクが超有利に効く！）
+        const totalPoints = valid.reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+        const completedPoints = valid.filter(t => t.status === 'completed').reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+        
+        return Math.round((completedPoints / totalPoints) * 100);
       }, [activeProject]);
 
       useEffect(() => {
@@ -709,8 +722,9 @@
         reader.readAsText(file);
       };
 
+      // 🛠️ 新機能：マスタのポイント計算に対応したデモデータを初期配置
       const injectDemoData = () => {
-        const demoProjects = [{ id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 2, stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが作成されました。', isSystem: true }], level: 1, isBlocked: false, nextAction: '推進メンバーに論点確認シートを展開する', urls: [{ id: 'u1_1', name: '新商品 ECD設計書Wiki', url: 'https://sansan.com' }, { id: 'u1_2', name: 'ドライブ共有フォルダ', url: 'https://google.com' }] }] }, { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false, nextAction: '法務のAさんに修正規約のドラフトをチャットする', urls: [{ id: 'u2_1', name: '法務リーガル相談スレッド', url: 'https://sansan.co.jp' }] }] }] }];
+        const demoProjects = [{ id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 2, stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが作成されました。', isSystem: true }], level: 1, isBlocked: false, urlName: '新商品 ECD設計書Wiki', url: 'https://sansan.com', nextAction: '推進メンバーに論点確認シートを展開する' }] }, { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false, urlName: '法務リーガル相談スレッド', url: 'https://sansan.co.jp', nextAction: '法務のAさんに修正規約のドラフトをチャットする' }] }] }];
         setFolders(initialFolders); setDeptList(initialDepts); setProjects(demoProjects); setSelectedFolderId('f1'); setCurrentProjectId('p1');
         showAlert('デモデータを安全に再生成しました！'); setShowSettingsModal(false);
       };
@@ -718,14 +732,18 @@
       const handleMockLogin = (email) => {
         const mockUser = { uid: 'mock_' + Date.now(), email, displayName: email.split('@')[0] };
         localStorage.setItem('pl_mock_user', JSON.stringify(mockUser)); setUser(mockUser);
-        showAlert(`Sansan推進コアメンバーとして認証しました。`);
+        showAlert suicide /`Sansan推進コアメンバーとして認証しました。`;
       };
 
+      // 🛠️ 新機能：データベース画面用の傾斜進捗計算ロジック
       const calculateProjectProgressById = (proj) => {
         let allTasks = []; proj.stepList?.forEach(s => { if (s.tasks) allTasks = [...allTasks, ...s.tasks]; });
         if (allTasks.length === 0) return 0;
         const valid = allTasks.filter(t => t.status !== 'not_applicable');
-        return valid.length === 0 ? 100 : Math.round((valid.filter(t => t.status === 'completed').length / valid.length) * 100);
+        if (valid.length === 0) return 100;
+        const totalPoints = valid.reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+        const completedPoints = valid.filter(t => t.status === 'completed').reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+        return Math.round((completedPoints / totalPoints) * 100);
       };
 
       const showAlert = (msg) => { setAlertMessage(msg); setTimeout(() => setAlertMessage(null), 4000); };
