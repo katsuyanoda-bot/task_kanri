@@ -110,7 +110,7 @@
 
     const initialProjects = [];
 
-    // 🛡️ 最下層：現場担当のタスクカード（🔗 URL名＆URL機能拡張）
+    // 🛡️ 最下層：現場担当のタスクカード
     function TaskCard({ task, index, totalTasks, onUpdateTask, onDeleteTask, onMoveTask, deptList }) {
       const [isEditing, setIsEditing] = useState(false);
       const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -119,7 +119,6 @@
       const [editDept, setEditDept] = useState(task.department || 'backoffice');
       const [editDueDate, setEditDueDate] = useState(task.dueDate || TODAY_STR);
       const [editLevel, setEditLevel] = useState(task.level || 1);
-      // 🛠️ 新設：URL＆URL名の編集用局所State
       const [editUrlName, setEditUrlName] = useState(task.urlName || '');
       const [editUrl, setEditUrl] = useState(task.url || '');
       const [logInput, setLogInput] = useState('');
@@ -131,16 +130,9 @@
         e.stopPropagation();
         const targetDept = deptList.find(d => d.key === editDept) || { label: '他部署', color: 'slate' };
         onUpdateTask(task.id, (p) => ({
-          ...p, 
-          title: editTitle, 
-          description: editDesc, 
-          department: editDept,
-          deptLabel: targetDept.label, 
-          deptColor: targetDept.color,
-          dueDate: editDueDate, 
-          level: Number(editLevel),
-          urlName: editUrlName.trim(), // 🛠️ 焼き付け保存
-          url: editUrl.trim()          // 🛠️ 焼き付け保存
+          ...p, title: editTitle, description: editDesc, department: editDept,
+          deptLabel: targetDept.label, deptColor: targetDept.color, dueDate: editDueDate, level: Number(editLevel),
+          urlName: editUrlName.trim(), url: editUrl.trim()
         }));
         setIsEditing(false);
       };
@@ -170,9 +162,8 @@
                 {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
               </select>
             </div>
-            {/* 🛠️ 新設：URL名＆URLインプットフォーム */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div><label className="text-[10px] text-slate-404">URL表示名 (例: ドキュメントWiki)</label><input type="text" value={editUrlName} onChange={e => setEditUrlName(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" placeholder="Wiki等" /></div>
+              <div><label className="text-[10px] text-slate-404">URL表示名</label><input type="text" value={editUrlName} onChange={e => setEditUrlName(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" placeholder="Wiki等" /></div>
               <div><label className="text-[10px] text-slate-404">リンクURL (https://...)</label><input type="url" value={editUrl} onChange={e => setEditUrl(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white font-mono" placeholder="https://..." /></div>
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -227,8 +218,6 @@
 
           {isDetailsOpen && (
             <div className="px-5 pb-4 space-y-3 animate-in fade-in duration-100" onClick={e => e.stopPropagation()}>
-              
-              {/* 🛠️ 新設：登録された各種URLへのジャンプボタン（シールド完全防御付き） */}
               {task.url && (
                 <div className="text-left border-t border-dashed dark:border-slate-700 pt-3">
                   <span className="text-[9.5px] font-bold text-slate-404 block mb-1">関連リソースリンク</span>
@@ -236,7 +225,7 @@
                     href={task.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()} // ⚡ リンククリックの衝撃波で詳細が閉じちゃうバグを100%封殺！
+                    onClick={(e) => e.stopPropagation()}
                     className="inline-flex items-center gap-1 text-[11px] font-black bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 px-3 py-1.5 rounded-xl shadow-2xs hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white transition-all"
                   >
                     🔗 {task.urlName || '添付リンクを開く'}
@@ -325,12 +314,11 @@
         e.preventDefault();
         if (!newTitle.trim()) return;
         const targetDept = deptList.find(d => d.key === newDept) || { label: '他部署', color: 'slate' };
-        
         const newTask = {
           id: `t_${Date.now()}`, title: newTitle.trim(), description: '', assignee: '自分', department: newDept,
           deptLabel: targetDept.label, deptColor: targetDept.color, interactor: '自分', dueDate: newDueDate,
           status: 'pending', doToday: false, startedAt: null, completedAt: null, contextLogs: [], level: 1, isBlocked: false,
-          urlName: '', url: '' // 初期空文字
+          urlName: '', url: ''
         };
         onAddTask(step.id, newTask);
         setNewTitle('');
@@ -341,7 +329,7 @@
         <div className={`bg-white dark:bg-slate-900 rounded-3xl shadow-sm border-4 overflow-hidden transition-all ${isCollapsed ? 'border-slate-202 dark:border-slate-800' : cClass?.borderStrong || 'border-slate-350'}`}>
           <div 
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-4 border-b dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 select-none cursor-pointer bg-slate-55 dark:bg-slate-850"
+            className="p-4 border-b dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 select-none cursor-pointer bg-slate-55 dark:bg-slate-855"
           >
             <div className="flex flex-wrap items-center gap-3">
               <span className="bg-slate-600 text-white font-black text-[10px] px-2 py-0.5 rounded shadow-2xs">STEP {index + 1}</span>
@@ -392,9 +380,11 @@
                   if (!taskFilter[task.status]) return null;
                   return (
                     <div key={task.id} id={`task-anchor-${task.id}`} onClick={e => e.stopPropagation()}>
+                      {/* 🛠️ 爆速オペ修正：ここに正しい子レーンコンテキスト (step.id) を乗せたアロー命令を再結合！ */}
                       <TaskCard 
                         task={task} index={tkIdx} totalTasks={stepTksAll.length} deptList={deptList} 
-                        onUpdateTask={onUpdateTask} onDeleteTask={onDeleteTask} onMoveTask={onMoveTask} 
+                        onUpdateTask={onUpdateTask} onDeleteTask={onDeleteTask} 
+                        onMoveTask={(tid, dir) => onMoveTask(step.id, tid, dir)} 
                       />
                     </div>
                   );
@@ -529,6 +519,7 @@
         });
       };
 
+      // 🛠️ 爆速オペ修正：一時変数（temp）を使った、BabelStandalone環境でも100%確実に動く泥臭いスワップロジック
       const handleMoveTaskInStep = (stepId, taskId, direction) => {
         setProjects(prev => prev.map(p => {
           if (p.id !== activeProject.id) return p;
@@ -541,7 +532,11 @@
               if (idx === -1) return s;
               const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
               if (targetIdx < 0 || targetIdx >= tList.length) return s;
-              [tList[idx], tList[targetIdx]] = [tList[targetIdx], tList[idx]];
+              
+              const temp = tList[idx];
+              tList[idx] = tList[targetIdx];
+              tList[targetIdx] = temp;
+              
               return { ...s, tasks: tList };
             })
           };
@@ -590,7 +585,6 @@
         reader.readAsText(file);
       };
 
-      // 🛠️ デモデータ投入時にも、あらかじめダミーURLを仕込んでイメージしやすく拡張
       const injectDemoData = () => {
         const demoProjects = [{ id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 2, stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが作成されました。', isSystem: true }], level: 1, isBlocked: false, urlName: '新商品 ECD設計書Wiki', url: 'https://sansan.com' }] }, { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false, urlName: '法務リーガル相談スレッド', url: 'https://sansan.co.jp' }] }] }];
         setFolders(initialFolders); setDeptList(initialDepts); setProjects(demoProjects); setSelectedFolderId('f1'); setCurrentProjectId('p1');
@@ -611,7 +605,7 @@
       };
 
       const showAlert = (msg) => { setAlertMessage(msg); setTimeout(() => setAlertMessage(null), 4000); };
-      const triggerConfirm = (title, message, onConfirmAction) => setConfirmModal({ isOpen: true, title, message, onConfirm: () => { onConfirmAction(); closeConfirm(); } });
+      const triggerConfirm = (title, message, onConfirmAction) => { setConfirmModal({ isOpen: true, title, message, onConfirm: () => { onConfirmAction(); closeConfirm(); } }); };
       const closeConfirm = () => setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null });
 
       useEffect(() => {
@@ -661,7 +655,7 @@
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
               <div className="flex items-center gap-3">
                 <div className="bg-indigo-600 text-white p-2 rounded-2xl font-black text-sm">PL</div>
-                <div><h1 className="text-xs font-black dark:text-white leading-none">Project Loom</h1><p className="text-[9px] text-slate-404 font-extrabold uppercase mt-0.5 tracking-wider">Sansan案件推進専用ダッシュボード</p></div>
+                <div><h1 className="text-xs font-black dark:text-white leading-none">Project Loom</h1><p className="text-[9px] text-slate-404 font-extrabold uppercase mt-0.5 tracking-wider">Sansan案件推進ダッシュボード</p></div>
                 <button onClick={() => setShowAddProjectModal(true)} className="ml-2 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 text-[10px] px-2 py-1 rounded-xl font-black shadow-2xs hover:scale-105 duration-100">➕ 新規案件を起票</button>
               </div>
               <div className="flex bg-slate-150 dark:bg-slate-800 p-0.5 rounded-xl text-xs font-bold border dark:border-slate-700">
