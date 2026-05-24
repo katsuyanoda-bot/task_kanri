@@ -75,7 +75,7 @@
       amber: { text: 'text-amber-850 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200', dot: '🟡' },
       rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200', dot: '🔴' },
       purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#2b1b3d]', border: 'border-purple-200 border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-50 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200', dot: '🟣' },
-      orange: { text: 'text-orange-700 dark:text-orange-300', bg: 'bg-[#fff7ed] dark:bg-[#431407]/40', border: 'border-orange-200 border-orange-800', borderStrong: 'border-orange-300 dark:border-orange-600', badge: 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 dark:text-orange-200', dot: '🟠' }
+      orange: { text: 'text-orange-700 dark:text-orange-300', bg: 'bg-[#fff7ed] dark:bg-[#431407]/40', border: 'border-orange-200 dark:border-orange-800', borderStrong: 'border-orange-300 dark:border-orange-600', badge: 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 dark:text-orange-200', dot: '🟠' }
     };
 
     const colorLabels = {
@@ -119,8 +119,6 @@
       const [editDept, setEditDept] = useState(task.department || 'backoffice');
       const [editDueDate, setEditDueDate] = useState(task.dueDate || TODAY_STR);
       const [editLevel, setEditLevel] = useState(task.level || 1);
-      const [editUrlName, setEditUrlName] = useState(task.urlName || '');
-      const [editUrl, setEditUrl] = useState(task.url || '');
       const [logInput, setLogInput] = useState('');
       const [nextActionInput, setNextActionInput] = useState(task.nextAction || '');
 
@@ -200,7 +198,7 @@
           urls: cleanedUrls,
           url: cleanedUrls[0]?.url || '',
           urlName: cleanedUrls[0]?.name || '',
-          completedAt: p.status !== 'completed' && editTitle ? TODAY_STR : p.completedAt // 完了日の自動スタンプ防衛
+          completedAt: p.status !== 'completed' && editTitle ? TODAY_STR : p.completedAt
         }));
         setIsEditing(false);
       };
@@ -236,7 +234,7 @@
                     onUpdateTask(task.id, p => ({ 
                       ...p, 
                       status: nextStatus,
-                      completedAt: nextStatus === 'completed' ? TODAY_STR : null // 完了日スタンプ回路
+                      completedAt: nextStatus === 'completed' ? TODAY_STR : null
                     }));
                   }}
                   className="bg-slate-100 dark:bg-slate-700 border-none rounded px-1 py-0.5 text-[10px] font-black text-slate-605 dark:text-slate-200 outline-none"
@@ -493,7 +491,7 @@
       );
     }
 
-    // 👑 総支配人：アプリケーション最上位コア
+    // 👑 総支配人：アプリケーション最上位コア（🛡️ 予定vs実績・シンプル期間評価軸 Aエンジン搭載）
     function App() {
       const fileInputRef = useRef(null);
       const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -572,7 +570,7 @@
         return Math.round((completedPoints / totalPoints) * 100);
       }, [activeProject]);
 
-      // 🛠️ 期間ズレ＆評価ラベリングエンジン（NOW/PAST）の徹底強化
+      // 🛠️ 予定vs実績・案A 評価集計ブレイン回路
       const projectTimeframeMetrics = useMemo(() => {
         const metrics = {};
         projects.forEach(proj => {
@@ -603,7 +601,7 @@
             pastDeptBreakdown[dKey].count += 1;
           });
 
-          // 🛠️ バグ修正：画面表示されている「最終完了日」の文字列と100%合致するよう日数計算回路を再構成
+          // 🛠️ バグ修正：画面の開始〜最終完了日と右上の所要日数を1ミリも矛盾なく完全に同期させる
           let durationDays = null;
           let calculatedEndDateStr = TODAY_STR;
           if (proj.evaluation?.actualEndDate) {
@@ -621,43 +619,36 @@
             const start = new Date(proj.startDate);
             const end = new Date(calculatedEndDateStr);
             const diffTime = end.setHours(0,0,0,0) - start.setHours(0,0,0,0);
-            durationDays = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1); // 開始日当日を含める補正
+            durationDays = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1); // 始期補正
           }
 
-          // 🛠️ 新設：期間に対する評価軸（スピードスコア）判定ロジック
-          let speedRating = '✅ 計画通り';
-          let speedColor = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+          // 🛠️ 案A：目標期間（予定）との比較レーティング
+          const targetDays = Number(proj.evaluation?.targetDurationDays) || 30;
+          let durationLabel = '';
+          let durationColor = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+          
           if (durationDays) {
-            const pointsPerDay = pastPoints / durationDays;
-            if (pointsPerDay >= 1.0) {
-              speedRating = '⚡ 爆速推進 (前倒し完了)';
-              speedColor = 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900';
-            } else if (durationDays > 14 && pastPoints <= 3) {
-              speedRating = '⚠️ 長期化 (プロセス改善推奨)';
-              speedColor = 'bg-rose-50 text-rose-700 dark:bg-rose-955/40 dark:text-rose-300 border border-rose-200 dark:border-rose-900';
+            const diff = targetDays - durationDays;
+            if (diff > 0) {
+              durationLabel = `予定より ${diff}日 前倒し完了 🎉`;
+              durationColor = 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800';
+            } else if (diff < 0) {
+              durationLabel = `予定より ${Math.abs(diff)}日 超過遅延 ⚠️`;
+              durationColor = 'bg-rose-50 text-rose-700 dark:bg-rose-955/40 dark:text-rose-300 border border-rose-200 dark:border-rose-800';
+            } else {
+              durationLabel = 'オンタイム完了（予定通り） ✅';
+              durationColor = 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800';
             }
-          }
-
-          // 🛠️ 新設：リソース消費量（P数）に対する格付けラベル
-          let loadClass = '🌱 ライト級案件';
-          let loadColor = 'bg-slate-100 text-slate-505';
-          if (pastPoints >= 10) {
-            loadClass = '🐘 ヘビー級案件 (高負荷実績)';
-            loadColor = 'bg-purple-50 text-purple-600 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800';
-          } else if (pastPoints >= 5) {
-            loadClass = '⚖️ ミドル級案件';
-            loadColor = 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800';
           }
 
           metrics[proj.id] = {
             now: { tasks: nowTasks, totalPoints: nowPoints, totalCount: nowTasks.length, deptBreakdown: Object.values(nowDeptBreakdown).filter(d => d.count > 0) },
             past: { tasks: pastTasks, totalPoints: pastPoints, totalCount: pastTasks.length, deptBreakdown: Object.values(pastDeptBreakdown) },
             durationDays,
+            targetDays,
             endDateStr: calculatedEndDateStr,
-            speedRating,
-            speedColor,
-            loadClass,
-            loadColor
+            durationLabel,
+            durationColor
           };
         });
         return metrics;
@@ -752,7 +743,7 @@
       const handleUpdateProjectEvaluation = (projId, evaluationFields) => {
         setProjects(prev => prev.map(p => {
           if (p.id !== projId) return p;
-          return { ...p, evaluation: { ...(p.evaluation || { tier: 'Tier 2', memo: '', actualEndDate: TODAY_STR }), ...evaluationFields } };
+          return { ...p, evaluation: { ...(p.evaluation || { tier: 'Tier 2', memo: '', actualEndDate: TODAY_STR, targetDurationDays: 30 }), ...evaluationFields } };
         }));
         showAlert('案件の戦略評価を更新しました。');
       };
@@ -769,7 +760,7 @@
         const newProj = {
           id: newId, folderId: newProjFolderId, name: newProjName.trim(), code: newProjCode.trim(), status: 'in_progress', startDate: TODAY_STR, endDate: '2026-06-25', taskSequence: 0,
           stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: TODAY_STR, dueDate: '2026-06-25', leader: '推進担当者', order: 0, tasks: [] }],
-          evaluation: { tier: 'Tier 2', memo: '', actualEndDate: '' }
+          evaluation: { tier: 'Tier 2', memo: '', actualEndDate: '', targetDurationDays: 30 }
         };
         setProjects([...projects, newProj]);
         setCurrentProjectId(newId); setShowAddProjectModal(false); setNewProjName(''); setNewProjCode(''); showAlert('新規プロジェクトを起票しました');
@@ -795,31 +786,44 @@
         reader.readAsText(file);
       };
 
+      // 🛡️ 聖域：suicide文字列を1000%根絶
+      const handleMockLogin = (email) => {
+        const mockUser = { uid: 'mock_' + Date.now(), email, displayName: email.split('@')[0] };
+        localStorage.setItem('pl_mock_user', JSON.stringify(mockUser)); setUser(mockUser);
+        showAlert(`Sansan推進コアメンバーとして認証しました。`);
+      };
+
+      const calculateProjectProgressById = (proj) => {
+        let allTasks = []; proj.stepList?.forEach(s => { if (s.tasks) allTasks = [...allTasks, ...s.tasks]; });
+        if (allTasks.length === 0) return 0;
+        const valid = allTasks.filter(t => t.status !== 'not_applicable');
+        if (valid.length === 0) return 100;
+        const totalPoints = valid.reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+        const completedPoints = valid.filter(t => t.status === 'completed').reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+        return Math.round((completedPoints / totalPoints) * 100);
+      };
+
       const injectDemoData = () => {
         const demoProjects = [
           { 
             id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 3, 
             stepList: [
-              { id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', completedAt: '2026-05-18', doToday: false, startedAt: '2026-05-15', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが完了しました。', isSystem: true }], level: 1, isBlocked: false, urlName: '新商品 ECD設計書Wiki', url: 'https://sansan.com', nextAction: '完了' }] }, 
+              { id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', completedAt: '2026-05-18', doToday: false, startedAt: '2026-05-15', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが完了しました。', isSystem: true }], level: 4, isBlocked: false, urlName: '新商品 ECD設計書Wiki', url: 'https://sansan.com', nextAction: '完了' }] }, 
               { id: 2, name: '法務・営業調整レビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 2, isBlocked: true, urlName: '法務リーガル相談スレッド', url: 'https://sansan.co.jp', nextAction: '法務のAさんに修正規約のドラフトをチャットする' }, { id: 't3', title: '営業推進への展開準備', description: 'リリース周知', assignee: '営業推進担当', department: 'sales', deptLabel: '営業', deptColor: 'blue', interactor: '自分', dueDate: '2026-05-29', status: 'pending', doToday: false, startedAt: '2026-05-20', contextLogs: [], level: 4, isBlocked: false, nextAction: '周知用のSlackスレッドの下書きを作る' }] }
             ],
-            evaluation: { tier: 'Tier 1', memo: '法務のレビュー（2P）が他部署ブロック状態。ここさえ抜ければ残りは営業推進の4Pタスクのみなので、週明けに法務とアライメントを行う。', actualEndDate: '2026-05-24' }
+            evaluation: { tier: 'Tier 1', memo: '法務のレビュー（2P）が他部署ブロック状態。ここさえ抜ければ残りは営業推進の4Pタスクのみなので、週明けに法務とアライメントを行う。', actualEndDate: '2026-05-24', targetDurationDays: 14 }
           },
           {
             id: 'p2', folderId: 'f2', name: '推進コア 効率化インフラ整備', code: 'CORP-2026', status: 'completed', startDate: '2026-04-01', endDate: '2026-05-15', taskSequence: 2, 
             stepList: [
               { id: 1, name: '要件定義とデータ連携', desc: 'インフラ接続', deptKey: 'system', deptLabel: 'システム', deptColor: 'slate', startDate: '2026-04-01', dueDate: '2026-04-20', leader: 'システム部', order: 0, tasks: [{ id: 't4', title: 'DBインフラ設計書レビュー', assignee: 'システムAさん', department: 'system', deptLabel: 'システム', deptColor: 'slate', dueDate: '2026-04-15', status: 'completed', completedAt: '2026-04-12', contextLogs: [], level: 4, isBlocked: false, nextAction: '完了' }, { id: 't5', title: '連携テストの実施', assignee: '推進担当', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', dueDate: '2026-04-20', status: 'completed', completedAt: '2026-04-19', contextLogs: [], level: 1, isBlocked: false, nextAction: '完了' }] }
             ],
-            evaluation: { tier: 'Tier 2', memo: '要件定義から実際のテスト完了まで、システム部主導で大きなトラブルなく完了。所要期間は19日間。', actualEndDate: '2026-04-19' }
+            evaluation: { tier: 'Tier 2', memo: '要件定義から実際のテスト完了まで、システム部主導で大きなトラブルなく完了。所要期間は19日間。', actualEndDate: '2026-04-19', targetDurationDays: 30 }
           }
         ];
         setFolders(initialFolders); setDeptList(initialDepts); setProjects(demoProjects); setSelectedFolderId('f1'); setCurrentProjectId('p1');
         showAlert('デモデータを安全に再生成しました！'); setShowSettingsModal(false);
       };
-
-      const showAlert = (msg) => { setAlertMessage(msg); setTimeout(() => setAlertMessage(null), 4000); };
-      const triggerConfirm = (title, message, onConfirmAction) => { setConfirmModal({ isOpen: true, title, message, onConfirm: () => { onConfirmAction(); closeConfirm(); } }); };
-      const closeConfirm = () => setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null });
 
       useEffect(() => {
         const savedMockUser = localStorage.getItem('pl_mock_user'); if (savedMockUser) setUser(JSON.parse(savedMockUser));
@@ -913,13 +917,13 @@
             )}
           </div>
 
-          {/* メインエリア */}
+          {/* メメインエリア */}
           <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
             {viewMode === 'board' && (
               projects.length === 0 ? (
                 <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 animate-in fade-in duration-500">
                   <p className="text-sm font-black text-slate-404">アクティブな案件プロジェクトがありません。</p>
-                  <p className="text-xs text-slate-404 mt-2">ロゴ右隣 of 「➕ 新規案件を起票」ボタンか、設定からデモデータを投入してください。</p>
+                  <p className="text-xs text-slate-404 mt-2">ロゴ右隣の「➕ 新規案件を起票」ボタンか、設定からデモデータを投入してください。</p>
                 </div>
               ) : (
                 <div className="space-y-8 pb-32">
@@ -943,12 +947,13 @@
               )
             )}
 
+            {/* 🛠️ 最新クレンジング：案A（目標vs実績 期間評価バッジ）完全ドッキング型DB画面 */}
             {viewMode === 'database' && (
               <div className="bg-white dark:bg-slate-800 border rounded-3xl shadow-sm p-6 space-y-6 animate-in fade-in duration-300">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div>
                     <h2 className="text-base font-black dark:text-white">全社横断プロジェクト・戦略コクピットDB</h2>
-                    <p className="text-[11px] text-slate-404 font-semibold mt-1">「NOW (進行中ボトルネック)」と「PAST (完了実績・所要期間)」の2大タイムラインを可視化します。</p>
+                    <p className="text-[11px] text-slate-404 font-semibold mt-1">「NOW（現在の他部署詰まり）」と「PAST（目標期間に対する前倒し・遅延実績）」を1秒で横並び比較します。</p>
                   </div>
                   <div className="flex flex-wrap gap-2 text-xs font-bold">
                     <select value={dbFilterFolderId} onChange={e=>setDbFilterFolderId(e.target.value)} className="border p-2 rounded-xl bg-transparent font-bold text-slate-855 dark:text-white bg-white dark:bg-slate-800"><option value="all">すべての分類</option>{folders?.map(f=><option key={f.id} value={f.id}>{f.name}</option>)}</select>
@@ -965,7 +970,7 @@
                     }
                     return true;
                   }).map(proj => {
-                    const metrics = projectTimeframeMetrics[proj.id] || { now: { totalPoints: 0, totalCount: 0, deptBreakdown: [] }, past: { totalPoints: 0, totalCount: 0, deptBreakdown: [] }, durationDays: null, endDateStr: TODAY_STR, speedRating: '計画通り', speedColor: '', loadClass: '', loadColor: '' };
+                    const metrics = projectTimeframeMetrics[proj.id] || { now: { totalPoints: 0, totalCount: 0, deptBreakdown: [] }, past: { totalPoints: 0, totalCount: 0, deptBreakdown: [] }, durationDays: null, targetDays: 30, endDateStr: TODAY_STR, durationLabel: 'オンタイム', durationColor: '' };
                     const isExpanded = expandedProjectDbId === proj.id;
                     const prog = calculateProjectProgressById(proj);
 
@@ -989,9 +994,12 @@
                           </div>
 
                           <div className="flex items-center gap-4">
-                            {/* 質・量のメタデータ評価バッジの自動配置 */}
-                            <span className={`px-2 py-0.5 text-[10px] font-black rounded ${metrics.loadColor}`}>
-                              {metrics.loadClass.split(' ')[0]} {proj.evaluation?.tier || 'Tier 2'}
+                            <span className={`px-2.5 py-0.5 text-[10.5px] font-black rounded-lg ${
+                              proj.evaluation?.tier === 'Tier 1' ? 'bg-purple-50 text-purple-600 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800' :
+                              proj.evaluation?.tier === 'Tier 2' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800' :
+                              'bg-slate-100 text-slate-505 dark:bg-slate-805 dark:text-slate-350 border border-slate-202 dark:border-slate-700'
+                            }`}>
+                              {proj.evaluation?.tier || 'Tier 2'}
                             </span>
                             
                             <div className="flex items-center gap-2">
@@ -1001,18 +1009,18 @@
                               <span className="text-xs font-black text-indigo-600 dark:text-indigo-404">{prog}%</span>
                             </div>
                             
-                            <span className="text-xs text-slate-404 font-bold">{isExpanded ? '▲ 閉じる' : '▼ タイムライン時間軸を展開'}</span>
+                            <span className="text-xs text-slate-404 font-bold">{isExpanded ? '▲ 閉じる' : '▼ 評価・時間軸分析を展開'}</span>
                           </div>
                         </div>
 
-                        {/* アコーディオン内部（進行中・完了後の完全分離） */}
+                        {/* アコーディオン内部 */}
                         {isExpanded && (
                           <div className="p-5 border-t dark:border-slate-750 bg-white dark:bg-slate-850 animate-in fade-in duration-100 space-y-5">
                             
                             {/* インライン戦略評価パネル */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-55/60 dark:bg-slate-900/30 p-4 rounded-2xl border dark:border-slate-700 text-xs font-bold">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-55/60 dark:bg-slate-900/30 p-4 rounded-2xl border dark:border-slate-700 text-xs font-bold">
                               <div className="space-y-1.5 text-left">
-                                <label className="text-[10px] text-indigo-500 uppercase font-black">🌟 案件の「質」を選択マスタ</label>
+                                <label className="text-[10px] text-indigo-500 uppercase font-black">🌟 案件のインパクト分類（質）</label>
                                 <select 
                                   value={proj.evaluation?.tier || 'Tier 2'}
                                   onChange={(e) => handleUpdateProjectEvaluation(proj.id, { tier: e.target.value })}
@@ -1023,6 +1031,22 @@
                                   <option value="Tier 3">🔹 Tier 3（チーム内効率化パッチ）</option>
                                 </select>
                               </div>
+                              
+                              {/* 🛠️ 新設：案A 目標推進日数のインライン設定欄 */}
+                              <div className="space-y-1.5 text-left">
+                                <label className="text-[10px] text-indigo-500 uppercase font-black">🎯 目標推進期間 (予定枠)</label>
+                                <div className="flex items-center gap-1.5">
+                                  <input 
+                                    type="number" 
+                                    min="1"
+                                    value={metrics.targetDays}
+                                    onChange={(e) => handleUpdateProjectEvaluation(proj.id, { targetDurationDays: Number(e.target.value) || 30 })}
+                                    className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-855 dark:text-white font-mono"
+                                  />
+                                  <span className="text-slate-404 shrink-0">日間</span>
+                                </div>
+                              </div>
+
                               <div className="space-y-1.5 text-left md:col-span-2">
                                 <label className="text-[10px] text-indigo-500 uppercase font-black">📝 推進振り返り・戦略ボトルネックメモ</label>
                                 <textarea 
@@ -1034,7 +1058,7 @@
                               </div>
                             </div>
 
-                            {/* ⏳ 2つの時間軸（進行中・完了後）のクロスオーバー */}
+                            {/* NOW ＆ PAST ２軸マトリクス */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               
                               {/* 🚨 進行中（NOW）タスクの重たさ直感表示 */}
@@ -1042,9 +1066,9 @@
                                 <div className="flex justify-between items-center border-b dark:border-slate-700 pb-2">
                                   <h4 className="text-xs font-black text-rose-550 flex items-center gap-1.5">
                                     <span>🚨 進行中タスク (NOW)</span>
-                                    <span className="bg-rose-50 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 px-2 py-0.5 rounded-md text-[10px]">{metrics.now.totalCount}件 / {metrics.now.totalPoints}P 残量</span>
+                                    <span className="bg-rose-50 text-rose-800 dark:bg-rose-955/60 dark:text-rose-300 px-2 py-0.5 rounded-md text-[10px]">{metrics.now.totalCount}件 / {metrics.now.totalPoints}P 残量</span>
                                   </h4>
-                                  <span className="text-[10px] text-slate-404 font-extrabold">直感可視化：どこが今重い？</span>
+                                  <span className="text-[10px] text-slate-404 font-extrabold">どこが今重い？</span>
                                 </div>
 
                                 {metrics.now.totalCount > 0 ? (
@@ -1055,11 +1079,10 @@
                                           <span className="text-slate-850 dark:text-slate-200 flex items-center gap-1.5">
                                             <span>{colorClassesMap[dept.color]?.dot || '⚫'}</span>
                                             <span>{dept.label}</span>
-                                            {dept.isBlocked && <span className="bg-amber-100 text-amber-800 border border-amber-300 px-1 rounded text-[9px] animate-pulse">⚠️ 連絡待ち詰まり</span>}
+                                            {dept.isBlocked && <span className="bg-amber-100 text-amber-800 border border-amber-300 px-1 rounded text-[9px]">⚠️ 連絡待ち</span>}
                                           </span>
                                           <span className="text-slate-505 font-mono">{dept.points} P</span>
                                         </div>
-                                        {/* 🎨 インジケーター：ウエイトの重さをドットの個数で直感マウント */}
                                         <div className="flex items-center gap-1">
                                           <div className="flex gap-0.5">
                                             {Array.from({ length: dept.points }).map((_, i) => (
@@ -1083,7 +1106,7 @@
                                 )}
                               </div>
 
-                              {/* 🏆 完了後（PAST）の実績内訳 ＆ スピード評価軸 */}
+                              {/* 🏆 完了後（PAST）の実績内訳 ＆ ⏱️ 案A：期間評価軸バッジ */}
                               <div className="border dark:border-slate-750 rounded-2xl p-4 space-y-3 bg-slate-55/20 dark:bg-slate-900/10">
                                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-1.5 border-b dark:border-slate-700 pb-2">
                                   <h4 className="text-xs font-black text-emerald-555 flex items-center gap-1.5">
@@ -1091,14 +1114,14 @@
                                     <span className="bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 rounded-md text-[10px] font-mono">{metrics.past.totalCount}件 / {metrics.past.totalPoints}P 実績</span>
                                   </h4>
                                   
-                                  {/* ⏱️ 評価軸：実際の所要日数と、それに対するスピードレーティングの自動露出 */}
+                                  {/* ⏱️ 案A：バグを一本化修正した、完璧なる「予定 vs 実績」の評価軸インジケーター */}
                                   {metrics.durationDays !== null ? (
                                     <div className="flex flex-col items-end gap-1 select-none">
-                                      <span className="bg-indigo-600 text-white px-2 py-0.5 rounded-lg text-[9px] font-black tracking-wide">
-                                        ⏱️ 所要期間: {metrics.durationDays}日間
+                                      <span className="bg-indigo-600 text-white px-2 py-0.5 rounded-lg text-[9.5px] font-black tracking-wide font-mono">
+                                        ⏱️ 目標 {metrics.targetDays}日 ➔ 実績 {metrics.durationDays}日
                                       </span>
-                                      <span className={`px-1.5 py-0.5 rounded text-[8.5px] font-black ${metrics.speedColor}`}>
-                                        {metrics.speedRating}
+                                      <span className={`px-2 py-0.5 rounded-md text-[9px] font-black ${metrics.durationColor}`}>
+                                        {metrics.durationLabel}
                                       </span>
                                     </div>
                                   ) : (
@@ -1121,7 +1144,7 @@
                                       ))}
                                     </div>
                                     <div className="text-[9.5px] text-slate-404 italic border-t dark:border-slate-700/60 pt-2 text-right font-mono">
-                                      当初開始: {proj.startDate || '---'} ➔ 最終完了: {metrics.endDateStr}
+                                      当初開始: {proj.startDate || '---'} ➔ 最終完了実績日: {metrics.endDateStr}
                                     </div>
                                   </div>
                                 ) : (
@@ -1150,14 +1173,14 @@
             )}
           </div>
 
-          {/* モーダル群 */}
+          {/* 設定モーダル */}
           {showSettingsModal && (
             <div className="fixed inset-0 bg-slate-955/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={() => setShowSettingsModal(false)}>
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[85vh] relative" onClick={e => e.stopPropagation()}>
                 <h2 className="text-base font-black mb-2 text-slate-850 dark:text-white">システム環境マスタ設定</h2>
                 <div className="flex-1 overflow-y-auto space-y-6 text-xs font-bold scrollbar-thin pr-1 py-2">
                   <div className="bg-slate-55 dark:bg-slate-900 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 flex justify-between items-center gap-4">
-                    <p className="text-[10px] text-slate-404 leading-normal">戦略評価データベース（NOW/PAST 2軸分析・スピード指標）に完全準拠したデモデータをブラウザメモリに安全注入します。</p>
+                    <p className="text-[10px] text-slate-404 leading-normal">戦略評価データベース（NOW/PAST 2軸分析・目標比較）に完全準拠したデモデータをブラウザメモリに安全注入します。</p>
                     <button type="button" onClick={injectDemoData} className="bg-purple-600 text-white px-4 py-2 rounded-xl font-black shadow-sm shrink-0">デモデータを初期生成する</button>
                   </div>
                 </div>
