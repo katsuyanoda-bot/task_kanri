@@ -66,7 +66,7 @@
   <script type="text/babel" data-type="module">
     const { useState, useMemo, useEffect, useRef } = React;
 
-    // 🎨 グローバル安全カラー定義（🔑 祝・PURPLEを正式追加実装）
+    // 🎨 グローバル安全カラー定義
     const colorClassesMap = {
       slate: { text: 'text-slate-700 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-650', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350' },
       blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200' },
@@ -77,17 +77,17 @@
       orange: { text: 'text-orange-700 dark:text-orange-300', bg: 'bg-[#fff7ed] dark:bg-[#431407]/40', border: 'border-orange-200 dark:border-orange-800', borderStrong: 'border-orange-300 dark:border-orange-600', badge: 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 dark:text-orange-200' }
     };
 
-    // 🛠️ 視覚化ハック：英語カラーを直感的な日本語ラベルにマッピングする辞書（🔑 purple追記）
     const colorLabels = {
-      slate: '⚫ グレー (システム等)',
-      blue: '🔵 ブルー (営業・顧客面面)',
-      emerald: '🟢 グリーン (法務・リーガル)',
-      amber: '🟡 イエロー (経理・財務)',
-      rose: '🔴 ローズ (推進事務・コア)',
-      purple: '🟣 パープル (開発・クリエイティブ)',
-      orange: '🟠 オレンジ (重要アラート)'
+      slate: '⚫ グレー',
+      blue: '🔵 ブルー',
+      emerald: '🟢 グリーン',
+      amber: '🟡 イエロー',
+      rose: '🔴 ローズ',
+      purple: '🟣 パープル',
+      orange: '🟠 オレンジ'
     };
 
+    const allowedDomains = ['sansan.com', 'sansan.co.jp'];
     const TODAY_STR = '2026-05-24';
 
     // 🛡️ 聖域：ナビゲーション用アイコン（SVG関数）
@@ -95,7 +95,6 @@
     const IconDatabase = () => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>;
     const IconChevronRight = () => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>;
 
-    // マスター初期データ定義
     const initialDepts = [
       { key: 'sales', label: '営業', color: 'blue', order: 0 },
       { key: 'finance', label: '経理', color: 'amber', order: 1 },
@@ -112,7 +111,7 @@
     const initialProjects = [];
 
     // 🛡️ 最下層：現場担当のタスクカード
-    function TaskCard({ task, onUpdateTask, onDeleteTask, deptList }) {
+    function TaskCard({ task, index, totalTasks, onUpdateTask, onDeleteTask, onMoveTask, deptList }) {
       const [isEditing, setIsEditing] = useState(false);
       const [isDetailsOpen, setIsDetailsOpen] = useState(false);
       const [editTitle, setEditTitle] = useState(task.title);
@@ -129,14 +128,8 @@
         e.stopPropagation();
         const targetDept = deptList.find(d => d.key === editDept) || { label: '他部署', color: 'slate' };
         onUpdateTask(task.id, (p) => ({
-          ...p, 
-          title: editTitle, 
-          description: editDesc, 
-          department: editDept,
-          deptLabel: targetDept.label, 
-          deptColor: targetDept.color,
-          dueDate: editDueDate, 
-          level: Number(editLevel)
+          ...p, title: editTitle, description: editDesc, department: editDept,
+          deptLabel: targetDept.label, deptColor: targetDept.color, dueDate: editDueDate, level: Number(editLevel)
         }));
         setIsEditing(false);
       };
@@ -163,10 +156,7 @@
             <div>
               <label className="text-[10px] text-slate-404">主担当部署</label>
               <select value={editDept} onChange={e => setEditDept(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white">
-                {deptList.map(d => {
-                  const labelDetail = colorLabels[d.color] ? ` (${colorLabels[d.color].split(' ')[0]})` : '';
-                  return <option key={d.key} value={d.key}>{d.label}</option>;
-                })}
+                {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -198,11 +188,15 @@
                   <option value="not_applicable">⚪ 対象外</option>
                 </select>
               </div>
+              
               <div className="flex items-center gap-1.5">
+                <button disabled={index === 0} onClick={(e) => { e.stopPropagation(); onMoveTask(task.id, 'up'); }} className={`p-1 border rounded-md text-[10px] font-black bg-slate-55 dark:bg-slate-700 duration-100 ${index === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-indigo-500 hover:text-white'}`}>▲</button>
+                <button disabled={index === totalTasks - 1} onClick={(e) => { e.stopPropagation(); onMoveTask(task.id, 'down'); }} className={`p-1 border rounded-md text-[10px] font-black bg-slate-55 dark:bg-slate-700 duration-100 ${index === totalTasks - 1 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-indigo-500 hover:text-white'}`}>▼</button>
+                
                 <button onClick={(e) => { e.stopPropagation(); onUpdateTask(task.id, p => ({ ...p, isBlocked: !p.isBlocked })); }} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.isBlocked ? 'bg-amber-100 text-amber-800 border-amber-400' : 'bg-slate-50 dark:bg-slate-700 text-slate-404 border-slate-300'}`}>連絡待ち</button>
                 <button onClick={(e) => { e.stopPropagation(); onUpdateTask(task.id, p => ({ ...p, doToday: !p.doToday })); }} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.doToday ? 'bg-orange-100 text-orange-800 border-orange-400' : 'bg-slate-50 dark:bg-slate-700 text-slate-404 border-slate-300'}`}>今日やる</button>
                 <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="text-slate-404 text-xs hover:scale-110 duration-100">✏️</button>
-                <button onClick={(e) => { e.stopPropagation(); onDeleteTask(task.id); }} className="text-slate-404 text-sm font-black hover:text-rose-605">×</button>
+                <button onClick={(e) => { e.stopPropagation(); onDeleteTask(task.id, task.title); }} className="text-slate-404 text-sm font-black hover:text-rose-605">×</button>
               </div>
             </div>
 
@@ -264,7 +258,7 @@
     }
 
     // 🧱 中堅レイヤー：STEP工程コンポーネント
-    function StepSection({ step, index, taskFilter, deptList, onUpdateStep, onDeleteStep, onAddTask, onUpdateTask, onDeleteTask }) {
+    function StepSection({ step, index, taskFilter, deptList, onUpdateStep, onDeleteStep, onAddTask, onUpdateTask, onDeleteTask, onMoveTask }) {
       const [isCollapsed, setIsCollapsed] = useState(false);
       const [isAddingTask, setIsAddingTask] = useState(false);
       const [isEditingStep, setIsEditingStep] = useState(false);
@@ -359,11 +353,14 @@
           {!isCollapsed && (
             <div className="p-4 bg-slate-55/30 dark:bg-slate-955/20">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {stepTksAll.map((task) => {
+                {stepTksAll.map((task, tkIdx) => {
                   if (!taskFilter[task.status]) return null;
                   return (
                     <div key={task.id} id={`task-anchor-${task.id}`} onClick={e => e.stopPropagation()}>
-                      <TaskCard key={task.id} task={task} deptList={deptList} onUpdateTask={onUpdateTask} onDeleteTask={onDeleteTask} />
+                      <TaskCard 
+                        task={task} index={tkIdx} totalTasks={stepTksAll.length} deptList={deptList} 
+                        onUpdateTask={onUpdateTask} onDeleteTask={onDeleteTask} onMoveTask={(tid, dir) => onMoveTask(step.id, tid, dir)} 
+                      />
                     </div>
                   );
                 })}
@@ -411,10 +408,23 @@
       const [currentProjectId, setCurrentProjectId] = useState('p1');
       const [taskFilter, setTaskFilter] = useState({ pending: true, in_progress: true, completed: false, not_applicable: false });
 
+      const [newProjName, setNewProjName] = useState('');
+      const [newProjCode, setNewProjCode] = useState('');
+      const [newProjFolderId, setNewProjFolderId] = useState('f1');
+
       const [newDeptLabel, setNewDeptLabel] = useState('');
       const [newDeptColor, setNewDeptColor] = useState('slate');
 
+      const [dbFilterFolderId, setDbFilterFolderId] = useState('all');
+      const [dbFilterText, setDbFilterText] = useState('');
+
       const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+
+      // 🛡️ セーフティガード：isSansanUser の評価で使う allowedDomains 参照エラーを完全防御
+      const isSansanUser = useMemo(() => {
+        if (!user?.email) return false;
+        return allowedDomains.includes(user.email.split('@')[1]?.toLowerCase());
+      }, [user]);
 
       const filteredProjects = useMemo(() => projects?.filter(p => p.folderId === selectedFolderId) || [], [projects, selectedFolderId]);
       const activeProject = useMemo(() => projects?.find(p => p.id === currentProjectId) || filteredProjects[0] || projects[0] || null, [projects, currentProjectId, filteredProjects]);
@@ -442,15 +452,9 @@
         e.preventDefault();
         if (!newDeptLabel.trim()) return;
         const newKey = `dept_${Date.now()}`;
-        const newDeptObj = {
-          key: newKey,
-          label: newDeptLabel.trim(),
-          color: newDeptColor,
-          order: deptList.length
-        };
-        setDeptList([...deptList, newDeptObj]);
+        setDeptList([...deptList, { key: newKey, label: newDeptLabel.trim(), color: newDeptColor, order: deptList.length }]);
         setNewDeptLabel('');
-        showAlert(`部署「${newDeptObj.label}」を新設しました。`);
+        showAlert(`部署「${newDeptLabel.trim()}」を新設しました。`);
       };
 
       const handleUpdateDeptMaster = (key, fields) => {
@@ -468,121 +472,103 @@
         if (!activeProject) return;
         const nextOrder = stepList.length;
         const newStep = {
-          id: `step_${Date.now()}`,
-          name: `工程 ${nextOrder + 1}`,
-          desc: '',
-          deptKey: 'backoffice',
-          deptLabel: '推進（事務）',
-          deptColor: 'rose',
-          startDate: TODAY_STR,
-          dueDate: TODAY_STR,
-          leader: user.displayName,
-          order: nextOrder,
-          tasks: []
+          id: `step_${Date.now()}`, name: `工程 ${nextOrder + 1}`, desc: '', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: TODAY_STR, dueDate: TODAY_STR, leader: user.displayName, order: nextOrder, tasks: []
         };
-        setProjects(prev => prev.map(p => {
-          if (p.id !== activeProject.id) return p;
-          return { ...p, stepList: [...p.stepList, newStep] };
-        }));
+        setProjects(prev => prev.map(p => p.id === activeProject.id ? { ...p, stepList: [...p.stepList, newStep] } : p));
         showAlert('新しい工程(STEP)を追加しました。');
       };
 
       const updateNestedTask = (taskId, updateFn) => {
         if (!activeProject) return;
-        setProjects(prev => prev.map(p => {
-          if (p.id !== activeProject.id) return p;
-          return {
-            ...p,
-            stepList: p.stepList.map(s => ({
-              ...s, tasks: (s.tasks || []).map(t => t.id === taskId ? updateFn(t) : t)
-            }))
-          };
-        }));
+        setProjects(prev => prev.map(p => p.id === activeProject.id ? { ...p, stepList: p.stepList.map(s => ({ ...s, tasks: (s.tasks || []).map(t => t.id === taskId ? updateFn(t) : t) })) } : p));
       };
 
       const handleAddTaskToStep = (stepId, newTaskObj) => {
+        setProjects(prev => prev.map(p => p.id === activeProject.id ? { ...p, taskSequence: (p.taskSequence || 0) + 1, stepList: p.stepList.map(s => s.id === stepId ? { ...s, tasks: [...(s.tasks || []), newTaskObj] } : s) } : p));
+      };
+
+      const handleDeleteTaskInStep = (taskId, taskTitle) => {
+        triggerConfirm('タスクの削除確認', `タスク「${taskTitle}」を完全に削除してもよろしいですか？`, () => {
+          setProjects(prev => prev.map(p => p.id === activeProject.id ? { ...p, stepList: p.stepList.map(s => ({ ...s, tasks: s.tasks.filter(t => t.id !== taskId) })) } : p));
+          showAlert('タスクを削除しました。');
+        });
+      };
+
+      const handleMoveTaskInStep = (stepId, taskId, direction) => {
         setProjects(prev => prev.map(p => {
           if (p.id !== activeProject.id) return p;
           return {
             ...p,
-            taskSequence: (p.taskSequence || 0) + 1,
-            stepList: p.stepList.map(s => s.id === stepId ? { ...s, tasks: [...(s.tasks || []), newTaskObj] } : s)
+            stepList: p.stepList.map(s => {
+              if (s.id !== stepId) return s;
+              const tList = [...(s.tasks || [])];
+              const idx = tList.findIndex(t => t.id === taskId);
+              if (idx === -1) return s;
+              const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+              if (targetIdx < 0 || targetIdx >= tList.length) return s;
+              [tList[idx], tList[targetIdx]] = [tList[targetIdx], tList[idx]];
+              return { ...s, tasks: tList };
+            })
           };
-        }));
-      };
-
-      const handleDeleteTaskInStep = (taskId) => {
-        setProjects(prev => prev.map(p => {
-          if (p.id !== activeProject.id) return p;
-          return { ...p, stepList: p.stepList.map(s => ({ ...s, tasks: s.tasks.filter(t => t.id !== taskId) })) };
         }));
       };
 
       const handleUpdateStepInfo = (stepId, updatedFields) => {
-        setProjects(prev => prev.map(p => {
-          if (p.id !== activeProject.id) return p;
-          return { ...p, stepList: p.stepList.map(s => s.id === stepId ? { ...s, ...updatedFields } : s) };
-        }));
+        setProjects(prev => prev.map(p => p.id === activeProject.id ? { ...p, stepList: p.stepList.map(s => s.id === stepId ? { ...s, ...updatedFields } : s) } : p));
       };
 
       const handleDeleteStepInfo = (stepId, stepName) => {
         triggerConfirm('工程の削除', `${stepName} 内の全タスクを含め、この工程を削除しますか？`, () => {
-          setProjects(prev => prev.map(p => {
-            if (p.id !== activeProject.id) return p;
-            return { ...p, stepList: p.stepList.filter(s => s.id !== stepId) };
-          }));
+          setProjects(prev => prev.map(p => p.id === activeProject.id ? { ...p, stepList: p.stepList.filter(s => s.id !== stepId) } : p));
           showAlert('工程を削除しました。');
         });
       };
 
+      const handleCreateProject = (e) => {
+        e.preventDefault(); if (!newProjName.trim()) return;
+        const newId = `p_${Date.now()}`;
+        const newProj = {
+          id: newId, folderId: newProjFolderId, name: newProjName.trim(), code: newProjCode.trim(), status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 0,
+          stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-06-25', leader: '推進担当者', order: 0, tasks: [] }]
+        };
+        setProjects([...projects, newProj]);
+        setCurrentProjectId(newId); setShowAddProjectModal(false); setNewProjName(''); setNewProjCode(''); showAlert('新規プロジェクトを起票しました');
+      };
+
       const exportBackup = () => {
         const blob = new Blob([JSON.stringify({ folders, depts: deptList, projects }, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `project_loom_backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+        a.download = `project_loom_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
         showAlert('バックアップを出力しました。');
       };
 
       const importBackup = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = (evt) => {
           try {
             const data = JSON.parse(evt.target.result);
-            if (data.folders) setFolders(data.folders);
-            if (data.depts) setDeptList(data.depts);
-            if (data.projects) setProjects(data.projects);
+            if (data.folders) setFolders(data.folders); if (data.depts) setDeptList(data.depts); if (data.projects) setProjects(data.projects);
             showAlert('バックアップから復元しました！');
-          } catch (err) {
-            showAlert('復元に失敗しました。');
-          }
+          } catch (err) { showAlert('復元に失敗しました。'); }
         };
         reader.readAsText(file);
       };
 
       const injectDemoData = () => {
         const demoProjects = [{ id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 2, stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが作成されました。', isSystem: true }], level: 1, isBlocked: false }] }, { id: 2, name: '法務へレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false }] }] }];
-        setFolders(initialFolders);
-        setDeptList(initialDepts);
-        setProjects(demoProjects);
-        setSelectedFolderId('f1');
-        setCurrentProjectId('p1');
-        showAlert('デモデータを初期生成しました。');
-        setShowSettingsModal(false);
+        setFolders(initialFolders); setDeptList(initialDepts); setProjects(demoProjects); setSelectedFolderId('f1'); setCurrentProjectId('p1');
+        showAlert('デモデータを初期生成しました。'); setShowSettingsModal(false);
       };
 
       const handleMockLogin = (email) => {
         const mockUser = { uid: 'mock_' + Date.now(), email, displayName: email.split('@')[0] };
-        localStorage.setItem('pl_mock_user', JSON.stringify(mockUser));
-        setUser(mockUser);
+        localStorage.setItem('pl_mock_user', JSON.stringify(mockUser)); setUser(mockUser);
         showAlert(`Sansan推進コアメンバーとして認証しました。`);
       };
 
       const calculateProjectProgressById = (proj) => {
-        let allTasks = [];
-        proj.stepList?.forEach(s => { if (s.tasks) allTasks = [...allTasks, ...s.tasks]; });
+        let allTasks = []; proj.stepList?.forEach(s => { if (s.tasks) allTasks = [...allTasks, ...s.tasks]; });
         if (allTasks.length === 0) return 0;
         const valid = allTasks.filter(t => t.status !== 'not_applicable');
         return valid.length === 0 ? 100 : Math.round((valid.filter(t => t.status === 'completed').length / valid.length) * 100);
@@ -597,8 +583,7 @@
       }, []);
 
       useEffect(() => {
-        if (isDarkMode) document.documentElement.classList.add('dark');
-        else document.documentElement.classList.remove('dark');
+        if (isDarkMode) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark');
       }, [isDarkMode]);
 
       if (!user) {
@@ -635,12 +620,13 @@
             </div>
           )}
 
-          {/* 固定天井ナビ */}
+          {/* 固定不透明天井ナビ */}
           <div className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-md">
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
               <div className="flex items-center gap-3">
                 <div className="bg-indigo-600 text-white p-2 rounded-2xl font-black text-sm">PL</div>
-                <div><h1 className="text-xs font-black dark:text-white leading-none">Project Loom</h1><p className="text-[9px] text-slate-404 font-extrabold uppercase mt-0.5 tracking-wider">Sansan案件推進専用ダッシュボード</p></div>
+                <div><h1 className="text-xs font-black dark:text-white leading-none">Project Loom</h1><p className="text-[9px] text-slate-404 font-extrabold uppercase mt-0.5 tracking-wider">Sansan案件推進ダッシュボード</p></div>
+                <button onClick={() => setShowAddProjectModal(true)} className="ml-2 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 text-[10px] px-2 py-1 rounded-xl font-black shadow-2xs hover:scale-105 duration-100">➕ 新規案件を起票</button>
               </div>
               <div className="flex bg-slate-150 dark:bg-slate-800 p-0.5 rounded-xl text-xs font-bold border dark:border-slate-700">
                 <button onClick={() => setViewMode('board')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='board'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconCalendar /><span>ダッシュボード</span></button>
@@ -686,7 +672,7 @@
               projects.length === 0 ? (
                 <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 animate-in fade-in duration-500">
                   <p className="text-sm font-black text-slate-404">アクティブな案件プロジェクトがありません。</p>
-                  <p className="text-xs text-slate-404 mt-2">右上の「設定」ボタンからデモデータを投入してください。</p>
+                  <p className="text-xs text-slate-404 mt-2">ロゴ右隣の「➕ 新規案件を起票」ボタンか、設定からデモデータを投入してください。</p>
                 </div>
               ) : (
                 <div className="space-y-8 pb-32">
@@ -695,6 +681,7 @@
                       key={step.id} step={step} index={index} taskFilter={taskFilter} deptList={deptList}
                       onUpdateStep={handleUpdateStepInfo} onDeleteStep={handleDeleteStepInfo}
                       onAddTask={handleAddTaskToStep} onUpdateTask={updateNestedTask} onDeleteTask={handleDeleteTaskInStep}
+                      onMoveTask={handleMoveTaskInStep}
                     />
                   ))}
                   
@@ -724,14 +711,18 @@
                       </tr>
                     </thead>
                     <tbody className="divide-y font-bold dark:divide-slate-700">
+                      {/* 🛡️ カイゼン：未入力案件や空配列データが来ても絶対にパニック死しないよう、徹底的にNull安全ガード(proj.name||'')を配備 */}
                       {projects?.filter(proj => {
                         if (dbFilterFolderId !== 'all' && proj.folderId !== dbFilterFolderId) return false;
-                        if (dbFilterText.trim() !== '') { const lowerText = dbFilterText.toLowerCase(); if (!proj.name.toLowerCase().includes(lowerText) && !proj.code.toLowerCase().includes(lowerText)) return false; }
+                        if (dbFilterText.trim() !== '') { 
+                          const lowerText = dbFilterText.toLowerCase(); 
+                          if (!(proj.name || '').toLowerCase().includes(lowerText) && !(proj.code || '').toLowerCase().includes(lowerText)) return false; 
+                        }
                         return true;
                       }).map(proj => (
                         <tr key={proj.id} className="hover:bg-slate-55/40 dark:hover:bg-slate-700/20">
                           <td className="py-3 px-4 text-sm underline cursor-pointer decoration-indigo-300" onClick={() => { setCurrentProjectId(proj.id); setViewMode('board'); }}>{proj.name}</td>
-                          <td className="py-3 px-4 font-mono text-slate-404">{proj.code}</td>
+                          <td className="py-3 px-4 font-mono text-slate-404">{proj.code || '---'}</td>
                           <td className="py-3 px-4 text-indigo-500 font-black">{calculateProjectProgressById(proj)}%</td>
                         </tr>
                       ))}
@@ -742,15 +733,13 @@
             )}
           </div>
 
-          {/* 設定モーダル */}
+          {/* システム環境マスタ設定 */}
           {showSettingsModal && (
             <div className="fixed inset-0 bg-slate-955/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={() => setShowSettingsModal(false)}>
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[85vh] relative" onClick={e => e.stopPropagation()}>
                 <h2 className="text-base font-black mb-2 text-slate-850 dark:text-white">システム環境マスタ設定</h2>
                 
                 <div className="flex-1 overflow-y-auto space-y-6 text-xs font-bold scrollbar-thin pr-1 py-2">
-                  
-                  {/* ➕ 部署マスタ新規追加フォーム */}
                   <form onSubmit={handleAddDeptMaster} className="bg-slate-55 dark:bg-slate-900/60 border border-slate-202 dark:border-slate-700 p-4 rounded-2xl space-y-3">
                     <span className="text-indigo-500 font-extrabold block text-[11px]">🏢 組織内・新しい保持部署の新設</span>
                     <div className="flex flex-wrap sm:flex-nowrap gap-2 items-end">
@@ -765,32 +754,16 @@
                     </div>
                   </form>
 
-                  {/* 既存部署マスタの一覧 */}
                   <div className="space-y-2">
                     <span className="text-slate-705 dark:text-slate-300 font-extrabold block text-[11px] border-b pb-1 dark:border-slate-700">📋 現在の登録部署マスタ一覧・カラーカスタム</span>
                     <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1">
                       {deptList.map((dept) => (
                         <div key={dept.key} className="flex items-center gap-2 bg-slate-55 border p-2.5 rounded-xl dark:bg-slate-900/40 dark:border-slate-700 border-slate-202 text-slate-805 dark:text-white shadow-2xs">
-                          <input 
-                            type="text" 
-                            value={dept.label} 
-                            onChange={(e) => handleUpdateDeptMaster(dept.key, { label: e.target.value })}
-                            className="flex-1 border p-1.5 rounded-xl bg-white dark:bg-slate-800 border-slate-202 font-extrabold text-xs" 
-                          />
-                          <select 
-                            value={dept.color} 
-                            onChange={(e) => handleUpdateDeptMaster(dept.key, { color: e.target.value })}
-                            className="p-1.5 border rounded-xl bg-white dark:bg-slate-800 text-xs font-bold"
-                          >
+                          <input type="text" value={dept.label} onChange={(e) => handleUpdateDeptMaster(dept.key, { label: e.target.value })} className="flex-1 border p-1.5 rounded-xl bg-white dark:bg-slate-800 border-slate-202 font-extrabold text-xs" />
+                          <select value={dept.color} onChange={(e) => handleUpdateDeptMaster(dept.key, { color: e.target.value })} className="p-1.5 border rounded-xl bg-white dark:bg-slate-800 text-xs font-bold">
                             {Object.keys(colorClassesMap).map(c => <option key={c} value={c}>{colorLabels[c] || c}</option>)}
                           </select>
-                          <button 
-                            type="button" 
-                            onClick={() => handleDeleteDeptMaster(dept.key, dept.label)}
-                            className="text-slate-404 font-black text-base px-2 hover:text-rose-605"
-                          >
-                            ×
-                          </button>
+                          <button type="button" onClick={() => handleDeleteDeptMaster(dept.key, dept.label)} className="text-slate-404 font-black text-base px-2 hover:text-rose-605">×</button>
                         </div>
                       ))}
                     </div>
@@ -805,6 +778,22 @@
                 <div className="pt-4 border-t dark:border-slate-700 flex justify-end">
                   <button type="button" onClick={() => setShowSettingsModal(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-805 dark:text-slate-200 px-5 py-2.5 rounded-xl font-bold">閉じる</button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* 案件追加モーダル */}
+          {showAddProjectModal && (
+            <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={() => setShowAddProjectModal(false)}>
+              <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-150" onClick={e => e.stopPropagation()}>
+                <form onSubmit={handleCreateProject} className="space-y-4 text-xs font-bold">
+                  <div><label className="block mb-1">新規案件プロジェクト名称 *</label><input required type="text" value={newProjName} onChange={e => setNewProjName(e.target.value)} className="w-full border rounded-xl p-2.5 bg-white dark:bg-slate-900 text-slate-805 dark:text-white" placeholder="例: 【ECD】無料化プラン実装" /></div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div><label className="block mb-1">コード</label><input type="text" value={newProjCode} onChange={e => setNewProjCode(e.target.value)} className="w-full border rounded-xl p-2 bg-white dark:bg-slate-900 text-slate-805 dark:text-white font-mono" placeholder="ECD-2026" /></div>
+                    <div><label className="block mb-1">フォルダ分類</label><select value={newProjFolderId} onChange={e => setNewProjFolderId(e.target.value)} className="w-full border rounded-xl p-2 bg-white dark:bg-slate-900 text-slate-805 dark:text-white">{folders?.map(f=><option key={f.id} value={f.id}>{f.name}</option>)}</select></div>
+                  </div>
+                  <div className="flex justify-end gap-2"><button type="button" onClick={() => setShowAddProjectModal(false)} className="bg-slate-150 px-4 py-2 rounded-xl">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-5 py-2 rounded-xl shadow-md">起票</button></div>
+                </form>
               </div>
             </div>
           )}
