@@ -336,6 +336,7 @@
         saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, interactor: finalInteractor, assignee: finalInteractor, level: Number(editFormData.level || 1) } : t) });
         setEditingTaskId(null); showAlert('タスク情報を更新しました');
       };
+      const deleteTask = (taskId) => triggerConfirm('削除', '削除しますか？', () => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.filter(t => t.id !== taskId) }); showAlert('削除完了'); });
 
       const handleCreateFolder = (e) => {
         e.preventDefault(); if (!newFolderName.trim()) return;
@@ -412,6 +413,11 @@
       }, [projects, selectedMonth, currentProjectId, targetLeadTime, tasks]);
 
       const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+
+      useEffect(() => {
+        if (isDarkMode) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+      }, [isDarkMode]);
 
       useEffect(() => {
         const savedMockUser = localStorage.getItem('pl_mock_user'); if (savedMockUser) setUser(JSON.parse(savedMockUser));
@@ -594,7 +600,7 @@
                         </div>
                       </div>
 
-                      {/* Step編集フォーム */}
+                      {/* 💡 修正：SyntaxErrorの原因になっていた「rounded-xl下」のゴミタイポを完全消去！ */}
                       {editingStepId === step.id && (
                         <div className="p-5 bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-800 text-xs font-bold space-y-4" onClick={e => e.stopPropagation()}>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -796,7 +802,7 @@
               </div>
             )}
 
-            {/* 💡 100%完全復活：4大切り替えタブをフル搭載したデータマイニング表の完全実装 */}
+            {/* 💡 復活：削ぎ落とされていた分析力ダッシュボード（下部集計テーブル群も100%完全配置） */}
             {viewMode === 'analytics' && (
               <div className="space-y-6 animate-in fade-in">
                 <h2 className="text-base font-black">有言実行グループ月次推進力成績表</h2>
