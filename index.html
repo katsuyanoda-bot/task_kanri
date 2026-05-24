@@ -222,7 +222,6 @@
 
       const getStepProgressText = (stepId) => getStepProgress(stepId);
 
-      // 💡 復活：消失していたデータ更新用の共通関数
       const updateData = (key, nextData) => {
         if (key === 'projects') setProjects(nextData);
         if (key === 'folders') setFolders(nextData);
@@ -309,6 +308,21 @@
         showAlert('タスクを追加しました');
       };
 
+      const handleCreateProject = (e) => {
+        e.preventDefault(); if (!newProjName.trim()) return;
+        const newId = `p_${Date.now()}`;
+        const newProj = {
+          id: newId, folderId: newProjFolderId, name: newProjName.trim(), code: newProjCode.trim(), status: newProjStatus, startDate: newProjStart, endDate: newProjEnd, taskSequence: 0,
+          stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', startDate: newProjStart, dueDate: newProjEnd, leader: '推進担当者', order: 0 }],
+          tasks: []
+        };
+        updateData('projects', [...projects, newProj]);
+        setCurrentProjectId(newId);
+        setShowAddProjectModal(false);
+        setNewProjName(''); setNewProjCode('');
+        showAlert('プロジェクト案件を起票しました。');
+      };
+
       const saveStepEdit = (stepId, e) => {
         e.preventDefault(); e.stopPropagation();
         saveProjectToFirestore({ ...activeProject, stepList: stepList.map(s => s.id === stepId ? { ...s, name: editStepName.trim(), deptKey: editStepDeptKey, startDate: editStepStartDate, dueDate: editStepDueDate } : s) });
@@ -327,22 +341,6 @@
         e.preventDefault(); if (!newFolderName.trim()) return;
         const newId = `f_${Date.now()}`; const newFolder = { id: newId, name: newFolderName.trim() };
         updateData('folders', [...folders, newFolder]); setSelectedFolderId(newId); setNewFolderName(''); setShowAddFolderModal(false); showAlert('大分類フォルダを作成しました。');
-      };
-
-      // 💡 復活：消失していた新規案件の起票用ロジック本体
-      const handleCreateProject = (e) => {
-        e.preventDefault(); if (!newProjName.trim()) return;
-        const newId = `p_${Date.now()}`;
-        const newProj = {
-          id: newId, folderId: newProjFolderId, name: newProjName.trim(), code: newProjCode.trim(), status: newProjStatus, startDate: newProjStart, endDate: newProjEnd, taskSequence: 0,
-          stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', startDate: newProjStart, dueDate: newProjEnd, leader: '推進担当者', order: 0 }],
-          tasks: []
-        };
-        updateData('projects', [...projects, newProj]);
-        setCurrentProjectId(newId);
-        setShowAddProjectModal(false);
-        setNewProjName(''); setNewProjCode('');
-        showAlert('プロジェクト案件を起票しました。');
       };
 
       const handleRenameDeptChange = (k, n) => { setDeptList(p => p.map(d => d.key === k ? { ...d, label: n } : d)); };
@@ -413,6 +411,8 @@
         return { deepDiveSteps, monthRisks, interactorRows: Object.values(interactorStats).sort((a, b) => b.total - a.total), summary: { total: monthTotalW, done: monthDoneW, remain: monthRemainW, blocked: monthBlockedW, scoreProgress: monthTotalW > 0 ? Math.round((monthDoneW / monthTotalW) * 100) : 0 } };
       }, [projects, selectedMonth, currentProjectId, targetLeadTime, tasks]);
 
+      const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+
       useEffect(() => {
         const savedMockUser = localStorage.getItem('pl_mock_user'); if (savedMockUser) setUser(JSON.parse(savedMockUser));
         const localFolders = localStorage.getItem('pl_folders'); setFolders(localFolders ? JSON.parse(localFolders) : initialFolders); if(!localFolders) localStorage.setItem('pl_folders', JSON.stringify(initialFolders));
@@ -438,8 +438,27 @@
       return (
         <div className="h-full flex flex-col bg-slate-55 dark:bg-slate-955 text-slate-805 dark:text-slate-150 font-sans antialiased duration-200">
           
+          {alertMessage && (
+            <div className="fixed bottom-6 right-6 bg-slate-955/95 dark:bg-slate-800 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] max-w-sm border border-slate-750">
+              <span className="font-bold">{alertMessage}</span>
+            </div>
+          )}
+
+          {confirmModal.isOpen && (
+            <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
+              <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-705 rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4">
+                <h3 className="font-extrabold text-sm text-slate-955 dark:text-white">{confirmModal.title}</h3>
+                <p className="text-xs text-slate-505 dark:text-slate-455">{confirmModal.message}</p>
+                <div className="flex justify-end gap-2 pt-3 border-t dark:border-slate-700 text-xs">
+                  <button onClick={closeConfirm} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
+                  <button onClick={confirmModal.onConfirm} className="bg-rose-605 text-white px-5 py-2 rounded-2xl font-extrabold">実行</button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* 固定不透明天井コンテナ */}
-          <div ref={headerWrapperRef} className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-sm">
+          <div ref={headerWrapperRef} className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-md">
             {/* 1層目 */}
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
               <div className="flex items-center gap-3">
@@ -452,7 +471,7 @@
                 <button onClick={() => setViewMode('analytics')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='analytics'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconChart /><span>分析力</span></button>
               </div>
               <div className="flex items-center gap-3">
-                <div className="text-xs bg-slate-150 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-bold">ユーザー: {user.displayName}</div>
+                <div className="text-xs bg-slate-150 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-bold">ユーザー: {user?.displayName || '未設定'}</div>
                 <button onClick={toggleDarkMode} className="p-2 border rounded-xl bg-slate-55 dark:bg-slate-800 text-slate-605 font-bold text-xs">🌗 外観切替</button>
                 <button onClick={() => setShowSettingsModal(true)} className="p-2 border rounded-xl bg-slate-55 dark:bg-slate-800 text-slate-605 font-bold text-xs">設定</button>
                 <div className="text-xs font-mono font-black text-indigo-600 dark:text-indigo-404">進捗 {projectProgress}%</div>
@@ -777,7 +796,7 @@
               </div>
             )}
 
-            {/* 分析力 */}
+            {/* 💡 100%完全復活：4大切り替えタブをフル搭載したデータマイニング表の完全実装 */}
             {viewMode === 'analytics' && (
               <div className="space-y-6 animate-in fade-in">
                 <h2 className="text-base font-black">有言実行グループ月次推進力成績表</h2>
@@ -786,6 +805,76 @@
                   <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">稼働タスク総重量</span><div className="text-2xl font-black font-mono text-slate-805 dark:text-white leading-none">{newAnalyticsData.summary.total} <span className="text-xs text-slate-404">pt</span></div></div>
                   <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">スタック保留重量</span><div className="text-2xl font-black font-mono text-amber-505 leading-none">{newAnalyticsData.summary.blocked} <span className="text-xs text-slate-404">pt</span></div></div>
                   <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 tracking-wider">推進達成率</span><div className="text-2xl font-black font-mono text-indigo-500 leading-none">{newAnalyticsData.summary.scoreProgress}%</div></div>
+                </div>
+
+                <div className="flex bg-slate-150 dark:bg-slate-800 p-1 rounded-2xl border text-xs font-bold w-max shadow-inner dark:border-slate-700">
+                  <button onClick={() => setAnalyticsTab('resource')} className={`px-4 py-2 rounded-xl ${analyticsTab==='resource'?'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white':''}`}>① 案件一覧</button>
+                  <button onClick={() => setAnalyticsTab('interactor')} className={`px-4 py-2 rounded-xl ${analyticsTab==='interactor'?'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white':''}`}>② 相手先別 ボール滞留</button>
+                  <button onClick={() => setAnalyticsTab('leadtime')} className={`px-4 py-2 rounded-xl ${analyticsTab==='leadtime'?'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white':''}`}>③ 工程リードタイム</button>
+                  <button onClick={() => setAnalyticsTab('risk')} className={`px-4 py-2 rounded-xl ${analyticsTab==='risk'?'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-white':''}`}>④ 組織ボトルネック</button>
+                </div>
+
+                <div className="bg-white dark:bg-slate-800 border p-6 rounded-3xl dark:border-slate-700 shadow-sm min-h-[200px]">
+                  {analyticsTab === 'resource' && (
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-black text-slate-850 dark:text-white">① プロジェクト別リソース分配状況</h3>
+                      {projects.map(p => {
+                        const rate = calculateProjectProgressById(p);
+                        return (
+                          <div key={p.id} className="p-3 border rounded-xl bg-slate-55/50 dark:bg-slate-900/30 flex justify-between items-center text-xs font-bold">
+                            <span className="text-slate-805 dark:text-slate-200">{p.name}</span>
+                            <span className="font-mono text-indigo-500">{rate}% 完成</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {analyticsTab === 'interactor' && (
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-black text-slate-850 dark:text-white">② 相手先別（To）の調整ボール滞留分析</h3>
+                      <div className="overflow-x-auto rounded-xl border dark:border-slate-700">
+                        <table className="w-full text-xs text-left">
+                          <thead className="bg-slate-55 dark:bg-slate-900 font-black">
+                            <tr><th className="py-2.5 px-4">やり取り相手</th><th className="py-2.5 px-4">関与負荷重量</th><th className="py-2.5 px-4 text-amber-505">連絡待ち分</th><th className="py-2.5 px-4 text-rose-605">期限超過分</th></tr>
+                          </thead>
+                          <tbody className="divide-y font-bold dark:divide-slate-700">
+                            {newAnalyticsData.interactorRows.length === 0 ? <tr><td colSpan="4" className="p-4 text-center text-slate-404">データなし</td></tr> : newAnalyticsData.interactorRows.map(r => (
+                              <tr key={r.name} className="hover:bg-slate-55/50">
+                                <td className="py-2.5 px-4">{r.name}</td>
+                                <td className="py-2.5 px-4 font-mono">{r.total}pt</td>
+                                <td className="py-2.5 px-4 font-mono text-amber-505">{r.blocked}pt</td>
+                                <td className="py-2.5 px-4 font-mono text-rose-605">{r.overdue}pt</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {analyticsTab === 'leadtime' && (
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-black text-slate-850 dark:text-white">③ Step工程別 平均リードタイム（着手〜完了）</h3>
+                      {newAnalyticsData.deepDiveSteps.map((s, idx) => (
+                        <div key={idx} className="p-3 border rounded-xl bg-slate-55/50 dark:bg-slate-900/30 flex justify-between items-center text-xs font-bold">
+                          <span>{s.stepName}</span>
+                          <span className="font-mono text-emerald-605">{s.avgDays} 日 (目標: {s.target}日)</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {analyticsTab === 'risk' && (
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-black text-slate-850 dark:text-white">④ 組織ボトルネック・アラート検知</h3>
+                      {newAnalyticsData.monthRisks.length === 0 ? <p className="text-xs text-slate-404 italic">スタックしているアラートタスクはありません。</p> : newAnalyticsData.monthRisks.map(r => (
+                        <div key={r.id} className="p-3 border border-rose-200 dark:border-rose-900 bg-rose-55/20 rounded-xl flex justify-between items-center text-xs font-bold">
+                          <div><span className="text-rose-605 mr-2">[{r.type}]</span><span className="text-slate-805 dark:text-slate-200">{r.title}</span><p className="text-[10px] text-slate-404 mt-0.5">{r.proj} / {r.desc}</p></div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
