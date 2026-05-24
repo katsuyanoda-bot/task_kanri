@@ -110,7 +110,7 @@
       blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-202 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500', accentBar: 'bg-blue-500 dark:bg-amber-404' },
       emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500', accentBar: 'bg-emerald-500 dark:bg-emerald-404' },
       green: { text: 'text-green-800 dark:text-green-300', bg: 'bg-[#f0fdf4] dark:bg-[#142d1b]', border: 'border-green-200 dark:border-green-800', borderStrong: 'border-green-300 dark:border-green-600', badge: 'bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800', bar: 'bg-green-700 dark:bg-green-600', accentBar: 'bg-green-600 dark:bg-green-500' },
-      amber: { text: 'text-amber-805 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
+      amber: { text: 'text-amber-850 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404', accentBar: 'bg-amber-500 dark:bg-amber-404' },
       rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500', accentBar: 'bg-rose-500 dark:bg-purple-404' },
       slate: { text: 'text-slate-605 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-605', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450', accentBar: 'bg-slate-450 dark:bg-slate-550' }
     };
@@ -652,6 +652,17 @@
         showAlert('相手待ち状態を切り替えました');
       };
 
+      const handleTaskEditDeptChange = (deptKey) => {
+        let finalInteractor = editFormData.interactor || '';
+        if (deptKey === 'backoffice') {
+          finalInteractor = user?.displayName || '自分';
+        } else {
+          const dName = deptList.find(d => d.key === deptKey)?.label || '他部署';
+          finalInteractor = `${dName} 担当者`;
+        }
+        setEditFormData(p => ({ ...p, department: deptKey, interactor: finalInteractor }));
+      };
+
       const handleAddTask = (stepId, e) => {
         e.preventDefault(); if (!newTaskTitle.trim() || !isSansanUser) return;
         const todayStr = getJSTDateString(); const currentSeq = activeProject.taskSequence || tasks.length; const nextSeq = currentSeq + 1;
@@ -1000,7 +1011,7 @@
                           <div><label className="text-[10px] block mb-1 text-slate-404">管理コード</label><input type="text" value={projectForm.code} onChange={e => setProjectForm({...projectForm, code: e.target.value})} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono" /></div>
                           <div><label className="text-[10px] block mb-1 text-slate-404">ステータス</label><select value={projectForm.status} onChange={e => setProjectForm({...projectForm, status: e.target.value})} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800"><option value="pending">未着手</option><option value="in_progress">進行中</option><option value="completed">完了</option><option value="not_applicable">対応なし</option></select></div>
                           <div><label className="text-[10px] block mb-1 text-slate-404">開始日</label><input type="date" value={projectForm.startDate} onChange={e => setProjectForm({...projectForm, startDate: e.target.value})} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono" /></div>
-                          <div><label className="text-[10px] block mb-1 text-slate-404">目標完了日</label><input type="date" value={projectForm.endDate} onChange={e => setProjectForm({...projectForm, endDate: e.target.value})} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono" /></div>
+                          <div><label className="block mb-1 text-slate-404">目標完了日</label><input type="date" value={projectForm.endDate} onChange={e => setProjectForm({...projectForm, endDate: e.target.value})} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono" /></div>
                         </div>
                       </div>
                     ) : (
@@ -1012,7 +1023,7 @@
                         </div>
                         <div className="flex items-center gap-2">
                           <button onClick={() => setShowUncompletedListModal(true)} className="text-[10.5px] bg-slate-150 dark:bg-slate-700 text-slate-705 px-3 py-2 rounded-xl font-bold border dark:border-slate-600 shadow-sm">📄 プロジェクト未完了タスク一覧</button>
-                          {/* 💡 修正点：文言を「＋ Step追加」に変更 */}
+                          {/* 💡 修正：文言を「Step追加」に変更 */}
                           <button onClick={() => setShowAddStepForm(true)} className="text-[10.5px] bg-indigo-600 text-white px-3 py-2 rounded-xl font-black flex items-center gap-1 shadow-sm"><IconPlus />Step追加</button>
                         </div>
                       </div>
@@ -1114,10 +1125,10 @@
                                     return (
                                       <div key={task.id} id={`task-anchor-${task.id}`} className={`relative border-4 rounded-3xl bg-white dark:bg-slate-800 shadow-sm flex flex-col justify-between overflow-hidden transition-all ${d || na ? 'border-slate-202 opacity-60 bg-slate-55/40 dark:bg-slate-800/40' : task.doToday ? 'border-amber-400 bg-amber-50/5 ring-1 ring-amber-300' : task.isBlocked ? 'border-amber-500/80 ring-2 ring-amber-300' : tkCls.borderStrong}`} draggable onDragStart={(e) => handleTaskDragStart(step.id, taskIndex, e)} onDragOver={(e) => handleTaskDragOver(step.id, taskIndex, e)} onDragEnd={handleTaskDragEnd}>
                                         {isEditingTask ? (
-                                          /* 💡 修正点：画像と同じ3行構成（コンパクト版）に全面改修 */
+                                          /* 💡 修正：新規起票画面と同じ3行の並びをコンパクト化して完全再現 */
                                           <div className="p-4 space-y-3 text-xs font-bold w-full animate-in fade-in" onClick={e => e.stopPropagation()}>
                                             <div className="flex justify-between items-center pb-1 border-b dark:border-slate-700">
-                                              <span className="font-black text-indigo-600 dark:text-indigo-404">✏️ タスクのクイック編集</span>
+                                              <span className="font-black text-indigo-600 dark:text-indigo-404">✏️ タスクマスタの編集</span>
                                               <div className="flex gap-1.5 text-[11px]">
                                                 <button type="button" onClick={() => setEditingTaskId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-2.5 py-0.5 rounded-lg">戻る</button>
                                                 <button type="button" onClick={() => saveEdit(task.id)} className="bg-indigo-600 text-white px-3 py-0.5 rounded-lg shadow-sm">保存</button>
@@ -1127,29 +1138,29 @@
                                               {/* 1行目：タイトル */}
                                               <div>
                                                 <label className="block text-[9px] text-slate-404 mb-0.5">タスク推進名 *</label>
-                                                <input required type="text" value={editFormData.title || ''} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold" />
+                                                <input required type="text" value={editFormData.title || ''} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
                                               </div>
                                               
-                                              {/* 2行目：4分割横並び（画像連動配置） */}
-                                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                              {/* 2行目：4分割横並び（画像レイアウト準拠・保持部署を左隣へ） */}
+                                              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                                                 <div>
                                                   <label className="block text-[9px] text-slate-404 mb-0.5">ボール保持部署</label>
-                                                  <select value={editFormData.department || ''} onChange={e => setEditFormData({...editFormData, department: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold">
+                                                  <select value={editFormData.department || ''} onChange={e => handleTaskEditDeptChange(e.target.value)} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white border-slate-202 dark:border-slate-700">
                                                     {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
                                                   </select>
                                                 </div>
                                                 <div>
-                                                  <label className="block text-[9px] text-slate-404 mb-0.5">やり取り相手 (To)</label>
-                                                  <input type="text" list={`suggest-edit-${task.id}`} value={editFormData.interactor || ''} onChange={e => setEditFormData({...editFormData, interactor: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold" />
+                                                  <label className="block text-[9px] text-slate-404 mb-0.5">やり取り相手 (To / 自由入力可)</label>
+                                                  <input type="text" list={`suggest-edit-${task.id}`} value={editFormData.interactor || ''} onChange={e => setEditFormData({...editFormData, interactor: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
                                                   <datalist id={`suggest-edit-${task.id}`}><option value={user?.displayName || '自分'} /><option value="上司・決裁者" /></datalist>
                                                 </div>
                                                 <div>
                                                   <label className="block text-[9px] text-slate-404 mb-0.5">期日</label>
-                                                  <input type="date" value={editFormData.dueDate || ''} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-mono" />
+                                                  <input type="date" value={editFormData.dueDate || ''} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-mono text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
                                                 </div>
                                                 <div>
                                                   <label className="block text-[9px] text-slate-404 mb-0.5">難易度ウエイト</label>
-                                                  <select value={editFormData.level || 1} onChange={e => setEditFormData({...editFormData, level: Number(e.target.value)})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 text-xs">
+                                                  <select value={editFormData.level || 1} onChange={e => setEditFormData({...editFormData, level: Number(e.target.value)})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 font-bold text-slate-805 dark:text-white border-slate-202 dark:border-slate-700">
                                                     <option value="1">🟢 セルフ完結 (1pt)</option>
                                                     <option value="2">🟡 スポット他部署 (2pt)</option>
                                                     <option value="4">🔴 マルチ他部署 (4pt)</option>
@@ -1160,7 +1171,7 @@
                                               {/* 3行目：論点・備考 */}
                                               <div>
                                                 <label className="block text-[9px] text-slate-404 mb-0.5">論点・備考</label>
-                                                <textarea value={editFormData.description || ''} onChange={e => setEditFormData({...editFormData, description: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 h-12" placeholder="詳細論点・メモを入力..." />
+                                                <textarea value={editFormData.description || ''} onChange={e => setEditFormData({...editFormData, description: e.target.value})} className="w-full p-1.5 text-xs border rounded-xl bg-slate-55 dark:bg-slate-900 h-12 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" placeholder="詳細論点・メモを入力..." />
                                               </div>
                                             </div>
                                           </div>
@@ -1169,11 +1180,15 @@
                                             <div className="p-5 pb-2 relative">
                                               <div className="absolute top-4 left-4 flex items-center gap-1 text-[10px] font-bold select-none">
                                                 <span className="cursor-grab text-slate-404"><IconDragHandle /></span>
-                                                <span className="bg-slate-150 dark:bg-slate-900 border text-slate-705 px-1.5 py-0.5 rounded-md font-mono">#{index+1}-{taskIndex+1}</span>
-                                                <span className={`px-1.5 py-0.5 rounded-md border text-[9px] font-black ${task.level===4?'bg-rose-55 text-rose-605':'bg-slate-55 text-slate-605'}`}>{task.level}pt重量</span>
+                                                {/* 💡 修正：左上ナンバーの色味をクッキリ強調（ダークモード視認性大幅アップ） */}
+                                                <span className="bg-slate-150 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-805 dark:text-slate-300 px-1.5 py-0.5 rounded-md font-mono font-extrabold shadow-xs">#{index+1}-{taskIndex+1}</span>
+                                                {/* 💡 修正：重量バッジの表記を「絵文字＋アイコンP」形式にシンプル化 */}
+                                                <span className={`px-1.5 py-0.5 rounded-md border text-[9px] font-black shadow-xs ${task.level===4?'bg-rose-55 dark:bg-rose-950/40 text-rose-605 border-rose-200 dark:border-rose-800':task.level===2?'bg-amber-55 dark:bg-amber-950/40 text-amber-605 border-amber-200 dark:border-amber-800':'bg-emerald-55 dark:bg-emerald-950/40 text-emerald-605 border-emerald-200 dark:border-emerald-800'}`}>
+                                                  {task.level===4?'🔴 4P':task.level===2?'🟡 2P':'🟢 1P'}
+                                                </span>
                                               </div>
                                               
-                                              {/* 💡 修正点：編集ボタンを右上端（×の左隣）に配置 */}
+                                              {/* 💡 修正：タスク編集ボタン（鉛筆）を右上端（×ボタンの左隣）に配置 */}
                                               <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
                                                 {task.status !== 'completed' && task.status !== 'not_applicable' && (
                                                   <button onClick={() => toggleTaskBlocked(task.id)} className={`text-[9px] font-black px-2 py-1 rounded-lg border ${task.isBlocked ? 'bg-amber-500 text-white animate-pulse' : 'bg-slate-55 dark:bg-slate-700 text-slate-404 dark:text-slate-300'}`}>✋ {task.isBlocked?'相手待ち中':'相手待ち'}</button>
@@ -1184,8 +1199,8 @@
                                                   <option value="pending">🔘 未対応</option><option value="in_progress">⚡ 進行中</option><option value="completed">✅ 完了する</option><option value="not_applicable">Na 対応外</option>
                                                 </select>
                                                 
-                                                {/* ここへ引っ越し */}
-                                                <button onClick={() => startEditing(task)} className="p-1 text-slate-404 hover:text-indigo-600 transition-colors" title="タスク編集"><IconEdit2 className="h-3.5 w-3.5" /></button>
+                                                {/* 鉛筆編集ボタンを右上へ固定 */}
+                                                <button onClick={() => startEditing(task)} className="p-1 text-slate-404 hover:text-indigo-600 transition-colors" title="タスクを編集する"><IconEdit2 className="h-3.5 w-3.5" /></button>
                                                 <button onClick={() => deleteTask(task.id)} className="text-slate-404 hover:text-rose-605 font-black text-sm ml-1">×</button>
                                               </div>
 
@@ -1225,18 +1240,40 @@
                                                 </div>
 
                                                 <div className="border-t border-dashed dark:border-slate-700 pt-2 mt-1 text-left" onClick={e => e.stopPropagation()}>
-                                                  <span className="text-[9.5px] font-black text-slate-404 block mb-1">📝 時系列交渉メモ ({task.contextLogs?.length || 0})</span>
+                                                  {/* 💡 修正：タイトルを「時系列メモ」に変更 */}
+                                                  <span className="text-[9.5px] font-black text-slate-404 block mb-1">📝 時系列メモ ({task.contextLogs?.length || 0})</span>
+                                                  
+                                                  {/* 💡 修正：入力欄を「上」へ引っ越し、プレースホルダーを「＋ 追記...」に変更 */}
+                                                  <input 
+                                                    type="text" 
+                                                    placeholder="＋ 追記..." 
+                                                    onKeyDown={(e) => { 
+                                                      if (e.nativeEvent.isComposing) return; 
+                                                      if (e.key === 'Enter' && e.target.value.trim()) { 
+                                                        const text = e.target.value.trim(); 
+                                                        const dStr = getJSTDateTimeString(); 
+                                                        {/* ★ハイライト機能を廃止し一律通常メモとして安全にスタック追加 */}
+                                                        const newLog = { id: `m_log_${Date.now()}`, date: dStr, text, isSystem: false, isHighlighted: false }; 
+                                                        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(x => x.id === task.id ? { ...x, contextLogs: [newLog, ...(x.contextLogs || [])] } : x) }); 
+                                                        e.target.value = ''; 
+                                                        showAlert('時系列メモに追記しました'); 
+                                                      } 
+                                                    }} 
+                                                    className="w-full text-[10.5px] bg-slate-55 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white rounded-xl px-2.5 py-1.5 focus:outline-none mb-2" 
+                                                  />
+
+                                                  {/* 💡 修正：過去履歴ログの一覧を「下」にぶら下げる配置へ変更 */}
                                                   {task.contextLogs && task.contextLogs.length > 0 && (
-                                                    <div className="space-y-1 max-h-[90px] overflow-y-auto mb-2 custom-scrollbar">
+                                                    <div className="space-y-1 max-h-[90px] overflow-y-auto mb-1 custom-scrollbar">
                                                       {task.contextLogs.map(log => (
-                                                        <div key={log.id} className={`p-1.5 rounded-lg border text-[11px] ${log.isHighlighted?'bg-rose-55 border-rose-200 text-rose-800 dark:bg-rose-950/20':'bg-slate-55 dark:bg-slate-900/50'}`}>
+                                                        /* ★赤ハイライト背景を廃止し、シンプルでフラットな統一デザインへ変更 */
+                                                        <div key={log.id} className="p-1.5 rounded-lg border text-[11px] bg-slate-55 dark:bg-slate-900/50 border-slate-202 dark:border-slate-700 text-slate-705 dark:text-slate-300">
                                                           <div className="flex justify-between text-[8.5px] text-slate-404 font-mono font-bold"><span>{log.isSystem?'🤖 システム':'👤 履歴ログ'}</span><span>{log.date}</span></div>
                                                           <p className="whitespace-pre-wrap font-medium leading-normal mt-0.5">{renderLogTextWithLinks(log.text)}</p>
                                                         </div>
                                                       ))}
                                                     </div>
                                                   )}
-                                                  <input type="text" placeholder="ラリー進捗を追記 (★から始めると赤くハイライトマーク)..." onKeyDown={(e) => { if (e.nativeEvent.isComposing) return; if (e.key === 'Enter' && e.target.value.trim()) { const text = e.target.value.trim(); const dStr = getJSTDateTimeString(); const isHigh = text.startsWith('★') || text.startsWith('!'); const newLog = { id: `m_log_${Date.now()}`, date: dStr, text, isSystem: false, isHighlighted: isHigh }; saveProjectToFirestore({ ...activeProject, tasks: tasks.map(x => x.id === task.id ? { ...x, contextLogs: [newLog, ...(x.contextLogs || [])] } : x) }); e.target.value = ''; showAlert('時系列メモに追記しました'); } }} className="w-full text-[10.5px] bg-slate-55 dark:bg-slate-900 border rounded-xl px-2 py-1 focus:outline-none" />
                                                 </div>
                                               </div>
                                             )}
@@ -1299,7 +1336,7 @@
                             <td className="py-3 px-4 text-center"><div className="flex items-center justify-center gap-2"><button onClick={()=>handleOpenProjectFromDb(proj)} className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 border border-indigo-200 dark:border-indigo-800 text-[11px] px-2.5 py-1 rounded-xl shadow-xs">開く</button><button onClick={(e)=>handleDeleteProjectByList(proj.id, e)} className="text-slate-404 hover:text-rose-600 font-bold text-xs">× 削除</button></div></td>
                           </tr>
                         );
-                      })}
+                      }).reverse()}
                     </tbody>
                   </table>
                 </div>
