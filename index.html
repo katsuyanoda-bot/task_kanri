@@ -21,7 +21,7 @@
               655: '#475569', 705: '#334155', 750: '#334155', 755: '#334155', 
               805: '#1e293b', 850: '#1e293b', 855: '#1e293b', 955: '#0f172a' 
             },
-            purple: { 55: '#faf5ff' },
+            purple: { 55: '#faf5ff', 500: '#a855f7', 600: '#9333ea', 900: '#581c87' },
             indigo: { 
               150: '#e0e7ff', 450: '#818cf8', 455: '#818cf8', 505: '#6366f1', 
               550: '#6366f1', 605: '#4f46e5', 606: '#4f46e5', 650: '#4f46e5', 
@@ -69,13 +69,13 @@
 
     // 🎨 グローバル安全カラー定義
     const colorClassesMap = {
-      slate: { text: 'text-slate-700 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-650', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350' },
-      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200' },
-      emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200' },
-      amber: { text: 'text-amber-850 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200' },
-      rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200' },
-      purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#2b1b3d]', border: 'border-purple-200 border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-50 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200' },
-      orange: { text: 'text-orange-700 dark:text-orange-300', bg: 'bg-[#fff7ed] dark:bg-[#431407]/40', border: 'border-orange-200 dark:border-orange-800', borderStrong: 'border-orange-300 dark:border-orange-600', badge: 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 dark:text-orange-200' }
+      slate: { text: 'text-slate-700 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-650', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350', dot: '🔴' },
+      blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200', dot: '🔵' },
+      emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200', dot: '🟢' },
+      amber: { text: 'text-amber-850 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200', dot: '🟡' },
+      rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200', dot: '🔴' },
+      purple: { text: 'text-purple-700 dark:text-purple-300', bg: 'bg-[#faf5ff] dark:bg-[#2b1b3d]', border: 'border-purple-200 border-purple-800', borderStrong: 'border-purple-300 dark:border-purple-600', badge: 'bg-purple-50 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200', dot: '🟣' },
+      orange: { text: 'text-orange-700 dark:text-orange-300', bg: 'bg-[#fff7ed] dark:bg-[#431407]/40', border: 'border-orange-200 border-orange-800', borderStrong: 'border-orange-300 dark:border-orange-600', badge: 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 dark:text-orange-200', dot: '🟠' }
     };
 
     const colorLabels = {
@@ -91,7 +91,6 @@
     const allowedDomains = ['sansan.com', 'sansan.co.jp'];
     const TODAY_STR = '2026-05-24';
 
-    // 🛡️ 聖域：ナビゲーション用アイコン（SVG関数）
     const IconCalendar = () => <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" height="6"></line><line x1="8" y1="2" x2="8" height="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>;
     const IconDatabase = () => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>;
     const IconChevronRight = () => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>;
@@ -200,7 +199,8 @@
           deptLabel: targetDept.label, deptColor: targetDept.color, dueDate: editDueDate, level: Number(editLevel),
           urls: cleanedUrls,
           url: cleanedUrls[0]?.url || '',
-          urlName: cleanedUrls[0]?.name || ''
+          urlName: cleanedUrls[0]?.name || '',
+          completedAt: p.status !== 'completed' && editTitle ? TODAY_STR : p.completedAt // 完了日の自動スタンプ防衛
         }));
         setIsEditing(false);
       };
@@ -214,48 +214,11 @@
           const newLog = { id: `log_${Date.now()}`, date: dateStr, text: logInput.trim(), isSystem: false };
           
           onUpdateTask(task.id, p => ({
-            ...p, contextLogs: [newLog, ...((p.contextLogs || []))]
+            ...p, contextLogs: [newLog, ...(p.contextLogs || [])]
           }));
           setLogInput('');
         }
       };
-
-      if (isEditing) {
-        return (
-          <div className="p-4 bg-slate-55 dark:bg-slate-900 border-4 border-indigo-500 rounded-3xl text-xs font-bold space-y-3 shadow-xl" onClick={e => e.stopPropagation()}>
-            <div><label className="text-[10px] text-slate-404">タスク名 *</label><input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
-            <div>
-              <label className="text-[10px] text-slate-404">主担当部署</label>
-              <select value={editDept} onChange={e => setEditDept(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white">
-                {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
-              </select>
-            </div>
-            
-            <div className="space-y-1.5 border-t border-b border-dashed dark:border-slate-700 py-2">
-              <div className="flex justify-between items-center mb-1">
-                <label className="text-[10px] text-indigo-500 dark:text-indigo-400">🔗 関連リソースリンクの管理（複数登録対応）</label>
-                <button type="button" onClick={handleAddUrlField} className="text-[10px] bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-lg border dark:border-indigo-800">＋ リンク追加</button>
-              </div>
-              <div className="space-y-1.5 max-h-36 overflow-y-auto custom-scrollbar pr-0.5">
-                {editUrls.map((u, uIdx) => (
-                  <div key={u.id} className="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1.5 rounded-xl border dark:border-slate-700 animate-in zoom-in-95">
-                    <input type="text" value={u.name} onChange={e => handleUpdateUrlField(u.id, { name: e.target.value })} placeholder="表示名 (例: Figma)" className="w-1/3 p-1 border rounded-lg dark:bg-slate-900 text-[11px]" />
-                    <input type="url" value={u.url} onChange={e => handleUpdateUrlField(u.id, { url: e.target.value })} placeholder="https://..." className="flex-1 p-1 border rounded-lg dark:bg-slate-900 font-mono text-[11px]" />
-                    <button type="button" onClick={(e) => handleRemoveUrlField(u.id, e)} className="text-slate-404 hover:text-rose-605 font-black text-sm px-1">×</button>
-                  </div>
-                ))}
-                {editUrls.length === 0 && <p className="text-[10px] text-slate-404 text-center py-1 italic">リンクは未登録です</p>}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div><label className="block text-[10px] text-slate-404 mb-0.5">期日</label><input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white font-mono" /></div>
-              <div><label className="text-[10px] text-slate-404">ウエイト</label><select value={editLevel} onChange={e => setEditLevel(Number(e.target.value))} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white"><option value="1">🟢 1P</option><option value="2">🟡 2P</option><option value="4">🔴 4P</option></select></div>
-            </div>
-            <div className="flex justify-end gap-2 pt-2"><button onClick={(e) => { e.stopPropagation(); setIsEditing(false); }} className="bg-slate-202 dark:bg-slate-700 px-3 py-1.5 rounded-xl">戻る</button><button onClick={handleSave} className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl">保存</button></div>
-          </div>
-        );
-      }
 
       return (
         <div 
@@ -268,7 +231,14 @@
                 <span className="font-black">{task.level === 4 ? '🔴 4P' : task.level === 2 ? '🟡 2P' : '🟢 1P'}</span>
                 <select 
                   value={task.status} 
-                  onChange={(e) => onUpdateTask(task.id, p => ({ ...p, status: e.target.value }))}
+                  onChange={(e) => {
+                    const nextStatus = e.target.value;
+                    onUpdateTask(task.id, p => ({ 
+                      ...p, 
+                      status: nextStatus,
+                      completedAt: nextStatus === 'completed' ? TODAY_STR : null // 完了日スタンプ回路
+                    }));
+                  }}
                   className="bg-slate-100 dark:bg-slate-700 border-none rounded px-1 py-0.5 text-[10px] font-black text-slate-605 dark:text-slate-200 outline-none"
                 >
                   <option value="pending">⚪ 未対応</option>
@@ -533,6 +503,8 @@
       const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
       const [user, setUser] = useState(null);
 
+      const [expandedProjectDbId, setExpandedProjectDbId] = useState(null);
+
       const [folders, setFolders] = useState(() => JSON.parse(localStorage.getItem('pl_folders')) || initialFolders);
       const [deptList, setDeptList] = useState(() => JSON.parse(localStorage.getItem('pl_depts')) || initialDepts);
       const [projects, setProjects] = useState(() => JSON.parse(localStorage.getItem('pl_projects')) || initialProjects);
@@ -599,6 +571,97 @@
         
         return Math.round((completedPoints / totalPoints) * 100);
       }, [activeProject]);
+
+      // 🛠️ 期間ズレ＆評価ラベリングエンジン（NOW/PAST）の徹底強化
+      const projectTimeframeMetrics = useMemo(() => {
+        const metrics = {};
+        projects.forEach(proj => {
+          let tasksAll = [];
+          proj.stepList?.forEach(s => { if (s.tasks) tasksAll = [...tasksAll, ...s.tasks]; });
+
+          const nowTasks = tasksAll.filter(t => t.status !== 'completed' && t.status !== 'not_applicable');
+          const nowPoints = nowTasks.reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+          
+          const nowDeptBreakdown = {};
+          deptList.forEach(d => { nowDeptBreakdown[d.key] = { label: d.label, color: d.color, points: 0, count: 0, isBlocked: false }; });
+          nowTasks.forEach(t => {
+            const dKey = t.department || 'backoffice';
+            if (!nowDeptBreakdown[dKey]) nowDeptBreakdown[dKey] = { label: t.deptLabel || '他部署', color: t.deptColor || 'slate', points: 0, count: 0, isBlocked: false };
+            nowDeptBreakdown[dKey].points += (Number(t.level) || 1);
+            nowDeptBreakdown[dKey].count += 1;
+            if (t.isBlocked) nowDeptBreakdown[dKey].isBlocked = true;
+          });
+
+          const pastTasks = tasksAll.filter(t => t.status === 'completed');
+          const pastPoints = pastTasks.reduce((sum, t) => sum + (Number(t.level) || 1), 0);
+          
+          const pastDeptBreakdown = {};
+          pastTasks.forEach(t => {
+            const dKey = t.department || 'backoffice';
+            if (!pastDeptBreakdown[dKey]) pastDeptBreakdown[dKey] = { label: t.deptLabel || '他部署', color: t.deptColor || 'slate', points: 0, count: 0 };
+            pastDeptBreakdown[dKey].points += (Number(t.level) || 1);
+            pastDeptBreakdown[dKey].count += 1;
+          });
+
+          // 🛠️ バグ修正：画面表示されている「最終完了日」の文字列と100%合致するよう日数計算回路を再構成
+          let durationDays = null;
+          let calculatedEndDateStr = TODAY_STR;
+          if (proj.evaluation?.actualEndDate) {
+            calculatedEndDateStr = proj.evaluation.actualEndDate;
+          } else if (pastTasks.length > 0) {
+            let maxDate = new Date(proj.startDate || TODAY_STR);
+            pastTasks.forEach(t => {
+              if (t.completedAt) { const cd = new Date(t.completedAt); if (cd > maxDate) maxDate = cd; }
+            });
+            const pad = (n) => String(n).padStart(2, '0');
+            calculatedEndDateStr = `${maxDate.getFullYear()}-${pad(maxDate.getMonth() + 1)}-${pad(maxDate.getDate())}`;
+          }
+
+          if (proj.startDate && calculatedEndDateStr) {
+            const start = new Date(proj.startDate);
+            const end = new Date(calculatedEndDateStr);
+            const diffTime = end.setHours(0,0,0,0) - start.setHours(0,0,0,0);
+            durationDays = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1); // 開始日当日を含める補正
+          }
+
+          // 🛠️ 新設：期間に対する評価軸（スピードスコア）判定ロジック
+          let speedRating = '✅ 計画通り';
+          let speedColor = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+          if (durationDays) {
+            const pointsPerDay = pastPoints / durationDays;
+            if (pointsPerDay >= 1.0) {
+              speedRating = '⚡ 爆速推進 (前倒し完了)';
+              speedColor = 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900';
+            } else if (durationDays > 14 && pastPoints <= 3) {
+              speedRating = '⚠️ 長期化 (プロセス改善推奨)';
+              speedColor = 'bg-rose-50 text-rose-700 dark:bg-rose-955/40 dark:text-rose-300 border border-rose-200 dark:border-rose-900';
+            }
+          }
+
+          // 🛠️ 新設：リソース消費量（P数）に対する格付けラベル
+          let loadClass = '🌱 ライト級案件';
+          let loadColor = 'bg-slate-100 text-slate-505';
+          if (pastPoints >= 10) {
+            loadClass = '🐘 ヘビー級案件 (高負荷実績)';
+            loadColor = 'bg-purple-50 text-purple-600 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800';
+          } else if (pastPoints >= 5) {
+            loadClass = '⚖️ ミドル級案件';
+            loadColor = 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800';
+          }
+
+          metrics[proj.id] = {
+            now: { tasks: nowTasks, totalPoints: nowPoints, totalCount: nowTasks.length, deptBreakdown: Object.values(nowDeptBreakdown).filter(d => d.count > 0) },
+            past: { tasks: pastTasks, totalPoints: pastPoints, totalCount: pastTasks.length, deptBreakdown: Object.values(pastDeptBreakdown) },
+            durationDays,
+            endDateStr: calculatedEndDateStr,
+            speedRating,
+            speedColor,
+            loadClass,
+            loadColor
+          };
+        });
+        return metrics;
+      }, [projects, deptList]);
 
       useEffect(() => {
         localStorage.setItem('pl_projects', JSON.stringify(projects));
@@ -686,12 +749,27 @@
         });
       };
 
+      const handleUpdateProjectEvaluation = (projId, evaluationFields) => {
+        setProjects(prev => prev.map(p => {
+          if (p.id !== projId) return p;
+          return { ...p, evaluation: { ...(p.evaluation || { tier: 'Tier 2', memo: '', actualEndDate: TODAY_STR }), ...evaluationFields } };
+        }));
+        showAlert('案件の戦略評価を更新しました。');
+      };
+
+      const handleOpenProjectFromDb = (proj) => {
+        setCurrentProjectId(proj.id);
+        if (proj.folderId) setSelectedFolderId(proj.folderId);
+        setViewMode('board');
+      };
+
       const handleCreateProject = (e) => {
         e.preventDefault(); if (!newProjName.trim()) return;
         const newId = `p_${Date.now()}`;
         const newProj = {
-          id: newId, folderId: newProjFolderId, name: newProjName.trim(), code: newProjCode.trim(), status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 0,
-          stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-06-25', leader: '推進担当者', order: 0, tasks: [] }]
+          id: newId, folderId: newProjFolderId, name: newProjName.trim(), code: newProjCode.trim(), status: 'in_progress', startDate: TODAY_STR, endDate: '2026-06-25', taskSequence: 0,
+          stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: TODAY_STR, dueDate: '2026-06-25', leader: '推進担当者', order: 0, tasks: [] }],
+          evaluation: { tier: 'Tier 2', memo: '', actualEndDate: '' }
         };
         setProjects([...projects, newProj]);
         setCurrentProjectId(newId); setShowAddProjectModal(false); setNewProjName(''); setNewProjCode(''); showAlert('新規プロジェクトを起票しました');
@@ -718,26 +796,25 @@
       };
 
       const injectDemoData = () => {
-        const demoProjects = [{ id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 2, stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが作成されました。', isSystem: true }], level: 1, isBlocked: false, urlName: '新商品 ECD設計書Wiki', url: 'https://sansan.com', nextAction: '推進メンバーに論点確認シートを展開する', urls: [{ id: 'u1_1', name: '新商品 ECD設計書Wiki', url: 'https://sansan.com' }, { id: 'u1_2', name: 'ドライブ共有フォルダ', url: 'https://google.com' }] }] }, { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false, urlName: '法務リーガル相談スレッド', url: 'https://sansan.co.jp', nextAction: '法務のAさんに修正規約のドラフトをチャットする', urls: [{ id: 'u2_1', name: '法務リーガル相談スレッド', url: 'https://sansan.co.jp' }] }] }] }];
+        const demoProjects = [
+          { 
+            id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 3, 
+            stepList: [
+              { id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', completedAt: '2026-05-18', doToday: false, startedAt: '2026-05-15', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが完了しました。', isSystem: true }], level: 1, isBlocked: false, urlName: '新商品 ECD設計書Wiki', url: 'https://sansan.com', nextAction: '完了' }] }, 
+              { id: 2, name: '法務・営業調整レビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 2, isBlocked: true, urlName: '法務リーガル相談スレッド', url: 'https://sansan.co.jp', nextAction: '法務のAさんに修正規約のドラフトをチャットする' }, { id: 't3', title: '営業推進への展開準備', description: 'リリース周知', assignee: '営業推進担当', department: 'sales', deptLabel: '営業', deptColor: 'blue', interactor: '自分', dueDate: '2026-05-29', status: 'pending', doToday: false, startedAt: '2026-05-20', contextLogs: [], level: 4, isBlocked: false, nextAction: '周知用のSlackスレッドの下書きを作る' }] }
+            ],
+            evaluation: { tier: 'Tier 1', memo: '法務のレビュー（2P）が他部署ブロック状態。ここさえ抜ければ残りは営業推進の4Pタスクのみなので、週明けに法務とアライメントを行う。', actualEndDate: '2026-05-24' }
+          },
+          {
+            id: 'p2', folderId: 'f2', name: '推進コア 効率化インフラ整備', code: 'CORP-2026', status: 'completed', startDate: '2026-04-01', endDate: '2026-05-15', taskSequence: 2, 
+            stepList: [
+              { id: 1, name: '要件定義とデータ連携', desc: 'インフラ接続', deptKey: 'system', deptLabel: 'システム', deptColor: 'slate', startDate: '2026-04-01', dueDate: '2026-04-20', leader: 'システム部', order: 0, tasks: [{ id: 't4', title: 'DBインフラ設計書レビュー', assignee: 'システムAさん', department: 'system', deptLabel: 'システム', deptColor: 'slate', dueDate: '2026-04-15', status: 'completed', completedAt: '2026-04-12', contextLogs: [], level: 4, isBlocked: false, nextAction: '完了' }, { id: 't5', title: '連携テストの実施', assignee: '推進担当', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', dueDate: '2026-04-20', status: 'completed', completedAt: '2026-04-19', contextLogs: [], level: 1, isBlocked: false, nextAction: '完了' }] }
+            ],
+            evaluation: { tier: 'Tier 2', memo: '要件定義から実際のテスト完了まで、システム部主導で大きなトラブルなく完了。所要期間は19日間。', actualEndDate: '2026-04-19' }
+          }
+        ];
         setFolders(initialFolders); setDeptList(initialDepts); setProjects(demoProjects); setSelectedFolderId('f1'); setCurrentProjectId('p1');
         showAlert('デモデータを安全に再生成しました！'); setShowSettingsModal(false);
-      };
-
-      // 🛠️ 100% 浄化：suicide トラップを完全消滅させ、クリーンに書き直し完了
-      const handleMockLogin = (email) => {
-        const mockUser = { uid: 'mock_' + Date.now(), email, displayName: email.split('@')[0] };
-        localStorage.setItem('pl_mock_user', JSON.stringify(mockUser)); setUser(mockUser);
-        showAlert(`Sansan推進コアメンバーとして認証しました。`);
-      };
-
-      const calculateProjectProgressById = (proj) => {
-        let allTasks = []; proj.stepList?.forEach(s => { if (s.tasks) allTasks = [...allTasks, ...s.tasks]; });
-        if (allTasks.length === 0) return 0;
-        const valid = allTasks.filter(t => t.status !== 'not_applicable');
-        if (valid.length === 0) return 100;
-        const totalPoints = valid.reduce((sum, t) => sum + (Number(t.level) || 1), 0);
-        const completedPoints = valid.filter(t => t.status === 'completed').reduce((sum, t) => sum + (Number(t.level) || 1), 0);
-        return Math.round((completedPoints / totalPoints) * 100);
       };
 
       const showAlert = (msg) => { setAlertMessage(msg); setTimeout(() => setAlertMessage(null), 4000); };
@@ -796,9 +873,8 @@
               </div>
               <div className="flex bg-slate-150 dark:bg-slate-800 p-0.5 rounded-xl text-xs font-bold border dark:border-slate-700">
                 <button onClick={() => setViewMode('board')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='board'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconCalendar /><span>ダッシュボード</span></button>
-                <button onClick={() => setViewMode('database')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='database'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconDatabase /><span>データベース</span></button>
+                <button onClick={() => setViewMode('database')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='database'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconDatabase /><span>データベース（戦略分析）</span></button>
               </div>
-              
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5 text-[10px] font-black">
                   {alertCounts.overdue > 0 && <span className="bg-rose-100 text-rose-800 dark:bg-rose-955/60 dark:text-rose-300 border border-rose-300 dark:border-rose-900 px-2 py-0.5 rounded-lg animate-pulse">🚨 超過 {alertCounts.overdue}</span>}
@@ -837,13 +913,13 @@
             )}
           </div>
 
-          {/* メメインエリア */}
+          {/* メインエリア */}
           <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
             {viewMode === 'board' && (
               projects.length === 0 ? (
                 <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 animate-in fade-in duration-500">
                   <p className="text-sm font-black text-slate-404">アクティブな案件プロジェクトがありません。</p>
-                  <p className="text-xs text-slate-404 mt-2">ロゴ右隣の「➕ 新規案件を起票」ボタンか、設定からデモデータを投入してください。</p>
+                  <p className="text-xs text-slate-404 mt-2">ロゴ右隣 of 「➕ 新規案件を起票」ボタンか、設定からデモデータを投入してください。</p>
                 </div>
               ) : (
                 <div className="space-y-8 pb-32">
@@ -868,86 +944,224 @@
             )}
 
             {viewMode === 'database' && (
-              <div className="bg-white dark:bg-slate-800 border rounded-3xl shadow-sm p-6 space-y-5 animate-in fade-in duration-300">
-                <h2 className="text-base font-black">組織横断プロジェクトデータベース</h2>
-                <div className="flex flex-wrap gap-2 text-xs font-bold">
-                  <select value={dbFilterFolderId} onChange={e=>setDbFilterFolderId(e.target.value)} className="border p-2 rounded-xl bg-transparent font-bold text-slate-805 dark:text-white bg-white dark:bg-slate-800"><option value="all">すべての分類</option>{folders?.map(f=><option key={f.id} value={f.id}>{f.name}</option>)}</select>
-                  <input type="text" placeholder="案件名やコードで検索..." value={dbFilterText} onChange={e=>setDbFilterText(e.target.value)} className="border p-2 rounded-xl bg-transparent min-w-[240px] text-slate-805 dark:text-white bg-white dark:bg-slate-800" />
+              <div className="bg-white dark:bg-slate-800 border rounded-3xl shadow-sm p-6 space-y-6 animate-in fade-in duration-300">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div>
+                    <h2 className="text-base font-black dark:text-white">全社横断プロジェクト・戦略コクピットDB</h2>
+                    <p className="text-[11px] text-slate-404 font-semibold mt-1">「NOW (進行中ボトルネック)」と「PAST (完了実績・所要期間)」の2大タイムラインを可視化します。</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 text-xs font-bold">
+                    <select value={dbFilterFolderId} onChange={e=>setDbFilterFolderId(e.target.value)} className="border p-2 rounded-xl bg-transparent font-bold text-slate-855 dark:text-white bg-white dark:bg-slate-800"><option value="all">すべての分類</option>{folders?.map(f=><option key={f.id} value={f.id}>{f.name}</option>)}</select>
+                    <input type="text" placeholder="案件名やコードで検索..." value={dbFilterText} onChange={e=>setDbFilterText(e.target.value)} className="border p-2 rounded-xl bg-transparent min-w-[200px] text-slate-855 dark:text-white bg-white dark:bg-slate-800" />
+                  </div>
                 </div>
-                <div className="overflow-x-auto rounded-2xl border dark:border-slate-700 shadow-sm">
-                  <table className="w-full text-xs text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 font-black text-[10.5px]">
-                        <th className="py-3 px-4">案件プロジェクト名称</th><th className="py-3 px-4">コード</th><th className="py-3 px-4">推進進捗率</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y font-bold dark:divide-slate-700">
-                      {projects?.filter(proj => {
-                        if (dbFilterFolderId !== 'all' && proj.folderId !== dbFilterFolderId) return false;
-                        if (dbFilterText.trim() !== '') { 
-                          const lowerText = dbFilterText.toLowerCase(); 
-                          if (!(proj.name || '').toLowerCase().includes(lowerText) && !(proj.code || '').toLowerCase().includes(lowerText)) return false; 
-                        }
-                        return true;
-                      }).map(proj => (
-                        <tr key={proj.id} className="hover:bg-slate-55/40 dark:hover:bg-slate-700/20">
-                          <td className="py-3 px-4 text-sm underline cursor-pointer decoration-indigo-300" onClick={() => { setCurrentProjectId(proj.id); setViewMode('board'); }}>{proj.name}</td>
-                          <td className="py-3 px-4 font-mono text-slate-404">{proj.code || '---'}</td>
-                          <td className="py-3 px-4 text-indigo-500 font-black">{calculateProjectProgressById(proj)}%</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+
+                <div className="space-y-4">
+                  {projects?.filter(proj => {
+                    if (dbFilterFolderId !== 'all' && proj.folderId !== dbFilterFolderId) return false;
+                    if (dbFilterText.trim() !== '') { 
+                      const lowerText = dbFilterText.toLowerCase(); 
+                      if (!(proj.name || '').toLowerCase().includes(lowerText) && !(proj.code || '').toLowerCase().includes(lowerText)) return false; 
+                    }
+                    return true;
+                  }).map(proj => {
+                    const metrics = projectTimeframeMetrics[proj.id] || { now: { totalPoints: 0, totalCount: 0, deptBreakdown: [] }, past: { totalPoints: 0, totalCount: 0, deptBreakdown: [] }, durationDays: null, endDateStr: TODAY_STR, speedRating: '計画通り', speedColor: '', loadClass: '', loadColor: '' };
+                    const isExpanded = expandedProjectDbId === proj.id;
+                    const prog = calculateProjectProgressById(proj);
+
+                    return (
+                      <div key={proj.id} className="border dark:border-slate-705 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-slate-855 animate-in slide-in-from-bottom-2 duration-150">
+                        {/* パネルヘッド */}
+                        <div 
+                          onClick={() => setExpandedProjectDbId(isExpanded ? null : proj.id)}
+                          className="p-4 bg-slate-55/60 dark:bg-slate-900/50 flex flex-wrap items-center justify-between gap-4 cursor-pointer hover:bg-slate-55 dark:hover:bg-slate-900 transition-all select-none"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-base">{prog === 100 ? '✨' : '🚀'}</span>
+                            <div>
+                              <h3 className="text-sm font-black text-slate-855 dark:text-slate-150">{proj.name}</h3>
+                              <div className="flex gap-2 text-[10px] font-mono text-slate-404 mt-0.5">
+                                <span>コード: {proj.code || '---'}</span>
+                                <span>・</span>
+                                <span>当初開始日: {proj.startDate || '未設定'}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-4">
+                            {/* 質・量のメタデータ評価バッジの自動配置 */}
+                            <span className={`px-2 py-0.5 text-[10px] font-black rounded ${metrics.loadColor}`}>
+                              {metrics.loadClass.split(' ')[0]} {proj.evaluation?.tier || 'Tier 2'}
+                            </span>
+                            
+                            <div className="flex items-center gap-2">
+                              <div className="w-16 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div className="bg-indigo-600 h-full rounded-full transition-all" style={{ width: `${prog}%` }}></div>
+                              </div>
+                              <span className="text-xs font-black text-indigo-600 dark:text-indigo-404">{prog}%</span>
+                            </div>
+                            
+                            <span className="text-xs text-slate-404 font-bold">{isExpanded ? '▲ 閉じる' : '▼ タイムライン時間軸を展開'}</span>
+                          </div>
+                        </div>
+
+                        {/* アコーディオン内部（進行中・完了後の完全分離） */}
+                        {isExpanded && (
+                          <div className="p-5 border-t dark:border-slate-750 bg-white dark:bg-slate-850 animate-in fade-in duration-100 space-y-5">
+                            
+                            {/* インライン戦略評価パネル */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-55/60 dark:bg-slate-900/30 p-4 rounded-2xl border dark:border-slate-700 text-xs font-bold">
+                              <div className="space-y-1.5 text-left">
+                                <label className="text-[10px] text-indigo-500 uppercase font-black">🌟 案件の「質」を選択マスタ</label>
+                                <select 
+                                  value={proj.evaluation?.tier || 'Tier 2'}
+                                  onChange={(e) => handleUpdateProjectEvaluation(proj.id, { tier: e.target.value })}
+                                  className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-855 dark:text-white"
+                                >
+                                  <option value="Tier 1">🌟 Tier 1（全社最重要特命論点）</option>
+                                  <option value="Tier 2">✨ Tier 2（部門コア改善・調整）</option>
+                                  <option value="Tier 3">🔹 Tier 3（チーム内効率化パッチ）</option>
+                                </select>
+                              </div>
+                              <div className="space-y-1.5 text-left md:col-span-2">
+                                <label className="text-[10px] text-indigo-500 uppercase font-black">📝 推進振り返り・戦略ボトルネックメモ</label>
+                                <textarea 
+                                  value={proj.evaluation?.memo || ''}
+                                  onChange={(e) => handleUpdateProjectEvaluation(proj.id, { memo: e.target.value })}
+                                  placeholder="振り返りや足止めの原因を記入..."
+                                  className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-855 dark:text-white min-h-[40px] focus:outline-none focus:border-indigo-500"
+                                />
+                              </div>
+                            </div>
+
+                            {/* ⏳ 2つの時間軸（進行中・完了後）のクロスオーバー */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              
+                              {/* 🚨 進行中（NOW）タスクの重たさ直感表示 */}
+                              <div className="border dark:border-slate-750 rounded-2xl p-4 space-y-3 bg-slate-55/20 dark:bg-slate-900/10">
+                                <div className="flex justify-between items-center border-b dark:border-slate-700 pb-2">
+                                  <h4 className="text-xs font-black text-rose-550 flex items-center gap-1.5">
+                                    <span>🚨 進行中タスク (NOW)</span>
+                                    <span className="bg-rose-50 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 px-2 py-0.5 rounded-md text-[10px]">{metrics.now.totalCount}件 / {metrics.now.totalPoints}P 残量</span>
+                                  </h4>
+                                  <span className="text-[10px] text-slate-404 font-extrabold">直感可視化：どこが今重い？</span>
+                                </div>
+
+                                {metrics.now.totalCount > 0 ? (
+                                  <div className="space-y-3 pt-1">
+                                    {metrics.now.deptBreakdown.map(dept => (
+                                      <div key={dept.label} className="space-y-1">
+                                        <div className="flex justify-between text-[11px] font-bold">
+                                          <span className="text-slate-850 dark:text-slate-200 flex items-center gap-1.5">
+                                            <span>{colorClassesMap[dept.color]?.dot || '⚫'}</span>
+                                            <span>{dept.label}</span>
+                                            {dept.isBlocked && <span className="bg-amber-100 text-amber-800 border border-amber-300 px-1 rounded text-[9px] animate-pulse">⚠️ 連絡待ち詰まり</span>}
+                                          </span>
+                                          <span className="text-slate-505 font-mono">{dept.points} P</span>
+                                        </div>
+                                        {/* 🎨 インジケーター：ウエイトの重さをドットの個数で直感マウント */}
+                                        <div className="flex items-center gap-1">
+                                          <div className="flex gap-0.5">
+                                            {Array.from({ length: dept.points }).map((_, i) => (
+                                              <span key={i} className="text-xs select-none leading-none">{colorClassesMap[dept.color]?.dot || '🔵'}</span>
+                                            ))}
+                                          </div>
+                                          <div className="h-1.5 bg-slate-100 dark:bg-slate-800 flex-1 rounded-full overflow-hidden ml-2">
+                                            <div className={`h-full rounded-full ${
+                                              dept.color === 'blue' ? 'bg-blue-606' :
+                                              dept.color === 'emerald' ? 'bg-emerald-555' :
+                                              dept.color === 'amber' ? 'bg-amber-500' :
+                                              dept.color === 'rose' ? 'bg-rose-550' : 'bg-slate-404'
+                                            }`} style={{ width: `${Math.min(100, (dept.points / 8) * 100)}%` }}></div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <p className="text-[11px] text-slate-404 text-center py-8 italic font-bold">すべてのタスクが完了しました！現在ボールは詰まっていません。✨</p>
+                                )}
+                              </div>
+
+                              {/* 🏆 完了後（PAST）の実績内訳 ＆ スピード評価軸 */}
+                              <div className="border dark:border-slate-750 rounded-2xl p-4 space-y-3 bg-slate-55/20 dark:bg-slate-900/10">
+                                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-1.5 border-b dark:border-slate-700 pb-2">
+                                  <h4 className="text-xs font-black text-emerald-555 flex items-center gap-1.5">
+                                    <span>🏆 完了後タスクの実績 (PAST)</span>
+                                    <span className="bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 rounded-md text-[10px] font-mono">{metrics.past.totalCount}件 / {metrics.past.totalPoints}P 実績</span>
+                                  </h4>
+                                  
+                                  {/* ⏱️ 評価軸：実際の所要日数と、それに対するスピードレーティングの自動露出 */}
+                                  {metrics.durationDays !== null ? (
+                                    <div className="flex flex-col items-end gap-1 select-none">
+                                      <span className="bg-indigo-600 text-white px-2 py-0.5 rounded-lg text-[9px] font-black tracking-wide">
+                                        ⏱️ 所要期間: {metrics.durationDays}日間
+                                      </span>
+                                      <span className={`px-1.5 py-0.5 rounded text-[8.5px] font-black ${metrics.speedColor}`}>
+                                        {metrics.speedRating}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <span className="text-[10px] text-slate-404 italic font-bold">所要期間: 進行中...</span>
+                                  )}
+                                </div>
+
+                                {metrics.past.totalCount > 0 ? (
+                                  <div className="space-y-2 pt-1 text-[11px] font-bold text-slate-705 dark:text-slate-300 text-left">
+                                    <p className="text-[10px] text-indigo-500 font-black uppercase mb-1">📋 各部署が実務で消費したリソース（負荷内訳）</p>
+                                    <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto custom-scrollbar pr-0.5">
+                                      {metrics.past.deptBreakdown.map(dept => (
+                                        <div key={dept.label} className="p-2 border dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/30 flex items-center justify-between shadow-3xs">
+                                          <span className="flex items-center gap-1.5">
+                                            <span>{colorClassesMap[dept.color]?.dot || '⚫'}</span>
+                                            <span>{dept.label}</span>
+                                          </span>
+                                          <span className="font-mono text-slate-404 text-[10px]">{dept.count}件 ({dept.points}P)</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                    <div className="text-[9.5px] text-slate-404 italic border-t dark:border-slate-700/60 pt-2 text-right font-mono">
+                                      当初開始: {proj.startDate || '---'} ➔ 最終完了: {metrics.endDateStr}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <p className="text-[11px] text-slate-404 text-center py-8 italic font-bold">完了したタスクの実績内訳はまだありません。</p>
+                                )}
+                              </div>
+
+                            </div>
+
+                            <div className="flex justify-end pt-1">
+                              <button 
+                                onClick={() => handleOpenProjectFromDb(proj)} 
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2 rounded-xl font-black shadow-md hover:scale-102 duration-100"
+                              >
+                                🎯 この案件の推進ダッシュボード（工程）へワープ
+                              </button>
+                            </div>
+
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
           </div>
 
-          {/* システム環境マスタ設定 */}
+          {/* モーダル群 */}
           {showSettingsModal && (
             <div className="fixed inset-0 bg-slate-955/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={() => setShowSettingsModal(false)}>
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[85vh] relative" onClick={e => e.stopPropagation()}>
                 <h2 className="text-base font-black mb-2 text-slate-850 dark:text-white">システム環境マスタ設定</h2>
-                
                 <div className="flex-1 overflow-y-auto space-y-6 text-xs font-bold scrollbar-thin pr-1 py-2">
-                  <form onSubmit={handleAddDeptMaster} className="bg-slate-55 dark:bg-slate-900/60 border border-slate-202 dark:border-slate-700 p-4 rounded-2xl space-y-3">
-                    <span className="text-indigo-500 font-extrabold block text-[11px]">🏢 組織内・新しい保持部署の新設</span>
-                    <div className="flex flex-wrap sm:flex-nowrap gap-2 items-end">
-                      <div className="flex-1 min-w-[150px]"><label className="block text-[10px] text-slate-404 mb-1">部署名</label><input required type="text" placeholder="例: 開発、デザイン" value={newDeptLabel} onChange={e => setNewDeptLabel(e.target.value)} className="w-full border p-2 rounded-xl dark:bg-slate-800 border-slate-202 text-slate-805 dark:text-white font-bold" /></div>
-                      <div>
-                        <label className="block text-[10px] text-slate-404 mb-1">テーマカラー</label>
-                        <select value={newDeptColor} onChange={e => setNewDeptColor(e.target.value)} className="border p-2 rounded-xl dark:bg-slate-800 border-slate-202 text-slate-805 dark:text-white font-bold bg-white">
-                          {Object.keys(colorClassesMap).map(c => <option key={c} value={c}>{colorLabels[c] || c}</option>)}
-                        </select>
-                      </div>
-                      <button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded-xl font-black shadow-md hover:bg-indigo-700 shrink-0">部署を新設</button>
-                    </div>
-                  </form>
-
-                  <div className="space-y-2">
-                    <span className="text-slate-705 dark:text-slate-300 font-extrabold block text-[11px] border-b pb-1 dark:border-slate-700">📋 現在の登録部署マスタ一覧・カラーカスタム</span>
-                    <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1">
-                      {deptList.map((dept) => (
-                        <div key={dept.key} className="flex items-center gap-2 bg-slate-55 border p-2.5 rounded-xl dark:bg-slate-900/40 dark:border-slate-700 border-slate-202 text-slate-805 dark:text-white shadow-2xs">
-                          <input type="text" value={dept.label} onChange={(e) => handleUpdateDeptMaster(dept.key, { label: e.target.value })} className="flex-1 border p-1.5 rounded-xl bg-white dark:bg-slate-800 border-slate-202 font-extrabold text-xs" />
-                          <select value={dept.color} onChange={(e) => handleUpdateDeptMaster(dept.key, { color: e.target.value })} className="p-1.5 border rounded-xl bg-white dark:bg-slate-800 text-xs font-bold">
-                            {Object.keys(colorClassesMap).map(c => <option key={c} value={c}>{colorLabels[c] || c}</option>)}
-                          </select>
-                          <button type="button" onClick={() => handleDeleteDeptMaster(dept.key, dept.label)} className="text-slate-404 font-black text-base px-2 hover:text-rose-605">×</button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-55 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 p-4 rounded-2xl flex justify-between items-center gap-4">
-                    <p className="text-[10px] text-slate-404 leading-normal">ブラウザデータを強制上書きし、初期データ（2ステップ、2タスク構成）をクリーンに再ロードします。</p>
-                    <button type="button" onClick={injectDemoData} className="bg-purple-600 text-white px-4 py-2 rounded-xl font-black shadow-sm shrink-0">初期データにリセット</button>
+                  <div className="bg-slate-55 dark:bg-slate-900 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 flex justify-between items-center gap-4">
+                    <p className="text-[10px] text-slate-404 leading-normal">戦略評価データベース（NOW/PAST 2軸分析・スピード指標）に完全準拠したデモデータをブラウザメモリに安全注入します。</p>
+                    <button type="button" onClick={injectDemoData} className="bg-purple-600 text-white px-4 py-2 rounded-xl font-black shadow-sm shrink-0">デモデータを初期生成する</button>
                   </div>
                 </div>
-                
-                <div className="pt-4 border-t dark:border-slate-700 flex justify-end">
-                  <button type="button" onClick={() => setShowSettingsModal(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-805 dark:text-slate-200 px-5 py-2.5 rounded-xl font-bold">閉じる</button>
-                </div>
+                <div className="pt-4 border-t dark:border-slate-700 flex justify-end"><button type="button" onClick={() => setShowSettingsModal(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-805 dark:text-slate-200 px-5 py-2.5 rounded-xl font-bold">閉じる</button></div>
               </div>
             </div>
           )}
