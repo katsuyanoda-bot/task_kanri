@@ -99,7 +99,7 @@
 
     const initialProjects = [];
 
-    // 🛡️ 最下層：現場担当のタスクカード（ステータス変更・部署連動・履歴ログ復活）
+    // 🛡️ 最下層：現場担当のタスクカード
     function TaskCard({ task, onUpdateTask, onDeleteTask, deptList }) {
       const [isEditing, setIsEditing] = useState(false);
       const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -108,13 +108,11 @@
       const [editDept, setEditDept] = useState(task.department || 'backoffice');
       const [editDueDate, setEditDueDate] = useState(task.dueDate || TODAY_STR);
       const [editLevel, setEditLevel] = useState(task.level || 1);
-      const [editInteractor, setEditInteractor] = useState(task.interactor || '自分');
       const [logInput, setLogInput] = useState('');
 
       const isOver = !['completed', 'not_applicable'].includes(task.status) && new Date(task.dueDate) < new Date(TODAY_STR);
       const tkCls = colorClassesMap[task.deptColor] || colorClassesMap.slate;
 
-      // 🛠️ 部署変更に伴うカラーとラベルの再スタンプ処理
       const handleSave = (e) => {
         e.stopPropagation();
         const targetDept = deptList.find(d => d.key === editDept) || { label: '他部署', color: 'slate' };
@@ -123,17 +121,14 @@
           title: editTitle, 
           description: editDesc, 
           department: editDept,
-          deptLabel: targetDept.label, // 焼き直し
-          deptColor: targetDept.color, // 焼き直し
+          deptLabel: targetDept.label, // 部署変更時にフチ色とバッジラベルを一撃連動
+          deptColor: targetDept.color,
           dueDate: editDueDate, 
-          level: Number(editLevel), 
-          interactor: editInteractor, 
-          assignee: editInteractor
+          level: Number(editLevel)
         }));
         setIsEditing(false);
       };
 
-      // 🪵 履歴ログの追記処理
       const handleAddLog = (e) => {
         if (e.key === 'Enter' && logInput.trim()) {
           e.stopPropagation();
@@ -153,9 +148,11 @@
         return (
           <div className="p-4 bg-slate-55 dark:bg-slate-900 border-4 border-indigo-500 rounded-3xl text-xs font-bold space-y-3 shadow-xl" onClick={e => e.stopPropagation()}>
             <div><label className="text-[10px] text-slate-404">タスク名 *</label><input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
-            <div className="grid grid-cols-2 gap-2">
-              <div><label className="text-[10px] text-slate-404">主担当部署</label><select value={editDept} onChange={e => setEditDept(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-              <div><label className="text-[10px] text-slate-404">やり取り相手</label><input type="text" value={editInteractor} onChange={e => setEditInteractor(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
+            <div>
+              <label className="text-[10px] text-slate-404">主担当部署</label>
+              <select value={editDept} onChange={e => setEditDept(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white">
+                {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+              </select>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div><label className="text-[10px] text-slate-404">期日</label><input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
@@ -175,13 +172,9 @@
             <div className="flex justify-between items-center text-[11px] font-bold text-slate-500 mb-3">
               <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
                 <span className="font-black">{task.level === 4 ? '🔴 4P' : task.level === 2 ? '🟡 2P' : '🟢 1P'}</span>
-                {/* 🛠️ ステータス一撃変更セレクトボックス */}
                 <select 
                   value={task.status} 
-                  onChange={(e) => {
-                    const nextStatus = e.target.value;
-                    onUpdateTask(task.id, p => ({ ...p, status: nextStatus }));
-                  }}
+                  onChange={(e) => onUpdateTask(task.id, p => ({ ...p, status: e.target.value }))}
                   className="bg-slate-100 dark:bg-slate-700 border-none rounded px-1 py-0.5 text-[10px] font-black text-slate-605 dark:text-slate-200 outline-none"
                 >
                   <option value="pending">⚪ 未対応</option>
@@ -202,7 +195,7 @@
               <h4 className="font-extrabold text-sm text-slate-850 dark:text-slate-150 leading-tight break-all">{task.title}</h4>
               <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-bold mt-1.5 text-slate-404">
                 <span className={`px-1.5 py-0.5 border rounded ${tkCls?.badge || 'bg-slate-202'}`}>{task.deptLabel || '他部署'}</span>
-                <span>To: {task.interactor}</span>
+                {/* 🛠️ クレンジング：「To:自分」などの不要なテキストを完全消去してスッキリ化 */}
                 <span className={`font-mono ${isOver ? 'text-rose-605 font-black' : ''}`}>期日: {task.dueDate}</span>
               </div>
             </div>
@@ -210,7 +203,6 @@
 
           {isDetailsOpen && (
             <div className="px-5 pb-4 space-y-3 animate-in fade-in duration-100" onClick={e => e.stopPropagation()}>
-              {/* 論点・備考 */}
               <div className="text-left border-t border-dashed dark:border-slate-700 pt-3">
                 <span className="text-[9.5px] font-bold text-slate-404 block mb-1">論点・備考</span>
                 <textarea 
@@ -222,7 +214,6 @@
                 />
               </div>
 
-              {/* 🛠️ 履歴ログタイムライン完全復活 */}
               <div className="text-left">
                 <span className="text-[9.5px] font-bold text-slate-404 block mb-1">履歴タイムライン</span>
                 <input 
@@ -389,7 +380,7 @@
       );
     }
 
-    // 👑 総支配人：アプリケーション最上位コア（Step追加ロジック追加）
+    // 👑 総支配人：アプリケーション最上位コア（部署マスタの編集ロジック完全実装）
     function App() {
       const fileInputRef = useRef(null);
       const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -407,13 +398,9 @@
       const [currentProjectId, setCurrentProjectId] = useState('p1');
       const [taskFilter, setTaskFilter] = useState({ pending: true, in_progress: true, completed: false, not_applicable: false });
 
-      const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-      const [newProjName, setNewProjName] = useState('');
-      const [newProjCode, setNewProjCode] = useState('');
-      const [newProjFolderId, setNewProjFolderId] = useState('f1');
-
-      const [dbFilterFolderId, setDbFilterFolderId] = useState('all');
-      const [dbFilterText, setDbFilterText] = useState('');
+      // 部署追加用の一時State
+      const [newDeptLabel, setNewDeptLabel] = useState('');
+      const [newDeptColor, setNewDeptColor] = useState('slate');
 
       const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
@@ -439,7 +426,35 @@
         localStorage.setItem('pl_folders', JSON.stringify(folders));
       }, [projects, deptList, folders]);
 
-      // 🛠️ Step追加ロジック
+      // 🛠️ 部署マスタの新規追加
+      const handleAddDeptMaster = (e) => {
+        e.preventDefault();
+        if (!newDeptLabel.trim()) return;
+        const newKey = `dept_${Date.now()}`;
+        const newDeptObj = {
+          key: newKey,
+          label: newDeptLabel.trim(),
+          color: newDeptColor,
+          order: deptList.length
+        };
+        setDeptList([...deptList, newDeptObj]);
+        setNewDeptLabel('');
+        showAlert(`部署「${newDeptObj.label}」を新設しました。`);
+      };
+
+      // 🛠️ 部署マスタのリネーム・カラー変更変更処理
+      const handleUpdateDeptMaster = (key, fields) => {
+        setDeptList(prev => prev.map(d => d.key === key ? { ...d, ...fields } : d));
+      };
+
+      // 🛠️ 部署マスタの削除処理
+      const handleDeleteDeptMaster = (key, label) => {
+        triggerConfirm('部署マスタの削除', `部署「${label}」を削除しますか？ (既存のタスクに焼き付けられた文字は維持されます)`, () => {
+          setDeptList(prev => prev.filter(d => d.key !== key));
+          showAlert('部署をマスタから削除しました。');
+        });
+      };
+
       const handleAddStep = () => {
         if (!activeProject) return;
         const nextOrder = stepList.length;
@@ -456,7 +471,6 @@
           order: nextOrder,
           tasks: []
         };
-        
         setProjects(prev => prev.map(p => {
           if (p.id !== activeProject.id) return p;
           return { ...p, stepList: [...p.stepList, newStep] };
@@ -612,7 +626,7 @@
             </div>
           )}
 
-          {/* 🧱 固定不透明天井ナビ */}
+          {/* 固定天井ナビ */}
           <div className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-md">
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
               <div className="flex items-center gap-3">
@@ -675,7 +689,6 @@
                     />
                   ))}
                   
-                  {/* 🛠️ STEP工程追加ボタンの配備 */}
                   <button 
                     onClick={handleAddStep}
                     className="w-full py-6 border-4 border-dashed border-slate-202 dark:border-slate-800 rounded-3xl text-slate-404 hover:text-indigo-500 hover:border-indigo-400 hover:bg-indigo-50/20 duration-150 flex flex-col items-center justify-center gap-2"
@@ -720,17 +733,69 @@
             )}
           </div>
 
-          {/* 設定モーダル */}
+          {/* 🛠️ 大幅強化：システム環境マスタ設定（部署の追加・編集・カラー選択機能を完全搭載） */}
           {showSettingsModal && (
             <div className="fixed inset-0 bg-slate-955/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={() => setShowSettingsModal(false)}>
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[85vh] relative" onClick={e => e.stopPropagation()}>
-                <h2 className="text-base font-black mb-4 text-slate-850 dark:text-white">システム環境マスタ設定</h2>
-                <div className="flex-1 overflow-y-auto space-y-5 text-xs font-bold scrollbar-thin">
-                  <div className="bg-slate-55 dark:bg-slate-900 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 flex justify-between items-center gap-4">
-                    <p className="text-[10px] text-slate-404 leading-normal">新設計の「入れ子ツリー構造」に完全準拠したデモデータをブラウザメモリに安全注入します。</p>
-                    <button type="button" onClick={injectDemoData} className="bg-purple-600 text-white px-4 py-2 rounded-xl font-black shadow-sm shrink-0">デモデータを初期生成</button>
+                <h2 className="text-base font-black mb-2 text-slate-850 dark:text-white">システム環境マスタ設定</h2>
+                
+                <div className="flex-1 overflow-y-auto space-y-6 text-xs font-bold scrollbar-thin pr-1 py-2">
+                  
+                  {/* ➕ 部署マスタ新規追加フォーム */}
+                  <form onSubmit={handleAddDeptMaster} className="bg-slate-55 dark:bg-slate-900/60 border border-slate-202 dark:border-slate-700 p-4 rounded-2xl space-y-3">
+                    <span className="text-indigo-500 font-extrabold block text-[11px]">🏢 組織内・新しい保持部署の新設</span>
+                    <div className="flex flex-wrap sm:flex-nowrap gap-2 items-end">
+                      <div className="flex-1 min-w-[150px]"><label className="block text-[10px] text-slate-404 mb-1">部署名</label><input required type="text" placeholder="例: 広報、人事" value={newDeptLabel} onChange={e => setNewDeptLabel(e.target.value)} className="w-full border p-2 rounded-xl dark:bg-slate-800 border-slate-202 text-slate-805 dark:text-white font-bold" /></div>
+                      <div>
+                        <label className="block text-[10px] text-slate-404 mb-1">テーマカラー</label>
+                        <select value={newDeptColor} onChange={e => setNewDeptColor(e.target.value)} className="border p-2 rounded-xl dark:bg-slate-800 border-slate-202 text-slate-805 dark:text-white font-bold bg-white">
+                          {Object.keys(colorClassesMap).map(c => <option key={c} value={c}>{c}カラー</option>)}
+                        </select>
+                      </div>
+                      <button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded-xl font-black shadow-md hover:bg-indigo-700 shrink-0">部署を新設</button>
+                    </div>
+                  </form>
+
+                  {/* ✏️ 既存部署マスタのインライン一覧・編集・削除 */}
+                  <div className="space-y-2">
+                    <span className="text-slate-705 dark:text-slate-300 font-extrabold block text-[11px] border-b pb-1 dark:border-slate-700">📋 現在の登録部署マスタ一覧・カラーカスタム</span>
+                    <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1">
+                      {deptList.map((dept) => (
+                        <div key={dept.key} className="flex items-center gap-2 bg-slate-55 border p-2.5 rounded-xl dark:bg-slate-900/40 dark:border-slate-700 border-slate-202 text-slate-805 dark:text-white shadow-2xs">
+                          {/* 部署ラベル編集 */}
+                          <input 
+                            type="text" 
+                            value={dept.label} 
+                            onChange={(e) => handleUpdateDeptMaster(dept.key, { label: e.target.value })}
+                            className="flex-1 border p-1.5 rounded-xl bg-white dark:bg-slate-800 border-slate-202 font-extrabold text-xs" 
+                          />
+                          {/* テーマカラーインライン選択 */}
+                          <select 
+                            value={dept.color} 
+                            onChange={(e) => handleUpdateDeptMaster(dept.key, { color: e.target.value })}
+                            className="p-1.5 border rounded-xl bg-white dark:bg-slate-800 text-xs font-bold"
+                          >
+                            {Object.keys(colorClassesMap).map(c => <option key={c} value={c}>{c}</option>)}
+                          </select>
+                          {/* マスタ削除ボタン */}
+                          <button 
+                            type="button" 
+                            onClick={() => handleDeleteDeptMaster(dept.key, dept.label)}
+                            className="text-slate-404 font-black text-base px-2 hover:text-rose-605"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-55 dark:bg-slate-900 border border-slate-202 dark:border-slate-700 p-4 rounded-2xl flex justify-between items-center gap-4">
+                    <p className="text-[10px] text-slate-404 leading-normal">ブラウザデータを強制上書きし、初期データ（2ステップ、1タスク構成）をクリーンに再ロードします。</p>
+                    <button type="button" onClick={injectDemoData} className="bg-purple-600 text-white px-4 py-2 rounded-xl font-black shadow-sm shrink-0">初期データにリセット</button>
                   </div>
                 </div>
+                
                 <div className="pt-4 border-t dark:border-slate-700 flex justify-end">
                   <button type="button" onClick={() => setShowSettingsModal(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-805 dark:text-slate-200 px-5 py-2.5 rounded-xl font-bold">閉じる</button>
                 </div>
