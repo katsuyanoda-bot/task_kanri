@@ -46,6 +46,7 @@
     .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
     .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
     .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .dark .scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
     .dark .scrollbar-thin::-webkit-scrollbar-thumb { background: #475569; }
     .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #64748b; }
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
@@ -110,7 +111,7 @@
 
     const initialProjects = [];
 
-    // 🛡️ 最下層：現場担当のタスクカード（⏭️ Next Action表面露出実装）
+    // 🛡️ 最下層：現場担当のタスクカード（🔗 マルチリンク機構・完全実装）
     function TaskCard({ task, index, totalTasks, onUpdateTask, onDeleteTask, onMoveTask, deptList }) {
       const [isEditing, setIsEditing] = useState(false);
       const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -119,12 +120,23 @@
       const [editDept, setEditDept] = useState(task.department || 'backoffice');
       const [editDueDate, setEditDueDate] = useState(task.dueDate || TODAY_STR);
       const [editLevel, setEditLevel] = useState(task.level || 1);
-      const [editUrlName, setEditUrlName] = useState(task.urlName || '');
-      const [editUrl, setEditUrl] = useState(task.url || '');
       const [logInput, setLogInput] = useState('');
-
-      // 🛠️ 新設：Next Actionインライン同期用State
       const [nextActionInput, setNextActionInput] = useState(task.nextAction || '');
+
+      // 🛡️ セーフティ防衛ハック：旧単一URLデータ構造が紛れ込んでも、配列へ自動コンバートしてエラー即死を防ぐ
+      const normalizedUrls = useMemo(() => {
+        if (task.urls && Array.isArray(task.urls)) return task.urls;
+        if (task.url) return [{ id: 'legacy', name: task.urlName || '添付リソース', url: task.url }];
+        return [];
+      }, [task.urls, task.url]);
+
+      // 編集用の一時的なリンク配列State
+      const [editUrls, setEditUrls] = useState([]);
+
+      // 編集モードに入った瞬間に一時Stateに展開
+      useEffect(() => {
+        if (isEditing) setEditUrls([...normalizedUrls]);
+      }, [isEditing, normalizedUrls]);
 
       useEffect(() => {
         setNextActionInput(task.nextAction || '');
@@ -151,32 +163,50 @@
         } else if (daysDiff <= 3) {
           return <span className="text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-955/40 border border-amber-200 dark:border-amber-900/60 px-1.5 py-0.5 rounded">⏳ あと{daysDiff}日</span>;
         } else {
-          return <span className="text-slate-500 dark:text-slate-400 font-semibold bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">あと{daysDiff}日</span>;
+          return <span className="text-slate-500 dark:text-slate-404 font-semibold bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">あと{daysDiff}日</span>;
         }
       }, [daysDiff]);
 
-      // 🛠️ 新設：フォーカスアウト時に自動でカチッと裏へ焼き付ける処理
       const handleNextActionBlur = () => {
         if (nextActionInput.trim() !== (task.nextAction || '')) {
           onUpdateTask(task.id, p => ({ ...p, nextAction: nextActionInput.trim() }));
         }
       };
 
-      // 🛠️ 新設：Enterキー押下時にインライン保存を完了させる処理
       const handleNextActionKeyDown = (e) => {
-        if (e.key === 'Enter') {
-          e.stopPropagation(); // 衝撃波シールド
-          e.target.blur(); // フォーカスを外してBlurイベントへ移譲
-        }
+        if (e.key === 'Enter') { e.stopPropagation(); e.target.blur(); }
+      };
+
+      // 🛠️ マルチリンク追加処理
+      const handleAddUrlField = (e) => {
+        e.stopPropagation();
+        setEditUrls([...editUrls, { id: `url_${Date.now()}_${Math.random()}`, name: '', url: '' }]);
+      };
+
+      // 🛠️ マルチリンクインライン変更処理
+      const handleUpdateUrlField = (id, fields) => {
+        setEditUrls(editUrls.map(u => u.id === id ? { ...u, ...fields } : u));
+      };
+
+      // 🛠️ マルチリンク行削除処理
+      const handleRemoveUrlField = (id, e) => {
+        e.stopPropagation();
+        setEditUrls(editUrls.filter(u => u.id !== id));
       };
 
       const handleSave = (e) => {
         e.stopPropagation();
         const targetDept = deptList.find(d => d.key === editDept) || { label: '他部署', color: 'slate' };
+        
+        // 空白行を除外してクレンジング
+        const cleanedUrls = editUrls.filter(u => u.url.trim() !== '');
+
         onUpdateTask(task.id, (p) => ({
           ...p, title: editTitle, description: editDesc, department: editDept,
           deptLabel: targetDept.label, deptColor: targetDept.color, dueDate: editDueDate, level: Number(editLevel),
-          urlName: editUrlName.trim(), url: editUrl.trim()
+          urls: cleanedUrls, // 🔑 複数配列としてガチッとセーブ
+          url: cleanedUrls[0]?.url || '',      // 旧データ構造への自動レガシーフォールバック
+          urlName: cleanedUrls[0]?.name || ''   // 旧データ構造への自動レガシーフォールバック
         }));
         setIsEditing(false);
       };
@@ -206,10 +236,25 @@
                 {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
               </select>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div><label className="text-[10px] text-slate-404">URL表示名</label><input type="text" value={editUrlName} onChange={e => setEditUrlName(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" placeholder="Wiki等" /></div>
-              <div><label className="text-[10px] text-slate-404">リンクURL</label><input type="url" value={editUrl} onChange={e => setEditUrl(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white font-mono" placeholder="https://..." /></div>
+            
+            {/* 🛠️ 新設：動的に増減するマルチリンク編集フォーム領域 */}
+            <div className="space-y-1.5 border-t border-b border-dashed dark:border-slate-700 py-2">
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-[10px] text-indigo-500 dark:text-indigo-400">🔗 関連リソースリンクの管理（複数登録対応）</label>
+                <button type="button" onClick={handleAddUrlField} className="text-[10px] bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-lg border dark:border-indigo-800">＋ リンク追加</button>
+              </div>
+              <div className="space-y-1.5 max-h-36 overflow-y-auto custom-scrollbar pr-0.5">
+                {editUrls.map((u, uIdx) => (
+                  <div key={u.id} className="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1.5 rounded-xl border dark:border-slate-700 animate-in zoom-in-95">
+                    <input type="text" value={u.name} onChange={e => handleUpdateUrlField(u.id, { name: e.target.value })} placeholder="表示名 (例: Figma)" className="w-1/3 p-1 border rounded-lg dark:bg-slate-900 text-[11px]" />
+                    <input type="url" value={u.url} onChange={e => handleUpdateUrlField(u.id, { url: e.target.value })} placeholder="https://..." className="flex-1 p-1 border rounded-lg dark:bg-slate-900 font-mono text-[11px]" />
+                    <button type="button" onClick={(e) => handleRemoveUrlField(u.id, e)} className="text-slate-400 hover:text-rose-605 font-black text-sm px-1">×</button>
+                  </div>
+                ))}
+                {editUrls.length === 0 && <p className="text-[10px] text-slate-404 text-center py-1 italic">リンクは未登録です</p>}
+              </div>
             </div>
+
             <div className="grid grid-cols-2 gap-2">
               <div><label className="text-[10px] text-slate-404">期日</label><input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
               <div><label className="text-[10px] text-slate-404">ウエイト</label><select value={editLevel} onChange={e => setEditLevel(Number(e.target.value))} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white"><option value="1">🟢 1P</option><option value="2">🟡 2P</option><option value="4">🔴 4P</option></select></div>
@@ -259,7 +304,6 @@
                 {deadlineBadge}
               </div>
 
-              {/* 🛠️ 新機能：詳細をパカパカ開けずとも表面から一撃で入力・確認できる Next Action インラインフォーム */}
               <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-left" onClick={e => e.stopPropagation()}>
                 <label className="text-[9.5px] font-black text-indigo-500 dark:text-indigo-400 block mb-1 uppercase tracking-wider">⏭️ 次の一手 (Next Action)</label>
                 <input 
@@ -277,22 +321,29 @@
 
           {isDetailsOpen && (
             <div className="px-5 pb-4 space-y-3 animate-in fade-in duration-100" onClick={e => e.stopPropagation()}>
-              {task.url && (
+              
+              {/* 🛠️ カイゼン：登録された数だけ、何個でも並列して並ぶシールド付きのマルチリソースリンク集 */}
+              {normalizedUrls.length > 0 && (
                 <div className="text-left border-t border-dashed dark:border-slate-700 pt-3">
-                  <span className="text-[9.5px] font-bold text-slate-404 block mb-1">関連リソースリンク</span>
-                  <a 
-                    href={task.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-1 text-[11px] font-black bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 px-3 py-1.5 rounded-xl shadow-2xs hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white transition-all"
-                  >
-                    🔗 {task.urlName || '添付リンクを開く'}
-                  </a>
+                  <span className="text-[9.5px] font-bold text-slate-404 block mb-1">関連リソースリンク集</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {normalizedUrls.map((uLink, uIdx) => (
+                      <a 
+                        key={uLink.id || uIdx}
+                        href={uLink.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()} // 衝撃波シールド
+                        className="inline-flex items-center gap-1 text-[11px] font-black bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 px-3 py-1.5 rounded-xl shadow-2xs hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white transition-all duration-100"
+                      >
+                        🔗 {uLink.name || `リソース ${uIdx + 1}`}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               )}
 
-              <div className={`text-left ${task.url ? '' : 'border-t border-dashed dark:border-slate-700 pt-3'}`}>
+              <div className={`text-left ${normalizedUrls.length > 0 ? '' : 'border-t border-dashed dark:border-slate-700 pt-3'}`}>
                 <span className="text-[9.5px] font-bold text-slate-404 block mb-1">論点・備考</span>
                 <textarea 
                   value={editDesc} 
@@ -378,7 +429,7 @@
           id: `t_${Date.now()}`, title: newTitle.trim(), description: '', assignee: '自分', department: newDept,
           deptLabel: targetDept.label, deptColor: targetDept.color, interactor: '自分', dueDate: newDueDate,
           status: 'pending', doToday: false, startedAt: null, completedAt: null, contextLogs: [], level: 1, isBlocked: false,
-          urlName: '', url: '', nextAction: '' // 初期値空文字
+          urls: [], nextAction: '' // 複数リンク配列を初期化
         };
         onAddTask(step.id, newTask);
         setNewTitle('');
@@ -462,7 +513,7 @@
                       <div><label className="block text-[10px] text-slate-404 mb-0.5">タスク名 *</label><input required type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} className="w-full p-1.5 border rounded-xl dark:bg-slate-900 border-slate-202 text-slate-805 dark:text-white" /></div>
                       <div className="grid grid-cols-2 gap-2">
                         <div><label className="block text-[10px] text-slate-404 mb-0.5">保持部署</label><select value={newDept} onChange={e => setNewDept(e.target.value)} className="w-full p-1.5 border rounded-xl dark:bg-slate-900 border-slate-202 text-slate-805 dark:text-white">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
-                        <div><label className="block text-[10px] text-slate-404 mb-0.5">期日</label><input type="date" value={newDueDate} onChange={e => setNewDueDate(e.target.value)} className="w-full p-1.5 border rounded-xl dark:bg-slate-900 border-slate-202 text-slate-805 dark:text-white font-mono" /></div>
+                        <div><label className="block text-[10px] text-slate-404 mb-0.5">期日</label><input type="date" value={newDueDate} onChange={e => setNewDueDate(newDueDate)} className="w-full p-1.5 border rounded-xl dark:bg-slate-900 border-slate-202 text-slate-805 dark:text-white font-mono" /></div>
                       </div>
                     </div>
                   </form>
@@ -662,9 +713,9 @@
         reader.readAsText(file);
       };
 
-      // 🛠️ デモデータ注入：Next Actionフィールドに、あらかじめ実務でよくあるサンプル文字を焼き付けておく
+      // 🛠️ デモデータ注入時、最初から2つの複数リンクがセットされた状態で展開するよう拡張
       const injectDemoData = () => {
-        const demoProjects = [{ id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 2, stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが作成されました。', isSystem: true }], level: 1, isBlocked: false, urlName: '新商品 ECD設計書Wiki', url: 'https://sansan.com', nextAction: '推進メンバーに論点確認シートを展開する' }] }, { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false, urlName: '法務リーガル相談スレッド', url: 'https://sansan.co.jp', nextAction: '法務のAさんに修正規約のドラフトをチャットする' }] }] }];
+        const demoProjects = [{ id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 2, stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが作成されました。', isSystem: true }], level: 1, isBlocked: false, nextAction: '推進メンバーに論点確認シートを展開する', urls: [{ id: 'u1_1', name: '新商品 ECD設計書Wiki', url: 'https://sansan.com' }, { id: 'u1_2', name: 'ドライブ共有フォルダ', url: 'https://google.com' }] }] }, { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false, nextAction: '法務のAさんに修正規約のドラフトをチャットする', urls: [{ id: 'u2_1', name: '法務リーガル相談スレッド', url: 'https://sansan.co.jp' }] }] }] }];
         setFolders(initialFolders); setDeptList(initialDepts); setProjects(demoProjects); setSelectedFolderId('f1'); setCurrentProjectId('p1');
         showAlert('デモデータを安全に再生成しました！'); setShowSettingsModal(false);
       };
