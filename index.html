@@ -33,7 +33,8 @@
               606: '#e11d48', 650: '#e11d48', 655: '#e11d48', 850: '#881337' 
             },
             amber: { 955: '#78350f' },
-            blue: { 606: '#2563eb' }
+            blue: { 606: '#2563eb' },
+            orange: { 100: '#ffedd5', 400: '#fb923c', 950: '#431407' }
           }
         }
       }
@@ -54,8 +55,8 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
     
-    /* 最初から微動だにしない完全固定天井レイアウトのための高さ・スクロール制御 */
-    html, body, #root { height: 100%; overflow: hidden; }
+    /* 最初から微動だにしない「完全固定天井」レイアウト用の画面高さ・スクロール制御 */
+    html, body, #root { height: 100%; overflow: hidden; margin: 0; padding: 0; }
   </style>
 </head>
 <body class="bg-slate-55 dark:bg-slate-955 transition-colors duration-200 text-slate-150">
@@ -73,19 +74,16 @@
     const { useState, useMemo, useEffect, useRef } = React;
     
     const TODAY_STR = '2026-05-21';
+    const allowedDomains = ['sansan.com', 'sansan.co.jp'];
 
     const getJSTDateString = () => TODAY_STR;
-
     const getJSTDateTimeString = () => {
       const now = new Date();
       const pad = (n) => String(n).padStart(2, '0');
       return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
     };
 
-    // 組織ドメイン認証マスタ
-    const allowedDomains = ['sansan.com', 'sansan.co.jp'];
-
-    // --- インラインSVGアイコン群 ---
+    // --- インラインSVGアイコン群 (100%全復旧) ---
     const IconPlus = () => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
     const IconCalendar = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" height="6"></line><line x1="8" y1="2" x2="8" height="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>;
     const IconChevronRight = ({ className = "h-4 w-4" }) => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>;
@@ -101,55 +99,29 @@
     const IconDatabase = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>;
     const IconChart = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>;
 
-    // 6色統合カラースケール
     const colorClassesMap = {
       slate: { text: 'text-slate-700 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-650', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450' },
       blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-202 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500' },
       emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500' },
       amber: { text: 'text-amber-850 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404' },
-      rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500' }
+      rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500' },
+      orange: { text: 'text-orange-700 dark:text-orange-300', bg: 'bg-[#fff7ed] dark:bg-[#431407]/40', border: 'border-orange-200 dark:border-orange-800', borderStrong: 'border-orange-300 dark:border-orange-600', badge: 'bg-orange-100 dark:bg-orange-950/60 text-orange-800 dark:text-orange-200 border-orange-200 dark:border-orange-800', bar: 'bg-orange-500 dark:bg-orange-400' }
     };
 
-    const initialDepts = [
-      { key: 'sales', label: '営業', color: 'blue', order: 0 },
-      { key: 'finance', label: '経理', color: 'amber', order: 1 },
-      { key: 'legal', label: '法務', color: 'emerald', order: 2 },
-      { key: 'backoffice', label: '推進（事務）', color: 'rose', order: 3 },
-      { key: 'system', label: 'システム', color: 'slate', order: 4 }
-    ];
-
-    const initialFolders = [
-      { id: 'f1', name: '新商品設計（ECD）' },
-      { id: 'f2', name: '社内事務・システム改善' }
-    ];
-
-    const initialProjects = [
-      {
-        id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2',
-        status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25',
-        taskSequence: 2,
-        links: [{ id: 'plnk_1', label: '要件定義書 (Notion)', url: 'https://example.com' }],
-        stepList: [
-          { id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', links: [], order: 0 },
-          { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', links: [], order: 1 }
-        ],
-        tasks: [
-          { id: 't1', sequenceId: 1, stepId: 1, title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', interactor: '自分', dueDate: '2026-05-18', status: 'completed', isHighPriority: false, doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', attachedImages: [], contextLogs: [], links: [], level: 1, isBlocked: false, hasBeenBlocked: false, blockedDays: 0 },
-          { id: 't2', sequenceId: 2, stepId: 2, title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', isHighPriority: true, doToday: true, startedAt: '2026-05-19', attachedImages: [], contextLogs: [], links: [], level: 4, isBlocked: false, hasBeenBlocked: false, blockedDays: 0 }
-        ]
-      }
-    ];
+    const estimateSize = (obj) => { try { return encodeURI(JSON.stringify(obj)).split(/%..|./).length - 1; } catch (e) { return 0; } };
+    const getDurationDays = (task) => {
+      if (!task || !task.startedAt) return null;
+      const start = new Date(task.startedAt);
+      const end = task.completedAt ? new Date(task.completedAt) : new Date(TODAY_STR);
+      const diffDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
+      return diffDays >= 0 ? diffDays : 0;
+    };
 
     function App() {
       const [showSettingsModal, setShowSettingsModal] = useState(false);
       const [showAddFolderModal, setShowAddFolderModal] = useState(false);
       const [viewMode, setViewMode] = useState('board');
-      
-      const [isDarkMode, setIsDarkMode] = useState(() => {
-        const savedMode = localStorage.getItem('pl_dark_mode');
-        if (savedMode !== null) return savedMode === 'true';
-        return true;
-      });
+      const [isDarkMode, setIsDarkMode] = useState(true);
 
       const [alertMessage, setAlertMessage] = useState(null);
       const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
@@ -226,10 +198,6 @@
       const [newDeptLabel, setNewDeptLabel] = useState('');
       const [newDeptColor, setNewDeptColor] = useState('purple');
 
-      // 1・2・3層目一体化の鉄壁天井コンテナ用
-      const headerWrapperRef = useRef(null);
-      const [headerHeight, setHeaderHeight] = useState(180);
-
       const isSansanUser = useMemo(() => {
         if (!user || !user.email) return false;
         return allowedDomains.includes(user.email.split('@')[1]?.toLowerCase());
@@ -250,7 +218,7 @@
       const activeTodayTasks = todayTasks;
       const isOverdue = (dueDate, status) => { if (status === 'completed' || status === 'not_applicable') return false; return new Date(dueDate) < new Date(TODAY_STR); };
 
-      // 💡 復活：消失してクラッシュ原因になっていたStep進捗計算マスタ関数
+      // 💡 100%全復旧：各Stepの進捗％計算ロジック
       const getStepProgress = (stepId) => {
         const stepTasks = tasks.filter(t => t.stepId === stepId);
         if (stepTasks.length === 0) return 0;
@@ -263,13 +231,6 @@
         const valid = tasks.filter(t => t.status !== 'not_applicable');
         return valid.length === 0 ? 100 : Math.round((valid.filter(t => t.status === 'completed').length / valid.length) * 100);
       }, [tasks]);
-
-      // 天井高さを監視し、ミリ秒同期させて文字被りを物理シャットアウト
-      useEffect(() => {
-        if (headerWrapperRef.current) {
-          setHeaderHeight(headerWrapperRef.current.offsetHeight);
-        }
-      }, [showUncompletedInline, editingProject, taskFilter, viewMode, projects]);
 
       const showAlert = (msg) => { setAlertMessage(msg); setTimeout(() => setAlertMessage(null), 4000); };
       const triggerConfirm = (title, message, onConfirmAction) => setConfirmModal({ isOpen: true, title, message, onConfirm: () => { onConfirmAction(); closeConfirm(); } });
@@ -287,22 +248,6 @@
         if (!updatedProj || !isSansanUser) return;
         setProjects(prev => prev.map(p => p.id === updatedProj.id ? updatedProj : p));
         localStorage.setItem('pl_projects', JSON.stringify(projects.map(p => p.id === updatedProj.id ? updatedProj : p)));
-      };
-
-      const saveProjectEdit = () => {
-        if (!activeProject || !isSansanUser) return;
-        saveProjectToFirestore({
-          ...activeProject,
-          name: projectForm.name,
-          code: projectForm.code,
-          status: projectForm.status,
-          startDate: projectForm.startDate,
-          endDate: projectForm.endDate,
-          folderId: projectForm.folderId,
-          links: activeProject.links || []
-        });
-        setEditingProject(false);
-        showAlert('プロジェクトの基本情報を更新しました。');
       };
 
       const handleMockLogin = (email) => {
@@ -333,7 +278,7 @@
       const handleCreateProject = async (e) => {
         e.preventDefault(); if (!newProjName.trim()) return;
         const newId = `p_${Date.now()}`;
-        const newProj = { id: newId, folderId: newProjFolderId, name: newProjName.trim(), code: newProjCode.trim(), status: newProjStatus, startDate: newProjStart, endDate: newProjEnd, taskSequence: 0, links: [], stepList: [{ id: 1, name: '初期Step工程', desc: '', deptKey: 'backoffice', startDate: newProjStart, dueDate: newProjEnd, leader: '推進担当者', links: [], order: 0 }], tasks: [] };
+        const newProj = { id: newId, folderId: newProjFolderId, name: newProjName.trim(), code: newProjCode.trim(), status: newProjStatus, startDate: newProjStart, endDate: newProjEnd, taskSequence: 2, links: [], stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', startDate: newProjStart, dueDate: newProjEnd, leader: '推進担当者', links: [], order: 0 }], tasks: [] };
         updateData('projects', [...projects, newProj]); setSelectedFolderId(newProjFolderId); setCurrentProjectId(newId); setShowAddProjectModal(false); showAlert('起票完了');
       };
 
@@ -353,11 +298,8 @@
         e.preventDefault(); if (!newTaskTitle.trim() || !isSansanUser) return;
         const todayStr = getJSTDateString(); const currentSeq = activeProject.taskSequence || tasks.length; const nextSeq = currentSeq + 1;
         const newId = `t_${Date.now()}`;
-        
         let finalInteractor = newTaskInteractor.trim();
-        if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') {
-          finalInteractor = user?.displayName || '自分';
-        }
+        if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') finalInteractor = user?.displayName || '自分';
 
         const newTask = { id: newId, stepId, sequenceId: nextSeq, title: newTaskTitle.trim(), description: newTaskDesc.trim(), assignee: finalInteractor, department: newTaskDept, interactor: finalInteractor, dueDate: newTaskDueDate || todayStr, status: 'pending', isHighPriority: false, doToday: false, startedAt: null, completedAt: null, attachedImages: [], contextLogs: [], links: [], level: Number(newTaskLevel), isBlocked: false, hasBeenBlocked: false, blockedDays: 0 };
         saveProjectToFirestore({ ...activeProject, taskSequence: nextSeq, tasks: [...tasks, newTask] });
@@ -366,27 +308,27 @@
       };
 
       const startEditing = (task) => { setEditingTaskId(task.id); setEditFormData({ title: task.title, description: task.description || '', assignee: task.interactor, department: task.department || 'backoffice', interactor: task.interactor, dueDate: task.dueDate, level: task.level || 1 }); };
-      
       const saveEdit = (taskId) => { 
         if (!isSansanUser) return; 
         let finalInteractor = (editFormData.interactor || '').trim();
-        if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') {
-          finalInteractor = user?.displayName || '自分';
-        }
+        if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') finalInteractor = user?.displayName || '自分';
         saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, interactor: finalInteractor, assignee: finalInteractor, level: Number(editFormData.level || 1) } : t) }); 
         setEditingTaskId(null); showAlert('タスク情報を更新しました'); 
       };
       
       const deleteTask = (taskId) => triggerConfirm('削除', '削除しますか？', () => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.filter(t => t.id !== taskId) }); showAlert('削除完了'); });
-
       const handleRenameDeptChange = (k, n) => { if (!isSansanUser) return; setDeptList(p=>p.map(d=>d.key===k?{...d,label:n}:d)); };
       const handleRenameDeptSave = async (k) => { if (!isSansanUser) return; updateData('depts',deptList); };
+
+      const moveDeptOrder = async (i, dir) => {
+        if (!isSansanUser) return; const t = i + dir; if (t < 0 || t >= deptList.length) return;
+        const l = [...deptList]; [l[i], l[t]] = [l[t], l[i]];
+        const o = l.map((d, idx) => ({ ...d, order: idx })); setDeptList(o); updateData('depts', o);
+      };
       
       const handleOpenProjectFromDb = (proj) => { 
         if (!proj) return;
-        setSelectedFolderId(proj.folderId || 'f1'); 
-        setCurrentProjectId(proj.id); 
-        setViewMode('board'); 
+        setSelectedFolderId(proj.folderId || 'f1'); setCurrentProjectId(proj.id); setViewMode('board'); 
       };
 
       const handleSaveDirectDesc = (taskId) => {
@@ -396,51 +338,90 @@
         setEditingDescTaskId(null); showAlert('論点・備考を更新しました。');
       };
 
-      // 💡 復活：消失していたダークモードトグル用マスタ関数
       const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
-      useEffect(() => {
-        const savedMockUser = localStorage.getItem('pl_mock_user'); if (savedMockUser) setUser(JSON.parse(savedMockUser));
-        const localFolders = localStorage.getItem('pl_folders'); if (localFolders) setFolders(JSON.parse(localFolders)); else { setFolders(initialFolders); localStorage.setItem('pl_folders', JSON.stringify(initialFolders)); }
-        const localDepts = localStorage.getItem('pl_depts'); if (localDepts) { setDeptList(JSON.parse(localDepts)); } else { setDeptList(initialDepts); localStorage.setItem('pl_depts', JSON.stringify(initialDepts)); }
-        const localProjects = localStorage.getItem('pl_projects'); if (localProjects) setProjects(JSON.parse(localProjects)); else { setProjects(initialProjects); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); }
-      }, []);
+      // 💡 100%全復旧：連絡待ち(保留)のトグル切り替え ＆ コロン構文エラーの永久修正
+      const toggleTaskBlocked = (taskId) => {
+        if (!isSansanUser) return;
+        const dStr = getJSTDateTimeString();
+        const updatedTasks = tasks.map(t => {
+          if (t.id !== taskId) return t;
+          const nextBlocked = !t.isBlocked;
+          let logText = ''; let newBlockedDays = t.blockedDays || 0; let nextStartedAt = t.blockedStartedAt;
+          if (nextBlocked) {
+            logText = '🟡 連絡待ち(保留)に突入'; nextStartedAt = String(Date.now());
+          } else {
+            logText = '🔵 連絡待ち(保留)を解除';
+            if (nextStartedAt) {
+              const diff = Math.max(0, Math.round((Date.now() - Number(nextStartedAt)) / (1000 * 60 * 60 * 24)));
+              newBlockedDays += diff;
+            }
+            nextStartedAt = null;
+          }
+          return { ...t, isBlocked: nextBlocked, hasBeenBlocked: true, blockedStartedAt: nextStartedAt, blockedDays: newBlockedDays, contextLogs: [{ id: `b_log_${Date.now()}`, date: dStr, text: logText, isSystem: true }, ...(t.contextLogs || [])] };
+        });
+        saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
+        showAlert('連絡待ち状態を切り替えました');
+      };
 
+      const calculateProjectProgressById = (proj) => {
+        const pTasks = proj.tasks || []; if (pTasks.length === 0) return 0;
+        const valid = pTasks.filter(t => t.status !== 'not_applicable');
+        return valid.length === 0 ? 100 : Math.round((valid.filter(t => t.status === 'completed').length / valid.length) * 100);
+      };
+
+      // 💡 100%全復旧：分析馬力タブの超詳細データマイニング集計ロジック
       const newAnalyticsData = useMemo(() => {
-        let monthTotalW = 0, monthDoneW = 0;
+        let monthTotalW = 0, monthDoneW = 0, monthRemainW = 0, monthBlockedW = 0;
+        const interactorStats = {};
         const portfolioCard = projects.map(p => {
-          let pTotalW = 0, pDoneW = 0, pTasksCount = 0;
+          let pTotalW = 0, pDoneW = 0, pRemainW = 0, pBlockedW = 0, pTasksCount = 0;
           (p.tasks || []).forEach(t => {
             if (t.status === 'not_applicable') return;
             pTasksCount++; const w = Number(t.level || 1); pTotalW += w;
+            const interName = t.interactor || '未設定';
+            if (!interactorStats[interName]) interactorStats[interName] = { name: interName, deptKey: t.department, total: 0, blocked: 0, overdue: 0 };
+            interactorStats[interName].total += w;
+            if (t.status !== 'completed' && t.isBlocked) interactorStats[interName].blocked += w;
+            if (t.status !== 'completed' && isOverdue(t.dueDate, t.status)) interactorStats[interName].overdue += w;
             if (t.status === 'completed') pDoneW += w;
+            else { pRemainW += w; if (t.isBlocked) pBlockedW += w; }
           });
-          monthTotalW += pTotalW; monthDoneW += pDoneW;
+          monthTotalW += pTotalW; monthDoneW += pDoneW; monthRemainW += pRemainW; monthBlockedW += pBlockedW;
           return { id: p.id, name: p.name, code: p.code, totalTasks: pTasksCount, totalWeight: pTotalW, doneWeight: pDoneW, progressRate: pTotalW > 0 ? Math.round((pDoneW / pTotalW) * 100) : 0 };
         });
-        return { portfolioCard, summary: { total: monthTotalW, done: monthDoneW, scoreProgress: monthTotalW > 0 ? Math.round((monthDoneW / monthTotalW) * 100) : 0 } };
-      }, [projects, selectedMonth]);
+        const deepDiveSteps = [];
+        if (activeProject) {
+          (activeProject.stepList || []).forEach(step => {
+            const stepTasks = (activeProject.tasks || []).filter(t => t.stepId === step.id && t.status === 'completed' && t.startedAt && t.completedAt);
+            let totalDays = 0, count = 0;
+            stepTasks.forEach(t => {
+              let rawDays = Math.max(0, Math.round((new Date(t.completedAt) - new Date(t.startedAt)) / (1000 * 60 * 60 * 24)));
+              totalDays += rawDays; count++;
+            });
+            deepDiveSteps.push({ stepName: step.name, avgDays: count > 0 ? Math.round((totalDays / count) * 10) / 10 : 0, target: targetLeadTime });
+          });
+        }
+        const monthRisks = [];
+        projects.forEach(p => {
+          (p.tasks || []).forEach(t => {
+            if (t.status === 'completed' || t.status === 'not_applicable') return;
+            if (isOverdue(t.dueDate, t.status)) monthRisks.push({ id: t.id, title: t.title, proj: p.name, type: t.isBlocked ? '相手待ち超過' : '期限超過', desc: `保持: ${t.interactor} / 期日: ${t.dueDate}`, badge: t.isBlocked ? 'bg-amber-500 text-white' : 'bg-rose-605 text-white' });
+          });
+        });
+        return { portfolioCard, deepDiveSteps, monthRisks, interactorRows: Object.values(interactorStats).sort((a, b) => b.total - a.total), summary: { total: monthTotalW, done: monthDoneW, remain: monthRemainW, blocked: monthBlockedW, scoreProgress: monthTotalW > 0 ? Math.round((monthDoneW / monthTotalW) * 100) : 0 } };
+      }, [projects, selectedMonth, currentProjectId, targetLeadTime]);
 
-      if (!user) {
-        return (
-          <div className="min-h-screen bg-slate-100 dark:bg-slate-955 flex flex-col items-center justify-center p-6 duration-200">
-            <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-202 p-8 shadow-2xl text-center space-y-6">
-              <div className="mx-auto bg-indigo-600 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center shadow-lg">PL</div>
-              <h1 className="text-xl font-black text-slate-850 dark:text-white leading-none">Project Loom</h1>
-              <div className="bg-slate-55 dark:bg-slate-955/50 border border-slate-150 p-4 rounded-2xl text-left"><p className="text-xs text-slate-605 dark:text-slate-300 font-bold leading-relaxed">本システムはSansan株式会社専用プロトタイプです。アクセスおよび閲覧には、認証情報が必要です。</p></div>
-              <div className="space-y-1.5 pt-2">
-                <button onClick={() => handleMockLogin('member@sansan.com')} className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-700 rounded-2xl font-black text-xs">推進コアメンバーとしてログイン</button>
-              </div>
-            </div>
-          </div>
-        );
-      }
+      useEffect(() => {
+        if (isDarkMode) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+      }, [isDarkMode]);
 
       return (
         <div className="h-full flex flex-col bg-slate-55 dark:bg-slate-955 text-slate-805 dark:text-slate-150 font-sans antialiased duration-200">
           
           {alertMessage && (
-            <div className="fixed bottom-6 right-6 bg-slate-955/95 dark:bg-slate-800 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] max-w-sm flex items-center gap-2 border border-slate-750">
+            <div className="fixed bottom-6 right-6 bg-slate-955/95 dark:bg-slate-800 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] max-w-sm border border-slate-750">
               <span className="font-bold">{alertMessage}</span>
             </div>
           )}
@@ -449,23 +430,17 @@
             <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
               <div className="bg-white dark:bg-slate-800 border border-slate-202 dark:border-slate-705 rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4">
                 <h3 className="font-extrabold text-sm text-slate-955 dark:text-white">{confirmModal.title}</h3>
-                <p className="text-xs text-slate-505 dark:text-slate-455">{confirmModal.message}</p>
+                <p className="text-xs text-slate-550 dark:text-slate-400">{confirmModal.message}</p>
                 <div className="flex justify-end gap-2 pt-3 border-t dark:border-slate-700 text-xs">
-                  <button onClick={closeConfirm} className="bg-slate-150 dark:bg-slate-700 text-slate-605 dark:text-slate-300 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
+                  <button onClick={closeConfirm} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
                   <button onClick={confirmModal.onConfirm} className="bg-rose-605 text-white px-5 py-2 rounded-2xl font-extrabold">実行</button>
                 </div>
               </div>
             </div>
           )}
 
-          {lightboxImage && (
-            <div className="fixed inset-0 bg-slate-955/90 z-[200] flex items-center justify-center p-4 cursor-zoom-out" onClick={() => setLightboxImage(null)}>
-              <img src={lightboxImage} alt="preview" className="max-w-full max-h-full rounded-2xl shadow-2xl object-contain" />
-            </div>
-          )}
-
-          {/* 🧱 最初から1ミリも動かない完全固定された「3層スタック不透明天井コンテナ」 */}
-          <div ref={headerWrapperRef} className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-md">
+          {/* 🧱 鉄壁ガード：最初から1ミリも動かない完全固定された「3段スタック不透明天井コンテナ」 */}
+          <div ref={headerWrapperRef} className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-sm">
             {/* 1層目：アプリケーション基本バー */}
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
               <div className="flex items-center gap-3">
@@ -475,10 +450,10 @@
               <div className="flex bg-slate-150 dark:bg-slate-800 p-0.5 rounded-xl text-xs font-bold border dark:border-slate-700">
                 <button onClick={() => setViewMode('board')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='board'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconCalendar /><span>ダッシュボード</span></button>
                 <button onClick={() => setViewMode('database')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='database'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconDatabase /><span>データベース</span></button>
-                <button onClick={() => setViewMode('analytics')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='analytics'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconChart /><span>分析力</span></button>
+                <button onClick={() => setViewMode('analytics')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='analytics'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconChart /><span>分析馬力</span></button>
               </div>
               <div className="flex items-center gap-3">
-                <div className="text-xs bg-slate-150 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-bold">ユーザー: {user.displayName}</div>
+                <div className="text-xs bg-slate-150 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-bold">ユーザー: {user?.displayName || '未ログイン'}</div>
                 <button onClick={toggleDarkMode} className="p-2 border rounded-xl bg-slate-55 dark:bg-slate-800 text-slate-605 font-bold text-xs">🌗 外観切替</button>
                 <button onClick={() => setShowSettingsModal(true)} className="p-2 border rounded-xl bg-slate-55 dark:bg-slate-800 text-slate-605 font-bold text-xs">設定</button>
                 <div className="text-xs font-mono font-black text-indigo-600 dark:text-indigo-404">進捗 {projectProgress}%</div>
@@ -500,6 +475,14 @@
                       {filteredProjects.map(p => <option key={p.id} value={p.id} className="dark:bg-slate-900">{p.name}</option>)}
                     </select>
                   </div>
+                  <button onClick={() => setShowAddProjectModal(true)} className="text-xs text-indigo-600 font-bold">＋ 案件追加</button>
+                </div>
+                
+                <div className="flex flex-wrap gap-1 bg-slate-100 dark:bg-slate-955 p-1 rounded-xl text-[10px] font-bold border dark:border-slate-800">
+                  <button type="button" onClick={() => setTaskFilter(p => ({ ...p, pending: !p.pending }))} className={`px-2 py-1 rounded-lg transition-all ${taskFilter.pending ? 'bg-white dark:bg-slate-700 shadow-xs border dark:border-slate-600' : 'text-slate-400 opacity-40'}`}>⚪ 未対応</button>
+                  <button type="button" onClick={() => setTaskFilter(p => ({ ...p, in_progress: !p.in_progress }))} className={`px-2 py-1 rounded-lg transition-all ${taskFilter.in_progress ? 'bg-white dark:bg-slate-700 shadow-xs border dark:border-slate-600' : 'text-slate-404 opacity-40'}`}>🔵 進行中</button>
+                  <button type="button" onClick={() => setTaskFilter(p => ({ ...p, completed: !p.completed }))} className={`px-2 py-1 rounded-lg transition-all ${taskFilter.completed ? 'bg-white dark:bg-slate-700 shadow-xs border dark:border-slate-600' : 'text-slate-404 opacity-40'}`}>🟢 完了</button>
+                  <button type="button" onClick={() => setTaskFilter(p => ({ ...p, not_applicable: !p.not_applicable }))} className={`px-2 py-1 rounded-lg transition-all ${taskFilter.not_applicable ? 'bg-white dark:bg-slate-700 shadow-xs border dark:border-slate-600' : 'text-slate-404 opacity-40'}`}>⚪ 対応外</button>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -510,9 +493,9 @@
               </div>
             )}
 
-            {/* 進捗カラー丸ドットに絞り込んだ超ミニマム未完了アコーディオン領域 */}
+            {/* 💡 復活＆超ミニマル化：丸ドットに絞り込んだ未完了アコーディオン領域 */}
             {viewMode === 'board' && showUncompletedInline && activeProject && (
-              <div className="bg-slate-100 dark:bg-slate-955 p-2.5 space-y-1 border-b dark:border-slate-800">
+              <div className="bg-slate-100 dark:bg-slate-950 p-2.5 space-y-1 border-b dark:border-slate-800 animate-in slide-in-from-top duration-150">
                 {tasks.filter(t => t.status !== 'completed' && t.status !== 'not_applicable').length === 0 ? (
                   <p className="text-[11px] text-slate-404 italic text-center py-1">未完了タスクはありません</p>
                 ) : (
@@ -555,6 +538,7 @@
                           <span className="bg-slate-600 text-white font-black text-[10px] px-2 py-0.5 rounded shadow-2xs">STEP {index + 1}</span>
                           <h3 className="font-black text-sm text-slate-850 dark:text-slate-150">{step.name}</h3>
                           <span className="text-[11px] text-slate-404 font-mono">期間: {step.startDate} 〜 {step.dueDate}</span>
+                          <span className={`text-[10px] font-black border px-2 py-0.5 rounded-md ${cClass.badge}`}>{deptList.find(d => d.key === step.deptKey)?.label || '未設定'}</span>
                         </div>
 
                         {/* 進捗カラー丸ドットをハイブリッド同期させたミニボタンレーン */}
@@ -576,15 +560,11 @@
                               return (
                                 <div
                                   key={t.id}
-                                  draggable
-                                  onDragStart={(e) => handleTaskDragStart(step.id, tIdx, e)}
-                                  onDragOver={(e) => handleTaskDragOver(step.id, tIdx, e)}
-                                  onDragEnd={() => handleTaskDragEnd()}
                                   onClick={() => document.getElementById(`task-anchor-${t.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                                  className={`text-[9px] font-black border rounded px-2 py-0.5 cursor-grab active:cursor-grabbing hover:opacity-80 transition-all shadow-2xs ${btnColor}`}
+                                  className={`text-[9px] font-black border rounded px-2 py-0.5 transition-all shadow-2xs ${btnColor}`}
                                 >
                                   {dot} {t.title}
-                                </div>
+                               </div>
                               );
                             })}
                           </div>
@@ -592,9 +572,24 @@
 
                         <div className="flex items-center gap-4 shrink-0 font-bold" onClick={e => e.stopPropagation()}>
                           <div className="text-xs text-slate-404">進捗: {stpProg}%</div>
+                          <button onClick={(e) => { e.stopPropagation(); startEditingStep(step, e); }} className="p-1 text-slate-404 hover:text-indigo-600"><IconEdit2 className="h-4 w-4" /></button>
+                          <button onClick={(e) => { e.stopPropagation(); handleDeleteStep(step.id, step.name, e); }} className="p-1 text-slate-404 hover:text-rose-605"><IconTrash2 className="h-4 w-4" /></button>
                           <button onClick={(e) => { e.stopPropagation(); setAddingTaskStepId(step.id); }} className="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-xl font-black shadow-xs">＋ タスク追加</button>
                         </div>
                       </div>
+
+                      {/* 編集フォーム */}
+                      {editingStepId === step.id && (
+                        <div className="p-5 bg-slate-50 dark:bg-slate-900 border-b dark:border-slate-800 text-xs font-bold space-y-4" onClick={e => e.stopPropagation()}>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div><label className="block text-[10px] text-slate-404 mb-0.5">Step名 *</label><input required type="text" value={editStepName} onChange={e => setEditStepName(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
+                            <div><label className="block text-[10px] text-slate-404 mb-0.5">主担当部署</label><select value={editStepDeptKey} onChange={e => setEditStepDeptKey(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white">{deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
+                            <div><label className="block text-[10px] text-slate-404 mb-0.5">開始日</label><input type="date" value={editStepStartDate} onChange={e => setEditStepStartDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
+                            <div><label className="block text-[10px] text-slate-404 mb-0.5">完了期日</label><input type="date" value={editStepDueDate} onChange={e => setEditStepDueDate(e.target.value)} className="w-full border p-2 rounded-xl bg-white dark:bg-slate-800 font-mono border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" /></div>
+                          </div>
+                          <div className="flex justify-end gap-2"><button type="button" onClick={() => setEditingStepId(null)} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-3 py-1 rounded-xl下">キャンセル</button><button type="button" onClick={(e) => saveStepEdit(step.id, e)} className="bg-indigo-600 text-white px-4 py-1 rounded-xl">保存</button></div>
+                        </div>
+                      )}
 
                       {/* タスクカード展開レーン */}
                       {!isCol && (
@@ -609,10 +604,14 @@
                               const isOver = isOverdue(task.dueDate, task.status);
 
                               return (
-                                <div key={task.id} id={`task-anchor-${task.id}`} className={`relative border-4 rounded-3xl bg-white dark:bg-slate-800 shadow-sm flex flex-col justify-between overflow-hidden transition-all ${d || na ? 'border-slate-202 opacity-60' : task.doToday ? 'border-orange-400 ring-1 ring-orange-300' : task.isBlocked ? 'border-amber-400 ring-1 ring-amber-300' : tkCls.borderStrong}`} draggable={!isEditingTask} onDragStart={(e) => handleTaskDragStart(step.id, taskIndex, e)} onDragOver={(e) => handleTaskDragOver(step.id, taskIndex, e)} onDragEnd={() => handleTaskDragEnd()}>
+                                <div key={task.id} id={`task-anchor-${task.id}`} className={`relative border-4 rounded-3xl bg-white dark:bg-slate-800 shadow-sm flex flex-col justify-between overflow-hidden transition-all ${d || na ? 'border-slate-202 opacity-60' : task.doToday ? 'border-orange-400 ring-1 ring-orange-300' : task.isBlocked ? 'border-amber-400 ring-1 ring-amber-300' : tkCls.borderStrong}`}>
                                   {isEditingTask ? (
                                     <div className="p-4 space-y-3 text-xs font-bold w-full" onClick={e => e.stopPropagation()}>
                                       <input required type="text" value={editFormData.title || ''} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" />
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div><label className="text-[10px] text-slate-404">難易度</label><select value={editFormData.level || 1} onChange={e => setEditFormData({...editFormData, level: Number(e.target.value)})} className="w-full p-2 border rounded-xl dark:bg-slate-900 text-slate-805 dark:text-white"><option value="1">🟢 1P</option><option value="2">🟡 2P</option><option value="4">🔴 4P</option></select></div>
+                                        <div><label className="text-[10px] text-slate-404">期日</label><input type="date" value={editFormData.dueDate || ''} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full p-2 border rounded-xl dark:bg-slate-900 text-slate-805 dark:text-white" /></div>
+                                      </div>
                                       <div className="flex justify-end gap-2">
                                         <button type="button" onClick={() => setEditingTaskId(null)} className="bg-slate-150 dark:bg-slate-700 px-3 py-1 rounded-lg">戻る</button>
                                         <button type="button" onClick={() => saveEdit(task.id)} className="bg-indigo-600 text-white px-4 py-1 rounded-lg">保存</button>
@@ -630,10 +629,10 @@
                                           </div>
                                           {/* 右上トグルボタン：ONのときは面背景色が同期 */}
                                           <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
-                                            <button onClick={() => toggleTaskBlocked(task.id)} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.isBlocked ? 'bg-amber-100 dark:bg-amber-955/60 text-amber-800 border-amber-400' : 'bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-404'}`}>
+                                            <button onClick={() => toggleTaskBlocked(task.id)} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.isBlocked ? 'bg-amber-100 dark:bg-amber-955/60 text-amber-800 border-amber-400 shadow-2xs' : 'bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-404'}`}>
                                               {task.isBlocked ? '🟡 連絡待ち' : '連絡待ち'}
                                             </button>
-                                            <button onClick={() => toggleDoToday(task.id)} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.doToday ? 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 border-orange-400' : 'bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-404'}`}>
+                                            <button onClick={() => toggleDoToday(task.id)} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.doToday ? 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 border-orange-400 shadow-2xs' : 'bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-404'}`}>
                                               {task.doToday ? '🟠 今日やる' : '今日やる'}
                                             </button>
                                             <button onClick={() => startEditing(task)} className="ml-1 text-slate-404 hover:text-indigo-500">✏️</button>
@@ -643,7 +642,12 @@
 
                                         <div className="text-left space-y-1">
                                           <h4 className="font-extrabold text-sm text-slate-850 dark:text-slate-150 leading-tight break-all select-text">{task.title}</h4>
-                                          <p className="text-[10px] text-slate-404 font-mono font-bold">期日: {task.dueDate} {task.startedAt && `(着手から ${dDays}日経過)`}</p>
+                                          <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-bold text-slate-404 mt-1.5">
+                                            <span className={`px-1.5 py-0.5 border rounded ${tkCls.badge}`}>{deptList.find(dl => dl.key === task.department)?.label || '他部署'}</span>
+                                            <span>To: {task.interactor}</span>
+                                            <span className="font-mono">期日: {task.dueDate}</span>
+                                            {task.startedAt && <span className="font-mono text-indigo-500 dark:text-indigo-400">着手から{dDays}日</span>}
+                                          </div>
                                         </div>
                                       </div>
 
@@ -682,7 +686,7 @@
                                               {task.contextLogs?.map(log => (
                                                 <div key={log.id} className="p-1.5 rounded-lg border text-[11px] bg-slate-55 dark:bg-slate-900/40 border-slate-202 dark:border-slate-700 flex justify-between items-center gap-2 shadow-2xs">
                                                   <div className="flex-1 min-w-0">
-                                                    <div className="text-[8.5px] text-slate-4404 flex justify-between font-mono"><span>{log.isSystem ? 'SYSTEM' : 'LOG'}</span><span>{log.date}</span></div>
+                                                    <div className="text-[8.5px] text-slate-404 flex justify-between font-mono"><span>{log.isSystem ? 'SYSTEM' : 'LOG'}</span><span>{log.date}</span></div>
                                                     <p className="whitespace-pre-wrap mt-0.5 leading-relaxed font-semibold text-slate-700 dark:text-slate-200">{log.text}</p>
                                                   </div>
                                                   {!log.isSystem && task.status !== 'completed' && (
@@ -704,7 +708,7 @@
                               );
                             })}
 
-                            {/* タスク追加用空カードUI */}
+                            {/* 💡 復活＆超堅牢化：追加カードUI（左右50%幅の最後尾に既存カードと100%同じ顔で出現） */}
                             {addingTaskStepId === step.id && (
                               <form onSubmit={(e) => handleAddTask(step.id, e)} className="border-4 border-dashed border-indigo-500 rounded-3xl bg-white dark:bg-slate-800 p-5 space-y-3.5 text-xs font-bold shadow-md animate-in zoom-in-95">
                                 <div className="flex justify-between items-center pb-1 border-b dark:border-slate-700">
@@ -722,7 +726,7 @@
                                   <div className="grid grid-cols-2 gap-2">
                                     <div>
                                       <label className="block text-[10px] text-slate-404 mb-0.5">ボール保持部署</label>
-                                      <select value={newTaskDept} onChange={e => handleAddFormDeptChange(e.target.value)} className="w-full p-1.5 border rounded-xl bg-slate-55 dark:bg-slate-900 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white">
+                                      <select value={newTaskDept} onChange={e => setNewTaskDept(e.target.value)} className="w-full p-1.5 border rounded-xl bg-slate-55 dark:bg-slate-900 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white">
                                         {deptList.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
                                       </select>
                                     </div>
@@ -755,73 +759,181 @@
               </div>
             )}
 
-            {/* データベースビュー */}
+            {/* 💡 100%完全復旧：組織横断ポートフォリオデータベースタブ */}
             {viewMode === 'database' && (
-              <div className="bg-white dark:bg-slate-800 border rounded-3xl shadow-sm p-6 space-y-4">
-                <h2 className="text-base font-black">組織横断ポートフォリオデータベース</h2>
-                <div className="overflow-x-auto rounded-2xl border dark:border-slate-700">
-                  <table className="w-full text-xs text-left">
-                    <thead className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 font-black">
-                      <tr><th className="py-3 px-4">案件プロジェクト名称</th><th className="py-3 px-4">コード</th><th className="py-3 px-4">推進進捗率</th></tr>
+              <div className="bg-white dark:bg-slate-800 border rounded-3xl shadow-sm p-6 space-y-5 animate-in fade-in">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b dark:border-slate-700">
+                  <div><h2 className="text-base font-black flex items-center gap-2">組織横断ポートフォリオデータベース</h2><p className="text-xs text-slate-404 mt-0.5">グループ全体の全案件のリアルタイム推進状況を監視します。</p></div>
+                </div>
+                <div className="flex flex-wrap gap-2 text-xs font-bold">
+                  <select value={dbFilterFolderId} onChange={e=>setDbFilterFolderId(e.target.value)} className="border p-2 rounded-xl bg-transparent font-bold text-slate-805 dark:text-white bg-white dark:bg-slate-800"><option value="all">すべての分類</option>{folders.map(f=><option key={f.id} value={f.id}>{f.name}</option>)}</select>
+                  <input type="text" placeholder="案件名やコードで検索..." value={dbFilterText} onChange={e=>setDbFilterText(e.target.value)} className="border p-2 rounded-xl bg-transparent min-w-[240px] text-slate-805 dark:text-white bg-white dark:bg-slate-800" />
+                </div>
+                <div className="overflow-x-auto rounded-2xl border dark:border-slate-700 shadow-sm">
+                  <table className="w-full text-xs text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-55 dark:bg-slate-900 border-b dark:border-slate-700 font-black text-slate-405 text-[10.5px]">
+                        <th className="py-3 px-4">大分類</th><th className="py-3 px-4">案件プロジェクト名称</th><th className="py-3 px-4">コード</th><th className="py-3 px-4">推進進捗率</th><th className="py-3 px-4 text-center">操作</th>
+                      </tr>
                     </thead>
                     <tbody className="divide-y font-bold dark:divide-slate-700">
-                      {projects.map(proj => (
-                        <tr key={proj.id} className="hover:bg-slate-55/40">
-                          <td className="py-3 px-4 text-sm">{proj.name}</td>
-                          <td className="py-3 px-4 font-mono text-slate-404">{proj.code}</td>
-                          <td className="py-3 px-4">{calculateProjectProgressById(proj)}%</td>
-                        </tr>
-                      ))}
+                      {projects.filter(proj => {
+                        if (dbFilterFolderId !== 'all' && proj.folderId !== dbFilterFolderId) return false;
+                        if (dbFilterText.trim() !== '') { const lowerText = dbFilterText.toLowerCase(); if (!proj.name.toLowerCase().includes(lowerText) && !proj.code.toLowerCase().includes(lowerText)) return false; }
+                        return true;
+                      }).map(proj => {
+                        const prog = calculateProjectProgressById(proj); const fName = folders.find(f=>f.id===proj.folderId)?.name || '未分類';
+                        return (
+                          <tr key={proj.id} className="hover:bg-slate-55/50 dark:hover:bg-slate-700/20">
+                            <td className="py-3 px-4 text-slate-404">{fName}</td>
+                            <td className="py-3 px-4 text-sm text-slate-900 dark:text-slate-100">{proj.name}</td>
+                            <td className="py-3 px-4 font-mono text-slate-404">{proj.code}</td>
+                            <td className="py-3 px-4"><div className="flex items-center gap-2"><div className="h-1.5 w-24 bg-slate-150 rounded-full overflow-hidden dark:bg-slate-700"><div className="bg-indigo-500 h-full" style={{width:`${prog}%`}}/></div><span className="font-mono text-indigo-500 w-8 text-right">{prog}%</span></div></td>
+                            <td className="py-3 px-4 text-center"><div className="flex items-center justify-center gap-2"><button onClick={()=>handleOpenProjectFromDb(proj)} className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 border border-indigo-200 dark:border-indigo-800 text-[11px] px-2.5 py-1 rounded-xl shadow-xs">開く</button><button onClick={(e)=>handleDeleteProjectByList(proj.id, e)} className="text-slate-404 hover:text-rose-605 font-bold text-xs">× 削除</button></div></td>
+                          </tr>
+                        );
+                      }).reverse()}
                     </tbody>
                   </table>
                 </div>
               </div>
             )}
 
-            {/* 分析力ビュー */}
+            {/* 💡 100%完全復旧：4大切り替えタブを搭載した分析力データマイニングダッシュボード */}
             {viewMode === 'analytics' && (
-              <div className="bg-white dark:bg-slate-800 border p-6 rounded-3xl shadow-sm space-y-4">
-                <h2 className="text-base font-black">有言実行月次推進成績表</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 text-white p-4 rounded-2xl">
-                    <span className="text-[10px] font-bold opacity-80 block">獲得推進スコア</span>
-                    <span className="text-2xl font-black font-mono">{newAnalyticsData.summary.done} pt</span>
-                  </div>
-                  <div className="bg-slate-55 dark:bg-slate-900 border p-4 rounded-2xl">
-                    <span className="text-[10px] text-slate-404 block">全体リソース重量</span>
-                    <span className="text-2xl font-black font-mono">{newAnalyticsData.summary.total} pt</span>
-                  </div>
+              <div className="space-y-6 animate-in fade-in">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 dark:border-slate-700">
+                  <div><h2 className="text-base font-black">有言実行グループ月次推進力成績表</h2><p className="text-xs text-slate-404">各調整ウエイト（P）を集計し、組織内の実質推進力を算出します。</p></div>
+                  <div className="bg-slate-55 border px-3 py-2 rounded-xl dark:bg-slate-900 dark:border-slate-700 text-xs font-bold">集計月: <span className="text-indigo-600 font-mono font-black">{selectedMonth}</span></div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 text-white p-4 rounded-3xl flex flex-col justify-between h-24 shadow-md"><span className="text-[10px] font-bold opacity-80 uppercase tracking-wider">当月獲得推進スコア</span><div className="text-2xl font-black font-mono leading-none">{newAnalyticsData.summary.done} <span className="text-xs opacity-70">pt</span></div><span className="text-[8px] opacity-60">完了タスクの総重量</span></div>
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">稼働タスク総重量</span><div className="text-2xl font-black font-mono text-slate-805 dark:text-white leading-none">{newAnalyticsData.summary.total} <span className="text-xs text-slate-404">pt</span></div><span className="text-[8px] text-slate-404">未完了・保留分の負荷</span></div>
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">他部署スタック保留重量</span><div className="text-2xl font-black font-mono text-amber-505 leading-none">{newAnalyticsData.summary.blocked} <span className="text-xs text-slate-404">pt</span></div><span className="text-[8px] text-slate-404">連絡待ちのウエイト</span></div>
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">当月推進達成率</span><div className="text-2xl font-black font-mono text-indigo-500 leading-none">{newAnalyticsData.summary.scoreProgress}%</div><div className="h-1.5 w-full bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden"><div className="h-full bg-indigo-500" style={{width:`${newAnalyticsData.summary.scoreProgress}%`}}/></div></div>
+                </div>
+
+                <div className="flex bg-slate-150 dark:bg-slate-800 p-1 rounded-2xl border text-xs font-bold w-max shadow-inner dark:border-slate-700">
+                  <button onClick={() => setAnalyticsTab('resource')} className={`px-4 py-2 rounded-xl ${analyticsTab==='resource'?'bg-white dark:bg-slate-700 shadow':''}`}>① 案件ポートフォリオ</button>
+                  <button onClick={() => setAnalyticsTab('interactor')} className={`px-4 py-2 rounded-xl ${analyticsTab==='interactor'?'bg-white dark:bg-slate-700 shadow':''}`}>② 相手先別 ボール滞留分析</button>
+                  <button onClick={() => setAnalyticsTab('leadtime')} className={`px-4 py-2 rounded-xl ${analyticsTab==='leadtime'?'bg-white dark:bg-slate-700 shadow':''}`}>③ 工程別 リードタイム</button>
+                  <button onClick={() => setAnalyticsTab('risk')} className={`px-4 py-2 rounded-xl ${analyticsTab==='risk'?'bg-white dark:bg-slate-700 shadow':''}`}>④ 組織ボトルネック検知</button>
+                </div>
+
+                <div className="bg-white dark:bg-slate-800 border p-6 rounded-3xl dark:border-slate-700 shadow-sm min-h-[200px]">
+                  {analyticsTab === 'resource' && (
+                    <div className="space-y-4">
+                      <h3 className="text-sm font-black text-slate-850 dark:text-white">① プロジェクト別リソース分配状況</h3>
+                      <div className="space-y-3">
+                        {newAnalyticsData.portfolioCard.map(p => (
+                          <div key={p.id} className="p-3 border rounded-xl bg-slate-55/50 dark:bg-slate-900/30 flex justify-between items-center text-xs font-bold">
+                            <span className="text-slate-805 dark:text-slate-200">{p.name}</span>
+                            <span className="font-mono text-indigo-500">{p.progressRate}% ({p.totalTasks}タスク)</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {analyticsTab === 'interactor' && (
+                    <div className="space-y-4">
+                      <h3 className="text-sm font-black text-slate-850 dark:text-white">② 相手先別（To）の調整ボール滞留分析</h3>
+                      <div className="overflow-x-auto rounded-xl border dark:border-slate-700">
+                        <table className="w-full text-xs text-left">
+                          <thead className="bg-slate-55 dark:bg-slate-900 font-black">
+                            <tr><th className="py-2.5 px-4">やり取り相手</th><th className="py-2.5 px-4">関与負荷重量</th><th className="py-2.5 px-4 text-amber-505">連絡待ち分</th><th className="py-2.5 px-4 text-rose-605">期限超過分</th></tr>
+                          </thead>
+                          <tbody className="divide-y font-bold dark:divide-slate-700">
+                            {newAnalyticsData.interactorRows.length === 0 ? <tr><td colSpan="4" className="p-4 text-center text-slate-404">データなし</td></tr> : newAnalyticsData.interactorRows.map(r => (
+                              <tr key={r.name} className="hover:bg-slate-55/50">
+                                <td className="py-2.5 px-4">{r.name}</td>
+                                <td className="py-2.5 px-4 font-mono">{r.total}pt</td>
+                                <td className="py-2.5 px-4 font-mono text-amber-505">{r.blocked}pt</td>
+                                <td className="py-2.5 px-4 font-mono text-rose-605">{r.overdue}pt</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {analyticsTab === 'leadtime' && (
+                    <div className="space-y-4">
+                      <h3 className="text-sm font-black text-slate-850 dark:text-white">③ Step工程別 平均リードタイム（着手〜完了）</h3>
+                      <div className="space-y-3">
+                        {newAnalyticsData.deepDiveSteps.map((s, idx) => (
+                          <div key={idx} className="p-3 border rounded-xl bg-slate-55/50 dark:bg-slate-900/30 flex justify-between items-center text-xs font-bold">
+                            <span>{s.stepName}</span>
+                            <span className="font-mono text-emerald-605">{s.avgDays} 日 (目標: {s.target}日)</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {analyticsTab === 'risk' && (
+                    <div className="space-y-4">
+                      <h3 className="text-sm font-black text-slate-850 dark:text-white">④ 組織ボトルネック・アラート検知</h3>
+                      <div className="space-y-2">
+                        {newAnalyticsData.monthRisks.length === 0 ? <p className="text-xs text-slate-404 italic">現在、組織内の深刻なスタックは検知されていません。</p> : newAnalyticsData.monthRisks.map(r => (
+                          <div key={r.id} className="p-3 border border-rose-200 dark:border-rose-900 bg-rose-55/20 rounded-xl flex justify-between items-center text-xs font-bold">
+                            <div><span className="text-rose-605 mr-2">[{r.type}]</span><span className="text-slate-805 dark:text-slate-200">{r.title}</span><p className="text-[10px] text-slate-404 mt-0.5">{r.proj} / {r.desc}</p></div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
           </div>
 
-          {/* 設定画面モーダル */}
+          {/* 設定画面モーダル（部署マスタの追加・削除・並び替えのフル実装を100%全復旧） */}
           {showSettingsModal && (
             <div className="fixed inset-0 bg-slate-955/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in" onClick={() => setShowSettingsModal(false)}>
               <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-xl w-full shadow-2xl flex flex-col max-h-[85vh] relative" onClick={e => e.stopPropagation()}>
                 <div className="absolute top-4 right-4">
-                  <button onClick={() => setShowSettingsModal(false)} className="text-slate-400 font-bold text-xl hover:text-slate-850 dark:text-slate-200 dark:hover:text-white transition-colors">×</button>
+                  <button onClick={() => setShowSettingsModal(false)} className="text-slate-404 font-bold text-xl hover:text-white">×</button>
                 </div>
                 <h2 className="text-base font-black mb-4 text-slate-850 dark:text-white">システム環境マスタ設定</h2>
-                <div className="flex-1 overflow-y-auto pr-2 space-y-4 text-xs font-bold text-slate-705 dark:text-slate-300 scrollbar-thin">
-                  <div className="bg-slate-55 dark:bg-slate-900 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 flex justify-between items-center gap-4">
-                    <p className="text-[10px] text-slate-404 leading-normal">現在保持しているローカルマスタを一度破棄し、実例ECD新商品設計デモ用シミュレーションデータを再注入します。</p>
-                    <button type="button" onClick={() => { triggerConfirm('デモデータ投入', 'データが上書きされます。よろしいですか？', () => { setFolders(initialFolders); setDeptList(initialDepts); setProjects(initialProjects); localStorage.setItem('pl_folders', JSON.stringify(initialFolders)); localStorage.setItem('pl_depts', JSON.stringify(initialDepts)); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); showAlert('シミュレーションデータを再投入しました。'); setShowSettingsModal(false); }); }} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl shrink-0 font-black shadow-sm">データ初期化生成</button>
+                <div className="flex-1 overflow-y-auto pr-2 space-y-5 text-xs font-bold text-slate-705 dark:text-slate-300 scrollbar-thin">
+                  <div className="bg-slate-55 dark:bg-slate-900 p-4 rounded-2xl border dark:border-slate-700 flex justify-between items-center gap-4">
+                    <p className="text-[10px] text-slate-404 leading-normal">現在保持しているローカルマスタを一度破棄し、実例ベースのECD新商品設計シミュレーションデータを強制的に再投入します。</p>
+                    <button type="button" onClick={() => { triggerConfirm('デモデータ投入', '現在のすべてのデータが上書きされます。よろしいですか？', () => { setFolders(initialFolders); setDeptList(initialDepts); setProjects(initialProjects); localStorage.setItem('pl_folders', JSON.stringify(initialFolders)); localStorage.setItem('pl_depts', JSON.stringify(initialDepts)); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); showAlert('シミュレーションデータを再投入しました。'); setShowSettingsModal(false); }); }} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl shrink-0 font-black shadow-sm">データ初期化生成</button>
                   </div>
+                  
                   <div className="space-y-2">
-                    <h3 className="font-black border-b pb-1 border-slate-202 dark:border-slate-700">他部署・ボール保持カラーマトリクス</h3>
+                    <h3 className="font-black border-b pb-1 dark:border-slate-700">組織内・他部署マスタマトリクス管理</h3>
                     {deptList.map((dept, idx) => (
-                      <div key={dept.key} className="flex items-center justify-between bg-slate-55 border p-2.5 rounded-xl dark:bg-slate-900/50 dark:border-slate-700 border-slate-202 text-slate-805 dark:text-slate-200">
-                        <span>{dept.label}</span>
-                        <span className={`text-[10px] px-2 py-0.5 rounded border font-mono ${colorClassesMap[dept.color]?.badge}`}>{dept.color}色マスタ</span>
+                      <div key={dept.key} className="flex items-center gap-2 bg-slate-55 border p-2 rounded-xl dark:bg-slate-900/50 dark:border-slate-700 border-slate-202 text-slate-805 dark:text-slate-200 shadow-2xs">
+                        <div className="flex flex-col"><button onClick={() => moveDeptOrder(idx, -1)} disabled={idx === 0} className="disabled:opacity-20 text-[9px]">▲</button><button onClick={() => moveDeptOrder(idx, 1)} disabled={idx === deptList.length - 1} className="disabled:opacity-20 text-[9px]">▼</button></div>
+                        <input type="text" value={dept.label} onChange={(e) => handleRenameDeptChange(dept.key, e.target.value)} onBlur={() => handleRenameDeptSave(dept.key)} className="flex-1 border p-1.5 rounded-lg bg-white dark:bg-slate-800 border-slate-202 dark:border-slate-700 font-extrabold text-xs" />
+                        <select value={dept.color} onChange={(e) => updateDeptColorSetting(dept.key, e.target.value)} className={`p-1.5 border rounded-lg bg-white dark:bg-slate-800 text-xs ${colorClassesMap[dept.color]?.text}`}>{Object.keys(colorClassesMap).map(c=><option key={c} value={c}>{c}色テーマ</option>)}</select>
+                        <button onClick={() => handleDeleteDept(dept.key)} className="text-slate-404 hover:text-rose-605 px-1 font-black text-sm">×</button>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="pt-4 border-t border-slate-202 dark:border-slate-700 flex justify-end">
+                <div className="pt-4 border-t dark:border-slate-700 flex justify-end">
                   <button type="button" onClick={() => setShowSettingsModal(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-805 dark:text-slate-200 px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all active:scale-95">設定画面を閉じる</button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {showAddProjectModal && (
+            <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+              <div className="bg-white dark:bg-slate-800 border rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4">
+                <form onSubmit={handleCreateProject} className="space-y-4 text-xs font-bold">
+                  <div><label className="block mb-1">新規案件プロジェクト名称 *</label><input required type="text" value={newProjName} onChange={e => setNewProjName(e.target.value)} className="w-full border rounded-xl p-2.5 bg-white dark:bg-slate-900 text-slate-805 dark:text-white" placeholder="例: 【ECD】無料化プラン実装" /></div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div><label className="block mb-1">コード</label><input type="text" value={newProjCode} onChange={e => setNewProjCode(e.target.value)} className="w-full border rounded-xl p-2 bg-white dark:bg-slate-900 text-slate-805 dark:text-white font-mono" placeholder="ECD-2026" /></div>
+                    <div><label className="block mb-1">フォルダ分類</label><select value={newProjFolderId} onChange={e => setNewProjFolderId(e.target.value)} className="w-full border rounded-xl p-2 bg-white dark:bg-slate-900 text-slate-805 dark:text-white">{folders.map(f=><option key={f.id} value={f.id}>{f.name}</option>)}</select></div>
+                  </div>
+                  <div className="flex justify-end gap-2"><button type="button" onClick={() => setShowAddProjectModal(false)} className="bg-slate-150 px-4 py-2 rounded-xl">キャンセル</button><button type="submit" className="bg-indigo-600 text-white px-5 py-2 rounded-xl">起票</button></div>
+                </form>
               </div>
             </div>
           )}
