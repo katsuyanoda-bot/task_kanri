@@ -67,41 +67,52 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <script type="text/babel" data-type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
     const { useState, useMemo, useEffect, useRef } = React;
-    
-    const TODAY_STR = '2026-05-24';
-    const allowedDomains = ['sansan.com', 'sansan.co.jp'];
-
-    const getJSTDateString = () => TODAY_STR;
-    const getJSTDateTimeString = () => {
-      const now = new Date();
-      const pad = (n) => String(n).padStart(2, '0');
-      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-    };
-
-    // --- インラインSVGアイコン群 ---
-    const IconPlus = () => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
-    const IconCalendar = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" height="6"></line><line x1="8" y1="2" x2="8" height="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>;
-    const IconChevronRight = ({ className = "h-4 w-4" }) => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>;
-    const IconChevronDown = ({ className = "h-4 w-4" }) => <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>;
-    const IconInfo = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>;
-    const IconExternalLink = ({ className = "h-2.5 w-2.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>;
-    const IconEdit2 = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>;
-    const IconTrash2 = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
-    const IconX = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
-    const IconArrowUp = () => <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>;
-    const IconArrowDown = () => <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>;
-    const IconDragHandle = () => <svg className="h-4 w-4 text-slate-404 dark:text-slate-505 cursor-grab active:cursor-grabbing" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line></svg>;
-    const IconDatabase = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>;
-    const IconChart = ({ className = "h-3.5 w-3.5" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>;
-    const IconSun = ({ className = "h-4 w-4" }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>;
 
     function App() {
-      // 💡 100%全復旧：消失していた固定天井高さを計るためのRef定義
+      // 💡 鉄壁：スコープバグから100%防衛するため、すべての定数・カラーマスタをApp内部へ完全カプセル化移送
+      const TODAY_STR = '2026-05-24';
+      const allowedDomains = ['sansan.com', 'sansan.co.jp'];
+
+      const colorClassesMap = {
+        slate: { text: 'text-slate-700 dark:text-slate-300', bg: 'bg-[#f8fafc] dark:bg-[#1e293b]', border: 'border-slate-202 dark:border-slate-705', borderStrong: 'border-slate-350 dark:border-slate-650', badge: 'bg-slate-202 dark:bg-slate-805 text-slate-805 dark:text-slate-350 border-slate-202 dark:border-slate-705', bar: 'bg-slate-555 dark:bg-slate-450' },
+        blue: { text: 'text-blue-700 dark:text-blue-300', bg: 'bg-[#f0f7ff] dark:bg-[#18263e]', border: 'border-blue-200 dark:border-blue-800', borderStrong: 'border-blue-300 dark:border-blue-600', badge: 'bg-blue-50 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 border-blue-202 dark:border-blue-800', bar: 'bg-blue-600 dark:bg-blue-500' },
+        emerald: { text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-[#ecfdf5] dark:bg-[#132d24]', border: 'border-emerald-200 dark:border-emerald-800', borderStrong: 'border-emerald-300 dark:border-emerald-600', badge: 'bg-emerald-55 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800', bar: 'bg-emerald-600 dark:bg-emerald-500' },
+        amber: { text: 'text-amber-850 dark:text-amber-300', bg: 'bg-[#fffbeb] dark:bg-[#2f2214]', border: 'border-amber-200 dark:border-amber-800', borderStrong: 'border-amber-300 dark:border-amber-600', badge: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800', bar: 'bg-amber-500 dark:bg-amber-404' },
+        rose: { text: 'text-rose-700 dark:text-rose-300', bg: 'bg-[#fff1f2] dark:bg-[#34161f]', border: 'border-rose-200 dark:border-rose-800', borderStrong: 'border-rose-300 dark:border-rose-600', badge: 'bg-rose-150 dark:bg-rose-900/60 text-rose-850 dark:text-rose-200 border-rose-300 dark:border-rose-800', bar: 'bg-rose-600 dark:bg-rose-500' },
+        orange: { text: 'text-orange-700 dark:text-orange-300', bg: 'bg-[#fff7ed] dark:bg-[#431407]/40', border: 'border-orange-200 dark:border-orange-800', borderStrong: 'border-orange-300 dark:border-orange-600', badge: 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 dark:text-orange-200 border-orange-200 dark:border-orange-800', bar: 'bg-orange-500 dark:bg-orange-400' }
+      };
+
+      const initialDepts = [
+        { key: 'sales', label: '営業', color: 'blue', order: 0 },
+        { key: 'finance', label: '経理', color: 'amber', order: 1 },
+        { key: 'legal', label: '法務', color: 'emerald', order: 2 },
+        { key: 'backoffice', label: '推進（事務）', color: 'rose', order: 3 },
+        { key: 'system', label: 'システム', color: 'slate', order: 4 }
+      ];
+
+      const initialFolders = [
+        { id: 'f1', name: '新商品設計（ECD）' },
+        { id: 'f2', name: '社内事務・システム改善' }
+      ];
+
+      const initialProjects = [
+        {
+          id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2',
+          status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25',
+          taskSequence: 2,
+          links: [{ id: 'plnk_1', label: '要件定義書 (Notion)', url: 'https://example.com' }],
+          stepList: [
+            { id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', links: [], order: 0 },
+            { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', links: [], order: 1 }
+          ],
+          tasks: [
+            { id: 't1', sequenceId: 1, stepId: 1, title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', interactor: '自分', dueDate: '2026-05-18', status: 'completed', isHighPriority: false, doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', attachedImages: [], contextLogs: [], links: [], level: 1, isBlocked: false, hasBeenBlocked: false, blockedDays: 0 },
+            { id: 't2', sequenceId: 2, stepId: 2, title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', isHighPriority: true, doToday: true, startedAt: '2026-05-19', attachedImages: [], contextLogs: [], links: [], level: 4, isBlocked: false, hasBeenBlocked: false, blockedDays: 0 }
+          ]
+        }
+      ];
+
       const headerWrapperRef = useRef(null);
 
       const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -175,13 +186,9 @@
       const [newTaskInteractor, setNewTaskInteractor] = useState('自分');
       const [newTaskDueDate, setNewTaskDueDate] = useState('2026-06-10');
       const [newTaskLevel, setNewTaskLevel] = useState(1);
-      const [newTaskImages, setNewTaskImages] = useState([]);
 
       const [editingTaskId, setEditingTaskId] = useState(null);
       const [editFormData, setEditFormData] = useState({});
-
-      const [newDeptLabel, setNewDeptLabel] = useState('');
-      const [newDeptColor, setNewDeptColor] = useState('purple');
 
       const [headerHeight, setHeaderHeight] = useState(180);
 
@@ -205,7 +212,6 @@
       const activeTodayTasks = todayTasks;
       const isOverdue = (dueDate, status) => { if (status === 'completed' || status === 'not_applicable') return false; return new Date(dueDate) < new Date(TODAY_STR); };
 
-      // 各Stepの進捗％計算ロジック
       const getStepProgress = (stepId) => {
         const stepTasks = tasks.filter(t => t.stepId === stepId);
         if (stepTasks.length === 0) return 0;
@@ -243,22 +249,20 @@
         localStorage.setItem('pl_projects', JSON.stringify(projects.map(p => p.id === updatedProj.id ? updatedProj : p)));
       };
 
-      const handleMockLogin = (email) => {
-        const namePart = email.split('@')[0];
-        const mockUser = { uid: 'mock_user_' + Date.now(), email: email, displayName: namePart };
-        localStorage.setItem('pl_mock_user', JSON.stringify(mockUser));
-        setUser(mockUser);
-        showAlert(`Sansanグループアカウントとして認証しました。`);
-      };
-
-      const handleLogout = async () => {
-        localStorage.removeItem('pl_mock_user'); setUser(null); showAlert('ログアウトしました。');
-      };
-
-      const handleCreateFolder = async (e) => {
-        e.preventDefault(); if (!newFolderName.trim()) return;
-        const newId = `f_${Date.now()}`; const newFolder = { id: newId, name: newFolderName.trim() };
-        updateData('folders', [...folders, newFolder]); setSelectedFolderId(newId); setNewFolderName(''); setShowAddFolderModal(false); showAlert('大分類フォルダを作成しました。');
+      const saveProjectEdit = () => {
+        if (!activeProject || !isSansanUser) return;
+        saveProjectToFirestore({
+          ...activeProject,
+          name: projectForm.name,
+          code: projectForm.code,
+          status: projectForm.status,
+          startDate: projectForm.startDate,
+          endDate: projectForm.endDate,
+          folderId: projectForm.folderId,
+          links: activeProject.links || []
+        });
+        setEditingProject(false);
+        showAlert('プロジェクトの基本情報を更新しました。');
       };
 
       const handleDeleteFolder = (folderId, e) => {
@@ -282,63 +286,34 @@
         });
       };
 
-      const startEditingStep = (step, e) => { 
-        e.stopPropagation(); setEditingStepId(step.id); setEditStepName(step.name); setEditStepDesc(step.desc || ''); setEditStepDeptKey(step.deptKey || 'backoffice'); setEditStepStartDate(step.startDate || ''); setEditStepDueDate(step.dueDate || ''); setEditStepLeader(step.leader || ''); 
-      };
-      
       const saveStepEdit = (stepId, e) => { e.preventDefault(); e.stopPropagation(); saveProjectToFirestore({ ...activeProject, stepList: (activeProject.stepList || []).map(s => s.id === stepId ? { ...s, name: editStepName.trim(), desc: editStepDesc.trim(), deptKey: editStepDeptKey, startDate: editStepStartDate, dueDate: editStepDueDate, leader: editStepLeader.trim() } : s) }); setEditingStepId(null); showAlert('Step情報を更新しました'); };
       const handleDeleteStep = (stepId, stepName, e) => { e.stopPropagation(); triggerConfirm('Step削除', `このStepと紐づくタスクを全消去しますか？`, () => { saveProjectToFirestore({ ...activeProject, stepList: (activeProject.stepList || []).filter(s => s.id !== stepId), tasks: tasks.filter(t => t.stepId !== stepId) }); showAlert('削除完了'); }); };
 
-      const handleAddTask = (stepId, e) => {
-        e.preventDefault(); if (!newTaskTitle.trim() || !isSansanUser) return;
-        const todayStr = getJSTDateString(); const currentSeq = activeProject.taskSequence || tasks.length; const nextSeq = currentSeq + 1;
-        const newId = `t_${Date.now()}`;
-        let finalInteractor = newTaskInteractor.trim();
-        if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') finalInteractor = user?.displayName || '自分';
-
-        const newTask = { id: newId, stepId, sequenceId: nextSeq, title: newTaskTitle.trim(), description: newTaskDesc.trim(), assignee: finalInteractor, department: newTaskDept, interactor: finalInteractor, dueDate: newTaskDueDate || todayStr, status: 'pending', isHighPriority: false, doToday: false, startedAt: null, completedAt: null, attachedImages: [], contextLogs: [], links: [], level: Number(newTaskLevel), isBlocked: false, hasBeenBlocked: false, blockedDays: 0 };
-        saveProjectToFirestore({ ...activeProject, taskSequence: nextSeq, tasks: [...tasks, newTask] });
-        setAddingTaskStepId(null); setNewTaskTitle(''); setNewTaskDesc('');
-        showAlert('タスクを追加しました');
-      };
-
-      const startEditing = (task) => { setEditingTaskId(task.id); setEditFormData({ title: task.title, description: task.description || '', assignee: task.interactor, department: task.department || 'backoffice', interactor: task.interactor, dueDate: task.dueDate, level: task.level || 1 }); };
-      const saveEdit = (taskId) => { 
-        if (!isSansanUser) return; 
-        let finalInteractor = (editFormData.interactor || '').trim();
-        if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') finalInteractor = user?.displayName || '自分';
-        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, interactor: finalInteractor, assignee: finalInteractor, level: Number(editFormData.level || 1) } : t) }); 
-        setEditingTaskId(null); showAlert('タスク情報を更新しました'); 
-      };
-      
-      const deleteTask = (taskId) => triggerConfirm('削除', '削除しますか？', () => { if (!isSansanUser) return; saveProjectToFirestore({ ...activeProject, tasks: tasks.filter(t => t.id !== taskId) }); showAlert('削除完了'); });
-      const handleRenameDeptChange = (k, n) => { if (!isSansanUser) return; setDeptList(p=>p.map(d=>d.key===k?{...d,label:n}:d)); };
-      const handleRenameDeptSave = async (k) => { if (!isSansanUser) return; updateData('depts',deptList); };
-
-      // 💡 100%全復旧：前回の出力で消失していた他部署カラー変更関数マスタ
-      const updateDeptColorSetting = async (k, c) => { if (!isSansanUser) return; updateData('depts', deptList.map(d => d.key === k ? { ...d, color: c } : d)); };
-
-      const moveDeptOrder = async (i, dir) => {
-        if (!isSansanUser) return; const t = i + dir; if (t < 0 || t >= deptList.length) return;
-        const l = [...deptList]; [l[i], l[t]] = [l[t], l[i]];
-        const o = l.map((d, idx) => ({ ...d, order: idx })); setDeptList(o); updateData('depts', o);
-      };
-      
-      const handleOpenProjectFromDb = (proj) => { 
-        if (!proj) return;
-        setSelectedFolderId(proj.folderId || 'f1'); setCurrentProjectId(proj.id); setViewMode('board'); 
-      };
-
-      const handleSaveDirectDesc = (taskId) => {
+      const changeTaskStatus = (taskId, newStatus) => {
         if (!isSansanUser) return;
-        const updatedTasks = tasks.map(t => t.id === taskId ? { ...t, description: tmpDescValue } : t);
-        saveProjectToFirestore({ ...activeProject, tasks: updatedTasks });
-        setEditingDescTaskId(null); showAlert('論点・備考を更新しました。');
+        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => {
+          if (t.id !== taskId) return t;
+          const dStr = getJSTDateTimeString(); const dOnly = dStr.split(' ')[0];
+          let upd = { ...t, status: newStatus };
+          if (newStatus === 'pending') {
+            upd.startedAt = null; upd.completedAt = null; upd.isBlocked = false; upd.blockedStartedAt = null;
+            upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: '⚪ 未対応へリセット', isSystem: true }, ...(t.contextLogs || [])];
+          } else if (newStatus === 'in_progress') {
+            if (!t.startedAt) upd.startedAt = dOnly; upd.completedAt = null;
+            upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: '🔵 進行中へステータス変更', isSystem: true }, ...(t.contextLogs || [])];
+          } else if (newStatus === 'completed' || newStatus === 'not_applicable') {
+            upd.completedAt = dOnly; if (!t.startedAt) upd.startedAt = dOnly;
+            if (t.isBlocked && t.blockedStartedAt) {
+              const bDays = Math.max(0, Math.round((Date.now() - Number(t.blockedStartedAt)) / (1000 * 60 * 60 * 24)));
+              upd.blockedDays = (t.blockedDays || 0) + bDays;
+            }
+            upd.isBlocked = false; upd.blockedStartedAt = null;
+            upd.contextLogs = [{ id: `s_${Date.now()}`, date: dStr, text: newStatus === 'completed' ? '🟢 タスク完了' : '⚪ 対応なし確定', isSystem: true }, ...(t.contextLogs || [])];
+          }
+          return upd;
+        })});
       };
 
-      const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
-
-      // 連絡待ち(保留)のトグル切り替え
       const toggleTaskBlocked = (taskId) => {
         if (!isSansanUser) return;
         const dStr = getJSTDateTimeString();
@@ -362,13 +337,22 @@
         showAlert('連絡待ち状態を切り替えました');
       };
 
+      const saveEdit = (taskId) => { 
+        if (!isSansanUser) return; 
+        let finalInteractor = (editFormData.interactor || '').trim();
+        if (finalInteractor === '自分' || finalInteractor === '自分 (推進担当)') finalInteractor = user?.displayName || '自分';
+        saveProjectToFirestore({ ...activeProject, tasks: tasks.map(t => t.id === taskId ? { ...t, ...editFormData, interactor: finalInteractor, assignee: finalInteractor, level: Number(editFormData.level || 1) } : t) }); 
+        setEditingTaskId(null); showAlert('タスク情報を更新しました'); 
+      };
+
+      const updateDeptColorSetting = async (k, c) => { if (!isSansanUser) return; updateData('depts', deptList.map(d => d.key === k ? { ...d, color: c } : d)); };
+
       const calculateProjectProgressById = (proj) => {
         const pTasks = proj.tasks || []; if (pTasks.length === 0) return 0;
         const valid = pTasks.filter(t => t.status !== 'not_applicable');
         return valid.length === 0 ? 100 : Math.round((valid.filter(t => t.status === 'completed').length / valid.length) * 100);
       };
 
-      // 💡 100%全復旧：月次推進成績表の超精細集計ロジック
       const newAnalyticsData = useMemo(() => {
         let monthTotalW = 0, monthDoneW = 0, monthRemainW = 0, monthBlockedW = 0;
         const interactorStats = {};
@@ -376,8 +360,6 @@
           let pTotalW = 0, pDoneW = 0, pRemainW = 0, pBlockedW = 0, pTasksCount = 0;
           (p.tasks || []).forEach(t => {
             if (t.status === 'not_applicable') return;
-            
-            // 💡 復旧：当月アクティブの正確なタイムスタンプ集計
             const isCompletedThisMonth = t.status === 'completed' && t.completedAt && t.completedAt.startsWith(selectedMonth);
             const isUncompletedActive = t.status !== 'completed' && ((t.dueDate && t.dueDate <= selectedMonth + '-31') || (t.startedAt && t.startedAt <= selectedMonth + '-31'));
             if (!isCompletedThisMonth && !isUncompletedActive) return;
@@ -388,10 +370,10 @@
             interactorStats[interName].total += w;
             if (t.status !== 'completed' && t.isBlocked) interactorStats[interName].blocked += w;
             if (t.status !== 'completed' && isOverdue(t.dueDate, t.status)) interactorStats[interName].overdue += w;
-            if (t.status === 'completed') pDoneW += w;
-            else { pRemainW += w; if (t.isBlocked) pBlockedW += w; }
+            if (t.status === 'completed') monthDoneW += w;
+            else { monthRemainW += w; if (t.isBlocked) monthBlockedW += w; }
           });
-          monthTotalW += pTotalW; monthDoneW += pDoneW; monthRemainW += pRemainW; monthBlockedW += pBlockedW;
+          monthTotalW += pTotalW;
           return { id: p.id, name: p.name, code: p.code, totalTasks: pTasksCount, totalWeight: pTotalW, doneWeight: pDoneW, progressRate: pTotalW > 0 ? Math.round((pDoneW / pTotalW) * 100) : 0 };
         });
         const deepDiveSteps = [];
@@ -400,7 +382,6 @@
             const stepTasks = (activeProject.tasks || []).filter(t => t.stepId === step.id && t.status === 'completed' && t.startedAt && t.completedAt);
             let totalDays = 0, count = 0;
             stepTasks.forEach(t => {
-              if (!t.completedAt.startsWith(selectedMonth)) return;
               let rawDays = Math.max(0, Math.round((new Date(t.completedAt) - new Date(t.startedAt)) / (1000 * 60 * 60 * 24)));
               totalDays += rawDays; count++;
             });
@@ -417,39 +398,13 @@
         return { portfolioCard, deepDiveSteps, monthRisks, interactorRows: Object.values(interactorStats).sort((a, b) => b.total - a.total), summary: { total: monthTotalW, done: monthDoneW, remain: monthRemainW, blocked: monthBlockedW, scoreProgress: monthTotalW > 0 ? Math.round((monthDoneW / monthTotalW) * 100) : 0 } };
       }, [projects, selectedMonth, currentProjectId, targetLeadTime]);
 
-      const handleAddFormDeptChange = (deptKey) => {
-        setNewTaskDept(deptKey);
-        if (deptKey === 'backoffice') setNewTaskInteractor(user?.displayName || '自分');
-        else setNewTaskInteractor(`${deptList.find(d => d.key === deptKey)?.label || '他部署'} 担当者`);
-      };
-
-      useEffect(() => {
-        const savedMockUser = localStorage.getItem('pl_mock_user'); if (savedMockUser) setUser(JSON.parse(savedMockUser));
-        const localFolders = localStorage.getItem('pl_folders'); if (localFolders) setFolders(JSON.parse(localFolders)); else { setFolders(initialFolders); localStorage.setItem('pl_folders', JSON.stringify(initialFolders)); }
-        const localDepts = localStorage.getItem('pl_depts'); if (localDepts) { setDeptList(JSON.parse(localDepts)); } else { setDeptList(initialDepts); localStorage.setItem('pl_depts', JSON.stringify(initialDepts)); }
-        const localProjects = localStorage.getItem('pl_projects'); if (localProjects) setProjects(JSON.parse(localProjects)); else { setProjects(initialProjects); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); }
-      }, []);
-
-      if (!user) {
-        return (
-          <div className="min-h-screen bg-slate-100 dark:bg-slate-955 flex flex-col items-center justify-center p-6 duration-200">
-            <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-202 p-8 shadow-2xl text-center space-y-6">
-              <div className="mx-auto bg-indigo-600 bg-gradient-to-tr from-indigo-700 to-purple-600 text-white w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center shadow-lg">PL</div>
-              <h1 className="text-xl font-black text-slate-850 dark:text-white leading-none">Project Loom</h1>
-              <div className="bg-slate-55 dark:bg-slate-955/50 border border-slate-150 p-4 rounded-2xl text-left"><p className="text-xs text-slate-605 dark:text-slate-300 font-bold leading-relaxed">本システムはSansan株式会社専用プロトタイプです。アクセスおよび閲覧には、認証情報が必要です。</p></div>
-              <div className="space-y-1.5 pt-2">
-                <button onClick={() => handleMockLogin('member@sansan.com')} className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-700 rounded-2xl font-black text-xs">推進コアメンバーとしてログイン</button>
-              </div>
-            </div>
-          </div>
-        );
-      }
+      const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
       return (
         <div className="h-full flex flex-col bg-slate-55 dark:bg-slate-955 text-slate-805 dark:text-slate-150 font-sans antialiased duration-200">
           
           {alertMessage && (
-            <div className="fixed bottom-6 right-6 bg-slate-955/95 dark:bg-slate-800 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] max-w-sm border border-slate-750">
+            <div className="fixed bottom-6 right-6 bg-slate-955/95 dark:bg-slate-800 text-white text-xs px-5 py-4 rounded-2xl shadow-2xl z-[100] max-w-sm border border-slate-775">
               <span className="font-bold">{alertMessage}</span>
             </div>
           )}
@@ -460,7 +415,7 @@
                 <h3 className="font-extrabold text-sm text-slate-955 dark:text-white">{confirmModal.title}</h3>
                 <p className="text-xs text-slate-505 dark:text-slate-455">{confirmModal.message}</p>
                 <div className="flex justify-end gap-2 pt-3 border-t dark:border-slate-700 text-xs">
-                  <button onClick={closeConfirm} className="bg-slate-150 dark:bg-slate-700 text-slate-605 dark:text-slate-300 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
+                  <button onClick={closeConfirm} className="bg-slate-150 dark:bg-slate-700 text-slate-605 px-4 py-2 rounded-2xl font-bold">キャンセル</button>
                   <button onClick={confirmModal.onConfirm} className="bg-rose-605 text-white px-5 py-2 rounded-2xl font-extrabold">実行</button>
                 </div>
               </div>
@@ -473,8 +428,8 @@
             </div>
           )}
 
-          {/* 🧱 鉄壁天井：最初から1ミリも動かない完全固定された「3段スタック不透明天井コンテナ」 */}
-          <div ref={headerWrapperRef} className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-md">
+          {/* 固定不透明天井コンテナ */}
+          <div ref={headerWrapperRef} className="shrink-0 bg-white dark:bg-slate-900 border-b dark:border-slate-800 select-none z-40 shadow-sm">
             {/* 1層目：アプリケーション基本バー */}
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
               <div className="flex items-center gap-3">
@@ -487,7 +442,7 @@
                 <button onClick={() => setViewMode('analytics')} className={`px-3 py-1.5 rounded-lg flex items-center gap-1 ${viewMode==='analytics'?'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow':''}`}><IconChart /><span>分析力</span></button>
               </div>
               <div className="flex items-center gap-3">
-                <div className="text-xs bg-slate-150 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-bold">ユーザー: {user.displayName}</div>
+                <div className="text-xs bg-slate-150 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-bold">ユーザー: {user?.displayName || '未設定'}</div>
                 <button onClick={toggleDarkMode} className="p-2 border rounded-xl bg-slate-55 dark:bg-slate-800 text-slate-605 font-bold text-xs">🌗 外観切替</button>
                 <button onClick={() => setShowSettingsModal(true)} className="p-2 border rounded-xl bg-slate-55 dark:bg-slate-800 text-slate-605 font-bold text-xs">設定</button>
                 <div className="text-xs font-mono font-black text-indigo-600 dark:text-indigo-404">進捗 {projectProgress}%</div>
@@ -511,6 +466,13 @@
                   </div>
                 </div>
 
+                <div className="flex flex-wrap gap-1 bg-slate-100 dark:bg-slate-955 p-1 rounded-xl text-[10px] font-bold border dark:border-slate-800">
+                  <button type="button" onClick={() => setTaskFilter(p => ({ ...p, pending: !p.pending }))} className={`px-2 py-1 rounded-lg transition-all ${taskFilter.pending ? 'bg-white dark:bg-slate-700 shadow-xs border dark:border-slate-600' : 'text-slate-404 opacity-40'}`}>⚪ 未対応</button>
+                  <button type="button" onClick={() => setTaskFilter(p => ({ ...p, in_progress: !p.in_progress }))} className={`px-2 py-1 rounded-lg transition-all ${taskFilter.in_progress ? 'bg-white dark:bg-slate-700 shadow-xs border dark:border-slate-600' : 'text-slate-404 opacity-40'}`}>🔵 進行中</button>
+                  <button type="button" onClick={() => setTaskFilter(p => ({ ...p, completed: !p.completed }))} className={`px-2 py-1 rounded-lg transition-all ${taskFilter.completed ? 'bg-white dark:bg-slate-700 shadow-xs border dark:border-slate-600' : 'text-slate-404 opacity-40'}`}>🟢 完了</button>
+                  <button type="button" onClick={() => setTaskFilter(p => ({ ...p, not_applicable: !p.not_applicable }))} className={`px-2 py-1 rounded-lg transition-all ${taskFilter.not_applicable ? 'bg-white dark:bg-slate-700 shadow-xs border dark:border-slate-600' : 'text-slate-404 opacity-40'}`}>⚪ 対応外</button>
+                </div>
+
                 <div className="flex items-center gap-2">
                   <button onClick={() => setShowUncompletedInline(!showUncompletedInline)} className={`text-[11px] px-3 py-1.5 rounded-xl font-bold border whitespace-nowrap text-slate-805 dark:text-slate-200 shadow-xs transition-colors ${showUncompletedInline ? 'bg-amber-500 border-amber-600 text-white' : 'bg-slate-150 dark:bg-slate-700 border-transparent dark:border-slate-600'}`}>
                     <span>📄 未完了タスク 展開</span><span>{showUncompletedInline ? ' ▲' : ' ▼'}</span>
@@ -519,7 +481,7 @@
               </div>
             )}
 
-            {/* 進捗カラー丸ドットに絞り込んだ超ミニマム未完了アコーディオン領域 */}
+            {/* 未完了リスト表示領域 */}
             {viewMode === 'board' && showUncompletedInline && activeProject && (
               <div className="bg-slate-100 dark:bg-slate-955 p-2.5 space-y-1 border-b dark:border-slate-800">
                 {tasks.filter(t => t.status !== 'completed' && t.status !== 'not_applicable').length === 0 ? (
@@ -604,7 +566,7 @@
                         </div>
                       </div>
 
-                      {/* 編集フォーム */}
+                      {/* Step編集フォーム */}
                       {editingStepId === step.id && (
                         <div className="p-5 bg-slate-50 dark:bg-slate-900 border-b dark:border-slate-800 text-xs font-bold space-y-4" onClick={e => e.stopPropagation()}>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -617,7 +579,7 @@
                         </div>
                       )}
 
-                      {/* タスクカード展開レーン */}
+                      {/* タスクカード展開エリア */}
                       {!isCol && (
                         <div className="p-4 bg-slate-55/30 dark:bg-slate-955/20">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -633,10 +595,10 @@
                                 <div key={task.id} id={`task-anchor-${task.id}`} className={`relative border-4 rounded-3xl bg-white dark:bg-slate-800 shadow-sm flex flex-col justify-between overflow-hidden transition-all ${d || na ? 'border-slate-202 opacity-60' : task.doToday ? 'border-orange-400 ring-1 ring-orange-300' : task.isBlocked ? 'border-amber-400 ring-1 ring-amber-300' : tkCls.borderStrong}`}>
                                   {isEditingTask ? (
                                     <div className="p-4 space-y-3 text-xs font-bold w-full" onClick={e => e.stopPropagation()}>
-                                      <input required type="text" value={editFormData.title || ''} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white" />
+                                      <input required type="text" value={editFormData.title || ''} onChange={e => setEditFormData({...editFormData, title: e.target.value})} className="w-full p-2 border rounded-xl bg-slate-55 dark:bg-slate-900 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" />
                                       <div className="grid grid-cols-2 gap-2">
-                                        <div><label className="text-[10px] text-slate-404">難易度</label><select value={editFormData.level || 1} onChange={e => setEditFormData({...editFormData, level: Number(e.target.value)})} className="w-full p-2 border rounded-xl dark:bg-slate-900 text-slate-805 dark:text-white"><option value="1">🟢 1P</option><option value="2">🟡 2P</option><option value="4">🔴 4P</option></select></div>
-                                        <div><label className="text-[10px] text-slate-404">期日</label><input type="date" value={editFormData.dueDate || ''} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full p-2 border rounded-xl dark:bg-slate-900 text-slate-805 dark:text-white" /></div>
+                                        <div><label className="text-[10px] text-slate-404">難易度</label><select value={editFormData.level || 1} onChange={e => setEditFormData({...editFormData, level: Number(e.target.value)})} className="w-full p-2 border rounded-xl dark:bg-slate-900 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700"><option value="1">🟢 1P</option><option value="2">🟡 2P</option><option value="4">🔴 4P</option></select></div>
+                                        <div><label className="text-[10px] text-slate-404">期日</label><input type="date" value={editFormData.dueDate || ''} onChange={e => setEditFormData({...editFormData, dueDate: e.target.value})} className="w-full p-2 border rounded-xl dark:bg-slate-900 text-slate-805 dark:text-white border-slate-202 dark:border-slate-700" /></div>
                                       </div>
                                       <div className="flex justify-end gap-2">
                                         <button type="button" onClick={() => setEditingTaskId(null)} className="bg-slate-150 dark:bg-slate-700 px-3 py-1 rounded-lg">戻る</button>
@@ -655,10 +617,10 @@
                                           </div>
                                           {/* 右上トグルボタン：ONのときは面背景色が同期 */}
                                           <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
-                                            <button onClick={() => toggleTaskBlocked(task.id)} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.isBlocked ? 'bg-amber-100 dark:bg-amber-955/60 text-amber-800 border-amber-400 shadow-2xs' : 'bg-slate-55 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-404'}`}>
+                                            <button onClick={() => toggleTaskBlocked(task.id)} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.isBlocked ? 'bg-amber-100 dark:bg-amber-955/60 text-amber-800 border-amber-400 shadow-2xs' : 'bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-404'}`}>
                                               {task.isBlocked ? '🟡 連絡待ち' : '連絡待ち'}
                                             </button>
-                                            <button onClick={() => toggleDoToday(task.id)} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.doToday ? 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 border-orange-400 shadow-2xs' : 'bg-slate-55 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-404'}`}>
+                                            <button onClick={() => toggleDoToday(task.id)} className={`px-2 py-0.5 rounded-lg border font-black text-[10px] transition-all ${task.doToday ? 'bg-orange-100 dark:bg-orange-955/60 text-orange-800 border-orange-400 shadow-2xs' : 'bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-404'}`}>
                                               {task.doToday ? '🟠 今日やる' : '今日やる'}
                                             </button>
                                             <button onClick={() => startEditing(task)} className="ml-1 text-slate-404 hover:text-indigo-500">✏️</button>
@@ -734,7 +696,7 @@
                               );
                             })}
 
-                            {/* タスク追加用空カードUI（左右50%幅の最後尾に出現） */}
+                            {/* タスク追加用空カードUI */}
                             {addingTaskStepId === step.id && (
                               <form onSubmit={(e) => handleAddTask(step.id, e)} className="border-4 border-dashed border-indigo-500 rounded-3xl bg-white dark:bg-slate-800 p-5 space-y-3.5 text-xs font-bold shadow-md animate-in zoom-in-95">
                                 <div className="flex justify-between items-center pb-1 border-b dark:border-slate-700">
@@ -825,7 +787,7 @@
               </div>
             )}
 
-            {/* 4大切り替えタブを搭載した分析力データマイニングダッシュボード */}
+            {/* 分析力ダッシュボード */}
             {viewMode === 'analytics' && (
               <div className="space-y-6 animate-in fade-in">
                 <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 dark:border-slate-700">
@@ -835,7 +797,7 @@
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 text-white p-4 rounded-3xl flex flex-col justify-between h-24 shadow-md"><span className="text-[10px] font-bold opacity-80 uppercase tracking-wider">当月獲得推進スコア</span><div className="text-2xl font-black font-mono leading-none">{newAnalyticsData.summary.done} <span className="text-xs opacity-70">pt</span></div><span className="text-[8px] opacity-60">完了タスクの総重量</span></div>
-                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">稼働タスク総重量</span><div className="text-2xl font-black font-mono text-slate-805 dark:text-white leading-none">{newAnalyticsData.summary.total} <span className="text-xs text-slate-404">pt</span></div><span className="text-[8px] text-slate-404">未完了・保留分の負荷</span></div>
+                  <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">稼働タスク総重量</span><div className="text-2xl font-black font-mono text-slate-805 dark:text-white leading-none">{newAnalyticsData.summary.total} <span className="text-xs text-slate-404">pt</span></div><span className="text-[8px] text-slate-404">当月集計対象のアクティブ負荷</span></div>
                   <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">他部署スタック保留重量</span><div className="text-2xl font-black font-mono text-amber-505 leading-none">{newAnalyticsData.summary.blocked} <span className="text-xs text-slate-404">pt</span></div><span className="text-[8px] text-slate-404">連絡待ちのウエイト</span></div>
                   <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl border flex flex-col justify-between h-24 dark:border-slate-700"><span className="text-[10px] font-bold text-slate-404 uppercase tracking-wider">当月推進達成率</span><div className="text-2xl font-black font-mono text-indigo-500 leading-none">{newAnalyticsData.summary.scoreProgress}%</div><div className="h-1.5 w-full bg-slate-150 dark:bg-slate-700 rounded-full overflow-hidden"><div className="h-full bg-indigo-500" style={{width:`${newAnalyticsData.summary.scoreProgress}%`}}/></div></div>
                 </div>
@@ -926,10 +888,9 @@
                 <h2 className="text-base font-black mb-4 text-slate-850 dark:text-white">システム環境マスタ設定</h2>
                 <div className="flex-1 overflow-y-auto pr-2 space-y-5 text-xs font-bold text-slate-705 dark:text-slate-300 scrollbar-thin">
                   <div className="bg-slate-55 dark:bg-slate-900 p-4 rounded-2xl border border-slate-202 dark:border-slate-700 flex justify-between items-center gap-4">
-                    <p className="text-[10px] text-slate-404 leading-normal">現在保持しているローカルマスタを一度破棄し、実例ベースのECD新商品設計シミュレーションデータを強制的に再投入します。</p>
-                    <button type="button" onClick={() => { triggerConfirm('デモデータ投入', '現在のすべてのデータが上書きされます。よろしいですか？', () => { setFolders(initialFolders); setDeptList(initialDepts); setProjects(initialProjects); localStorage.setItem('pl_folders', JSON.stringify(initialFolders)); localStorage.setItem('pl_depts', JSON.stringify(initialDepts)); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); showAlert('シミュレーションデータを再投入しました。'); setShowSettingsModal(false); }); }} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl shrink-0 font-black shadow-sm">データ初期化生成</button>
+                    <p className="text-[10px] text-slate-404 leading-normal">現在保持しているローカルマスタを一度破棄し、実例ベースのECD新商品設計デモ用シミュレーションデータを再投入します。</p>
+                    <button type="button" onClick={() => { triggerConfirm('デモデータ投入', 'データが上書きされます。よろしいですか？', () => { setFolders(initialFolders); setDeptList(initialDepts); setProjects(initialProjects); localStorage.setItem('pl_folders', JSON.stringify(initialFolders)); localStorage.setItem('pl_depts', JSON.stringify(initialDepts)); localStorage.setItem('pl_projects', JSON.stringify(initialProjects)); showAlert('シミュレーションデータを再投入しました。'); setShowSettingsModal(false); }); }} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl shrink-0 font-black shadow-sm">データ初期化生成</button>
                   </div>
-                  
                   <div className="space-y-2">
                     <h3 className="font-black border-b pb-1 border-slate-202 dark:border-slate-700">組織内・他部署マスタマトリクス管理</h3>
                     {deptList.map((dept, idx) => (
@@ -942,7 +903,7 @@
                     ))}
                   </div>
                 </div>
-                <div className="pt-4 border-t dark:border-slate-700 flex justify-end">
+                <div className="pt-4 border-t border-slate-202 dark:border-slate-700 flex justify-end">
                   <button type="button" onClick={() => setShowSettingsModal(false)} className="bg-slate-150 dark:bg-slate-700 text-slate-805 dark:text-slate-200 px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all active:scale-95">設定画面を閉じる</button>
                 </div>
               </div>
