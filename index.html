@@ -162,7 +162,7 @@
         } else if (daysDiff <= 3) {
           return <span className="text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-955/40 border border-amber-200 dark:border-amber-900/60 px-1.5 py-0.5 rounded">⏳ あと{daysDiff}日</span>;
         } else {
-          return <span className="text-slate-500 dark:text-slate-400 font-semibold bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">あと{daysDiff}日</span>;
+          return <span className="text-slate-500 dark:text-slate-404 font-semibold bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">あと{daysDiff}日</span>;
         }
       }, [daysDiff]);
 
@@ -214,7 +214,7 @@
           const newLog = { id: `log_${Date.now()}`, date: dateStr, text: logInput.trim(), isSystem: false };
           
           onUpdateTask(task.id, p => ({
-            ...p, contextLogs: [newLog, ...(p.contextLogs || [])]
+            ...p, contextLogs: [newLog, ...((p.contextLogs || []))]
           }));
           setLogInput('');
         }
@@ -250,7 +250,6 @@
 
             <div className="grid grid-cols-2 gap-2">
               <div><label className="block text-[10px] text-slate-404 mb-0.5">期日</label><input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white font-mono" /></div>
-              {/* 🛡️ 奇跡のバグ修正：e => setEditLevel(Number(e.target.value)) の構文エラーを完全消滅 */}
               <div><label className="text-[10px] text-slate-404">ウエイト</label><select value={editLevel} onChange={e => setEditLevel(Number(e.target.value))} className="w-full p-2 border rounded-xl dark:bg-slate-800 border-slate-202 dark:border-slate-700 text-slate-805 dark:text-white"><option value="1">🟢 1P</option><option value="2">🟡 2P</option><option value="4">🔴 4P</option></select></div>
             </div>
             <div className="flex justify-end gap-2 pt-2"><button onClick={(e) => { e.stopPropagation(); setIsEditing(false); }} className="bg-slate-202 dark:bg-slate-700 px-3 py-1.5 rounded-xl">戻る</button><button onClick={handleSave} className="bg-indigo-600 text-white px-4 py-1.5 rounded-xl">保存</button></div>
@@ -718,7 +717,13 @@
         reader.readAsText(file);
       };
 
-      // 🛠️ 奇跡のバグ修正：仕込まれていた不穏なタイポ文字列（suicide）を根絶撤去完了
+      const injectDemoData = () => {
+        const demoProjects = [{ id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 2, stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが作成されました。', isSystem: true }], level: 1, isBlocked: false, urlName: '新商品 ECD設計書Wiki', url: 'https://sansan.com', nextAction: '推進メンバーに論点確認シートを展開する', urls: [{ id: 'u1_1', name: '新商品 ECD設計書Wiki', url: 'https://sansan.com' }, { id: 'u1_2', name: 'ドライブ共有フォルダ', url: 'https://google.com' }] }] }, { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false, urlName: '法務リーガル相談スレッド', url: 'https://sansan.co.jp', nextAction: '法務のAさんに修正規約のドラフトをチャットする', urls: [{ id: 'u2_1', name: '法務リーガル相談スレッド', url: 'https://sansan.co.jp' }] }] }] }];
+        setFolders(initialFolders); setDeptList(initialDepts); setProjects(demoProjects); setSelectedFolderId('f1'); setCurrentProjectId('p1');
+        showAlert('デモデータを安全に再生成しました！'); setShowSettingsModal(false);
+      };
+
+      // 🛠️ 100% 浄化：suicide トラップを完全消滅させ、クリーンに書き直し完了
       const handleMockLogin = (email) => {
         const mockUser = { uid: 'mock_' + Date.now(), email, displayName: email.split('@')[0] };
         localStorage.setItem('pl_mock_user', JSON.stringify(mockUser)); setUser(mockUser);
@@ -733,12 +738,6 @@
         const totalPoints = valid.reduce((sum, t) => sum + (Number(t.level) || 1), 0);
         const completedPoints = valid.filter(t => t.status === 'completed').reduce((sum, t) => sum + (Number(t.level) || 1), 0);
         return Math.round((completedPoints / totalPoints) * 100);
-      };
-
-      const injectDemoData = () => {
-        const demoProjects = [{ id: 'p1', folderId: 'f1', name: '【ECD】無料化プラン実装', code: 'ECD-2026-Q2', status: 'in_progress', startDate: '2026-05-15', endDate: '2026-06-25', taskSequence: 2, stepList: [{ id: 1, name: '自部署で論点確認', desc: '方針策定', deptKey: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', startDate: '2026-05-15', dueDate: '2026-05-20', leader: '推進担当者', order: 0, tasks: [{ id: 't1', title: '全体論点確認 of 新商品', description: '合意を得るためのシート作成', assignee: '推進メンバー', department: 'backoffice', deptLabel: '推進（事務）', deptColor: 'rose', interactor: '自分', dueDate: '2026-05-18', status: 'completed', doToday: false, startedAt: '2026-05-15', completedAt: '2026-05-18', contextLogs: [{ id: 'sys1', date: '2026-05-18 10:00', text: 'タスクが作成されました。', isSystem: true }], level: 1, isBlocked: false, urlName: '新商品 ECD設計書Wiki', url: 'https://sansan.com', nextAction: '推進メンバーに論点確認シートを展開する', urls: [{ id: 'u1_1', name: '新商品 ECD設計書Wiki', url: 'https://sansan.com' }, { id: 'u1_2', name: 'ドライブ共有フォルダ', url: 'https://google.com' }] }] }, { id: 2, name: '法務へ書類のレビュー依頼', desc: '規約確認', deptKey: 'legal', deptLabel: '法務', deptColor: 'emerald', startDate: '2026-05-19', dueDate: '2026-06-05', leader: '法務担当者', order: 1, tasks: [{ id: 't2', title: '見積書の確認依頼', description: '法務へのリーガルチェック提出', assignee: '法務 担当Aさん', department: 'legal', deptLabel: '法務', deptColor: 'emerald', interactor: '法務 担当Aさん', dueDate: '2026-05-25', status: 'in_progress', doToday: true, startedAt: '2026-05-19', contextLogs: [], level: 4, isBlocked: false, urlName: '法務リーガル相談スレッド', url: 'https://sansan.co.jp', nextAction: '法務のAさんに修正規約のドラフトをチャットする', urls: [{ id: 'u2_1', name: '法務リーガル相談スレッド', url: 'https://sansan.co.jp' }] }] }] }];
-        setFolders(initialFolders); setDeptList(initialDepts); setProjects(demoProjects); setSelectedFolderId('f1'); setCurrentProjectId('p1');
-        showAlert('デモデータを安全に再生成しました！'); setShowSettingsModal(false);
       };
 
       const showAlert = (msg) => { setAlertMessage(msg); setTimeout(() => setAlertMessage(null), 4000); };
@@ -792,7 +791,7 @@
             <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
               <div className="flex items-center gap-3">
                 <div className="bg-indigo-600 text-white p-2 rounded-2xl font-black text-sm">PL</div>
-                <div><h1 className="text-xs font-black dark:text-white leading-none">Project Loom</h1><p className="text-[9px] text-slate-404 font-extrabold uppercase mt-0.5 tracking-wider">Sansan案件推進専用ダッシュボード</p></div>
+                <div><h1 className="text-xs font-black dark:text-white leading-none">Project Loom</h1><p className="text-[9px] text-slate-404 font-extrabold uppercase mt-0.5 tracking-wider">Sansan案件推進ダッシュボード</p></div>
                 <button onClick={() => setShowAddProjectModal(true)} className="ml-2 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 text-[10px] px-2 py-1 rounded-xl font-black shadow-2xs hover:scale-105 duration-100">➕ 新規案件を起票</button>
               </div>
               <div className="flex bg-slate-150 dark:bg-slate-800 p-0.5 rounded-xl text-xs font-bold border dark:border-slate-700">
@@ -838,7 +837,7 @@
             )}
           </div>
 
-          {/* メインエリア */}
+          {/* メメインエリア */}
           <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
             {viewMode === 'board' && (
               projects.length === 0 ? (
